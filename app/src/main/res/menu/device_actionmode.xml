@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+     
+     <item
+        android:id="@+id/device_ft"
+        android:orderInCategory="100"
+        android:showAsAction="always"
+        android:title="@string/action_ft"
+       />
+     
+     <item
+        android:id="@+id/device_dt"
+        android:orderInCategory="101"
+        android:showAsAction="always"
+        android:icon="@drawable/duration_test"
+        android:title="@string/action_dt"/>
+   
+      
+      <item
+        android:id="@+id/device_st"
+        android:orderInCategory="102"
+        android:showAsAction="always"
+        android:title="@string/action_st"/>
+      
+      <item
+        android:id="@+id/device_id"
+        android:icon="@drawable/id_blue"
+        android:orderInCategory="103"
+        android:showAsAction="always"
+        android:title="@string/action_id"
+     	/>
+      
+      <item
+        android:id="@+id/device_refresh"
+        android:orderInCategory="104"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="@string/action_refresh"/>
+      
+      <item
+        android:id="@+id/device_stopId"
+        android:orderInCategory="105"
+        android:showAsAction="never"
+        android:title="@string/action_stop_id"/>
+      
+      <item
+        android:id="@+id/device_select_all_faulty"
+        android:orderInCategory="106"
+        android:showAsAction="never"
+        android:title="@string/action_select_allFaulty"/>
+      
+       <item
+        android:id="@+id/device_select_loop1_all"
+        android:orderInCategory="107"
+        android:showAsAction="never"
+        android:title=""/>
+       
+       <item
+        android:id="@+id/device_select_loop2_all"
+        android:orderInCategory="108"
+        android:showAsAction="never"
+        android:title=""/>
+       
+       
+       
+       <item
+        android:id="@+id/device_deselect_all"
+        android:orderInCategory="109"
+        android:showAsAction="never"
+        android:title="@string/action_deselect_allDevice"/>
+       
+ 
+</menu>

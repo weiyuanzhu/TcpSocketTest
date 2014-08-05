@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <string name="app_name">N-Light Connect</string>
+    <string name="app_version">
+        Version: <xliff:g id="promotion_code">beta 0.7.0</xliff:g>
+    </string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_about">About</string>
+    <string name="action_search">Search</string>
+    <string name="action_showDeviceList">Show Loops</string>
+    <string name="action_showLoops">Show Loops</string>
+    <string name="action_showFaultyDevices">Show Faulty Devices</string>
+    <string name="action_sort_by_faulty">Faulty</string>
+    <string name="action_sort_by_alphabet">A-Z</string>
+    <string name="action_sort_by_unnamed">Unnamed</string>
+    <string name="action_sort_device_by">SORT DEVICE BY</string>
+    <string name="action_refresh_status">RefreshPanelStatus</string>
+    
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_panel_list">N-Light</string>
+    <string name="overall">GetOverallStatus</string>
+    <string name="title_activity_loading_screen">N-Light</string>
+    <string name="location">Location</string>
+    <string name="status">status</string>
+    <string name="title_activity_panel_info">PanelInfo</string>
+    <string name="title_activity_device_list">DeviceList</string>
+    <string name="title_activity_device_info">DeviceInfoActivity</string>
+    <string name="title_activity_main">N-Light Connect</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_panel_live">N-Light Connect (Live)</string>
+    <string name="title_activity_panel_demo">N-Light Connect (Demo)</string>
+    <string name="title_activity_device">DeviceActivity</string>
+    <string name="title_activity_test">TestActivity</string>
+    <string name="title_activity_base">BaseActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="panelInfo_contact">Contact</string>
+    <string name="toast_search_panel">Searching panels in the building</string>
+    <string name="btn_contact_engineer">Contact engineer</string>
+    <string name="btn_engineer_mode">Engineer mode</string>
+    <string name="btn_live">Live Mode</string>
+    <string name="btn_demo">Demo Mode</string>
+    <string name="btn_search">Search</string>
+    <string name="title_dialog_panellist">Panel list</string>
+    <string name="title_dialog_nopanelfound">No panel found in the building, please search again.</string>
+    <string name="btn_connect">Connect</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="btn_searchagain">Search again</string>
+    <string name="btn_enter">Enter</string>
+
+    <string name="subtitle_activity_panel">Panel list</string>
+    <string name="subtitle_activity_device">Device list</string>
+    
+    <string name="text_panelstatus_ok">All OK</string>
+    <string name="text_panelstatus_fault">Fault(s) found: </string>
+    <string name="text_contat_engineer">To contact an enginneer: </string>
+    <string name="text_control_panel_location">Control panel location: </string>
+    <string name="text_contact_name">Contact name: </string>
+	<string name="text_contact_tel">Telphone: </string>
+	<string name="text_contact_mobile">Mobile: </string>
+	
+	<string name="title_dialog_input_setPanelName">Name panel</string>
+	<string name="title_dialog_input_setDeviceName">Name device</string>
+	<string name="title_dialog_input_setContactName">Update contatc name</string>
+	<string name="title_dialog_input_setTel">Update telphone number</string>
+	<string name="title_dialog_input_setMobile">Update mobile number</string>
+	<string name="title_dialog_input_enterPasscode">Enter panel passcode</string>
+	<string name="title_dialog_input_setPasscode">Update panel passcode</string>
+	<string name="title_dialog_input_enterInformation">Enter information</string>
+	
+	<string name="hint_dialog_input_setPanelName">Panel name</string>
+	<string name="hint_dialog_input_setDeviceName">Device name</string>
+	<string name="hint_dialog_input_setContactName">Contact name</string>
+	<string name="hint_dialog_input_setTel">Telephone number</string>
+	<string name="hint_dialog_input_setMobile">Mobile number</string>
+	<string name="hint_dialog_input_enterPasscode">4 digit passcode</string>
+	<string name="hint_dialog_input_setPasscode">4 digit passcode</string>
+	<string name="hint_dialog_input_enterInformation">Enter information</string>
+	
+	<string name="text_fragment_panelInfo_ipAddress">IP address</string>
+	<string name="text_fragment_panelInfo_serialNumber">Serial number</string>
+	<string name="text_fragment_panelInfo_gtin">GTIN</string>
+	<string name="text_fragment_panelInfo_contact">Contact</string>
+	<string name="text_fragment_panelInfo_tel">Telephone</string>
+	<string name="text_fragment_panelInfo_mobile">Mobile</string>
+	<string name="text_fragment_panelInfo_firmware">Firmware version</string>
+	<string name="text_fragment_panelInfo_memoryUsage">Memory used</string>
+	<string name="text_fragment_panelInfo_passcode">Passcode</string>
+	
+	<string name="text_live"> (Live)</string>
+    <string name="text_demo"> (Demo)</string>
+    
+    <string name="text_fragment_deviceInfo_deviceName">Device name</string>
+    <string name="text_fragment_deviceInfo_address">Address</string>
+    <string name="text_fragment_deviceInfo_serialNumber">Serial number</string>
+    <string name="text_fragment_deviceInfo_gtin">GTIN</string>
+    <string name="text_fragment_deviceInfo_emergencyMode">Emergency mode</string>
+    <string name="text_fragment_deviceInfo_emergencyStatus">Emergency status</string>
+    <string name="text_fragment_deviceInfo_failureStatus">Failure  status</string>
+    <string name="text_fragment_deviceInfo_batteryLevel">Battery level</string>
+    <string name="text_fragment_deviceInfo_durationTest">Last duration test result</string>
+    <string name="text_fragment_deviceInfo_emergencyLamp">Total emergency lamp operating time</string>
+    <string name="text_fragment_deviceInfo_communicationStatus">Communication status</string>
+    <string name="text_emergencyLamp_value">Less than <xliff id="emergencyLamo_hours">%1$d</xliff> hour(s)</string>
+    <string name="text_durationTest_value"><xliff id="emergencyLamo_hours">%1$d</xliff> minute(s)</string>
+    <string name="text_deviceLost">Device lost</string>
+    <string name="text_deviceCommunicationOk">OK</string>
+    <string name="text_autoRefresh">Auto refresh: <xliff:g id="autorefresh_toggle">%1$s</xliff:g></string>
+    <string name="text_lastRefresh"> " Device last refreshed: " <xliff:g id="lastRefresh_time">%1$s</xliff:g></string>
+	
+	<string name="text_settings_panelData">PANEL DATA</string>
+	<string name="text_settings_syncPref">SYNCHRONIZATION PREFERENCE</string>
+	<string name="text_savePanelLocation">"Save Panel's Location"</string>
+	<string name="text_savePanelSelection">Save Panel Selection</string>
+	<string name="text_autoRefreshAll">Auto Refresh Panel/Device</string>
+	<string name="text_autoRefreshSelectedDevice">Auto refresh selected device</string>
+	<string name="text_autoRefershAllDevices">Auto refresh all devices</string>
+	
+	<string name="text_savePanelLocation_summary">Cache panel\'s location when first time loading panel</string>
+	<string name="text_savePanelSelection_summary">Save your selection for panels when connecting, and make it default for next time</string>
+	<string name="text_autoRefreshAll_summary">Sychronizing panel and device information</string>
+	<string name="text_autoRefreshSelectedDevice_summary">Every 5 seconds</string>
+	<string name="text_autoRefreshAllDevices_summary">Every 60 seconds</string>
+	
+	<string name="text_loading_panel">"Loading panel data.. (" <xliff:g id="panelToLoad">%1$d</xliff:g> ")"</string>
+	<string name="text_analyzing_data">"Analysing panel data..""</string>
+	<string name="text_finish_loading">"Finish loading.."</string>
+	<string name="text_connect_error">"Cannot connect to " <xliff:g id="error_ip">%1$s</xliff:g> ", please check connection."</string>
+	<string name="text_prepPanelData">"Preparing Panel Data"</string>
+
+    <string name="device_selected_description">Selected: <xliff:g id="device_selected_counter">%1$d</xliff:g></string>
+    <string name="device_selected_number">0</string>
+    <string name="action_select_loop1">Select loop1 devices</string>
+    <string name="action_deselect_loop1">Deselect loop1 devices</string>
+    <string name="action_select_loop2">Select loop2 devices</string>
+    <string name="action_deselect_loop2">Deselect loop1 devices</string>
+    
+    <string name="text_multi_selection_mode">Device Multiple selection mode.</string>
+    <string name="text_loop_faulty_message"><xliff:g id="faulty_device_no">%1$s</xliff:g> Number of faulty device(s): <xliff:g id="faulty_device_no">%2$d</xliff:g></string>
+    <string name="text_panel_faulty_message">Panel fault(s): <xliff:g id="faulty_panel_no">%1$d</xliff:g></string>
+
+    <string name="emergencyMode_REST_MODE">Rest Mode,</string>
+    <string name="emergencyMode_NORMAL_MODE">Normal Mode,</string>
+    <string name="emergencyMode_EMERGENCY_MODE">Emergency Mode,</string>
+    <string name="emergencyMode_EXTENDED_EMERGENCY_MODE">Extended Emergency Mode,</string>
+    <string name="emergencyMode_FUNCTION_TEST_IN_PROGRESS">"FT in Progress,</string>
+    <string name="emergencyMode_DURATION_TEST_IN_PROGRESS">DT in Progress,</string>
+    <string name="emergencyMode_HARDWIRED_INHIBIT">Hardwired Inhibited,</string>
+    <string name="emergencyMode_HARDWIRED_SWITCH_ON">Hardwire switch is on,</string>
+    
+    <string name="failureStatus_CIRCUIT_FAILURE">Circuit Failed, </string>
+    <string name="failureStatus_BATTERY_DURATION_FAILURE">Battery Duration, </string>
+    <string name="failureStatus_LAMP_FAILURE">Lamp Failed, </string>
+    <string name="failureStatus_FUNCTION_TEST_MAXIMUM_DELAY_EXCEEDED">FT Max, </string>
+    <string name="failureStatus_BATTERY_FAILURE">Battery Failed, </string>
+    <string name="failureStatus_DURATION_TEST_MAXIMUM_DELAY_EXCEEDED">DT Max, </string>
+    <string name="failureStatus_FUNCTION_TEST_FAILURE">FT Failed, </string>
+    <string name="failureStatus_DURATION_TEST_FAILURE">DT Failed, </string>
+    <string name="failureStatus_ALL_OK">All OK,</string>
+    
+    <string name="emergencyStatus_INHIBIT_MODE">Inhibit Mode,</string>
+    <string name="emergencyStatus_FUNCTION_TEST_DONE">FT Done,</string>
+    <string name="emergencyStatus_DURATION_TEST_DONE">DT Done,</string>
+    <string name="emergencyStatus_BATTERY_FULLY_CHARGED">Battery Full,</string>
+    <string name="emergencyStatus_FUNCTION_TEST_PENDING">FT Pending,</string>
+    <string name="emergencyStatus_DURATION_TEST_PENDING">DT Pending,</string>
+    <string name="emergencyStatus_IDENTIFICATION_ACTIVE">Identification Activt,</string>
+    <string name="emergencyStatus_PHYSICALLY_SELECTED">Physically Selected,</string>
+  	<string name="emergencyStatus_NORMAL">-,</string>
+    
+	<string name="toast_refresh_panelStatus">Refreshing panel status</string>
+	<string name="toast_expand_loop"><xliff:g id="expand_loop">%1$s</xliff:g> " expanded"</string>
+	<string name="toast_ft_inProgress">Function test in progress</string>
+	<string name="toast_dt_inProgress">Duration test in progress</string>    
+	<string name="toast_stop_all">Stopping all pending test</string>    
+	<string name="toast_id_inProgress">Device identify in progress</string>    
+	<string name="toast_refresh_device">Refreshing device status</string>    
+	<string name="toast_stop_identify">Stopping identify</string>
+
+	<string name="action_stop_id">Stop identify</string>
+	<string name="action_select_allFaulty">Select all faults</string>
+	<string name="action_deselect_allDevice">Deselect all devices</string>
+	<string name="action_ft">FT</string>
+	<string name="action_dt">DT</string>
+	<string name="action_st">ST</string>
+	<string name="action_id">ID</string>
+	<string name="action_refresh">Refresh</string>
+	
+</resources>

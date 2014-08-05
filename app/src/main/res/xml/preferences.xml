@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/text_settings_panelData"
+        android:key="pref_key_panel_data">
+	    <CheckBoxPreference
+	        android:key="pref_key_panel_save"
+	        android:title="@string/text_savePanelLocation"
+	        android:summary="@string/text_savePanelLocation_summary"
+	        android:defaultValue="true"/>
+		
+		<CheckBoxPreference
+	        android:key="pref_key_save_checked"
+	        android:title="@string/text_savePanelSelection"
+	        android:summary="@string/text_savePanelSelection_summary"
+	        android:defaultValue="true"/>
+		</PreferenceCategory>
+	<PreferenceCategory
+	  	android:title="@string/text_settings_syncPref"
+	    android:key="pref_key_sync">
+	    <CheckBoxPreference
+	        android:key="pref_key_refresh"
+	        android:title="@string/text_autoRefreshAll"
+	        android:summary="@string/text_autoRefreshAll_summary"
+	        android:defaultValue="true"/>
+	    <CheckBoxPreference
+	        android:key="pref_auto_refresh_selected_device" 
+	        android:dependency="pref_key_refresh"
+	        android:title="@string/text_autoRefreshSelectedDevice"
+	        android:summary="@string/text_autoRefreshSelectedDevice_summary"
+	        android:defaultValue="false"/>
+	    
+	    <!--  
+	    <ListPreference
+	        android:dependency="pref_auto_sync_device"
+	        android:key="pref_key_sync_device"
+	        android:title="Device Sync Time"
+	        android:dialogTitle="Sync in seconds"
+	        android:entries="@array/pref_device_entries"
+	        android:entryValues="@array/pref_device_values"
+	        >
+	    </ListPreference>
+	    -->
+	    
+	    
+	    <CheckBoxPreference
+	        android:key="pref_auto_refresh_all_devices" 
+	        android:dependency="pref_key_refresh"
+	        android:title="@string/text_autoRefershAllDevices"
+	        android:summary="@string/text_autoRefreshAllDevices_summary"
+	        android:defaultValue="false"/>
+	    
+	    
+	    <!--  
+	    <ListPreference
+	        android:dependency="pref_key_refresh"
+	        android:key="pref_key_sync_panel"
+	        android:title="Panel Sync Time"
+	        android:dialogTitle="Sync in Minutes"
+	        android:entries="@array/pref_panel_entries"
+	        android:entryValues="@array/pref_panel_values"
+	        >
+	    </ListPreference>
+	    -->
+	    
+	    
+	</PreferenceCategory>
+    
+</PreferenceScreen>

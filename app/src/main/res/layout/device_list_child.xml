@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="55dip"
+    android:orientation="horizontal"
+    android:background="?android:attr/activatedBackgroundIndicator">
+
+		
+
+		<ImageView
+		    android:id="@+id/childImage"
+		    android:layout_width="50dp"
+		    android:layout_height="50dp"
+		    android:layout_alignParentLeft="true"
+		    android:layout_alignParentTop="true"
+		    android:layout_marginLeft="30dp"
+		    android:paddingLeft="10dip"
+		    android:scaleType="centerInside"
+		    android:src="@drawable/ic_action_refresh" />
+		
+		
+
+		<ProgressBar
+		    android:id="@+id/deviceList_child_progressBar"
+		    android:layout_width="40dp"
+		    android:layout_height="40dp"
+		    android:layout_centerVertical="true"
+		    android:layout_toLeftOf="@+id/devicelist_child_address_textView"
+		    android:paddingLeft="10dip" />
+
+		<TextView
+		    android:id="@+id/devicelist_child_address_textView"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerVertical="true"
+		    android:layout_toRightOf="@+id/childImage"
+		    android:paddingLeft="5dip"
+		    android:text="child"
+		    android:textSize="20sp" />
+
+		<TextView
+		    android:id="@+id/devicelist_child_location_textView"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_centerVertical="true"
+		    android:layout_toRightOf="@+id/devicelist_child_address_textView"
+		    android:paddingLeft="10dip"
+		    android:text="location"
+		    android:textSize="20sp" />
+    
+</RelativeLayout>

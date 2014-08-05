@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+      <group android:id="@+id/action_group_sort_devicelist">
+        <item android:id="@+id/action_sort_by_faulty"
+              android:title="@string/action_sort_by_faulty" />
+        <item android:id="@+id/action_sort_by_alphabet"
+              android:title="@string/action_sort_by_alphabet" />
+        <item android:id="@+id/action_sort_by_unnamed"
+              android:title="@string/action_sort_by_unnamed" />
+        
+    </group>
+
+</menu>

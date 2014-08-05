@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+   	android:background="?android:attr/activatedBackgroundIndicator">
+ 
+    <ImageView
+        android:id="@+id/groupImage"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleType="centerInside"
+        android:paddingLeft="20dp"
+        android:src="@drawable/ic_action_refresh" />
+ 
+    <TextView
+        android:id="@+id/lblListHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:paddingLeft="10dp"
+		android:text="test"
+        android:textSize="25sp"
+        />
+    <TextView
+        android:id="@+id/loopDeviceNo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:paddingLeft="10dp"
+		android:text="DeviceNo"
+        android:textSize="25sp"
+        />
+    
+    
+ 
+</LinearLayout>

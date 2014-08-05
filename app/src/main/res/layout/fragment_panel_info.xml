@@ -1,0 +1,68 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PanelInfoFragment" >
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">"
+
+        <TextView
+            android:id="@+id/panel_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" 
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"/>
+
+        <ProgressBar
+            android:id="@+id/panel_progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="400dp"
+            android:layout_height="wrap_content" 
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:visibility="gone"/>
+
+        
+
+        <ListView
+            android:id="@+id/panelInfo_listView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" 
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp">
+        </ListView>
+        
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp">"
+            
+            <Button
+            android:id="@+id/panelInfo_fetchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fetch Panel Data"
+            android:visibility="gone"/>
+            
+            <Button
+            android:id="@+id/panelInfo_deviceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ShowDeviceList"
+            android:visibility="gone"/>
+            
+            
+        </LinearLayout>
+        
+        
+
+    </LinearLayout>
+
+</FrameLayout>

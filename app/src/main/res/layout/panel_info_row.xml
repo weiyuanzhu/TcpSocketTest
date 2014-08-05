@@ -1,0 +1,22 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <TextView
+        android:id="@+id/panel_description"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft= "50dp"
+        android:gravity="left"
+        android:layout_weight="1"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/panel_value"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="50dp"
+        android:layout_weight="1"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</LinearLayout>

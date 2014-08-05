@@ -1,0 +1,82 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".LoadingScreenActivity" >
+
+    <TextView
+        android:id="@+id/app_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/loadscreen_logo_imageView"
+        android:layout_marginBottom="16dp"
+        android:text="@string/app_version"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    
+
+    <Button
+        android:id="@+id/loadscreen_demo_imageBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/loadscreen_logo_imageView"
+        android:layout_alignTop="@+id/loadscreen_logo_imageView"
+        android:onClick="demoMode"
+        android:text="@string/btn_demo"/>
+    
+    <Button
+        android:id="@+id/loadscreen_live_imageBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="liveMode"
+        android:layout_alignTop="@+id/loadscreen_live_imageBtn"
+        android:layout_toLeftOf="@+id/loadscreen_live_imageBtn"
+        android:text="@string/btn_live"/>
+
+    <ImageView
+        android:id="@+id/loadscreen_logo_imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/nlight_connect" />
+
+    <TextView
+        android:id="@+id/loadscreen_progress_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/loadscreen_progressBar"
+        android:layout_centerHorizontal="true"
+        android:text="@string/app_version"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:visibility="gone" />
+
+    <ProgressBar
+        android:id="@+id/loadscreen_progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:minWidth="200dip" 
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/button1"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:onClick="searchPanelsBtn"
+        android:text="@string/btn_search" 
+        android:visibility="gone"/>
+
+    
+
+</RelativeLayout>
