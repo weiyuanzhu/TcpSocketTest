@@ -455,7 +455,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		for(String key : panelMap.keySet()){
 			
-			TCPConnection conn = (TCPConnection) ip_connection_map.get(key);
+			TCPConnection conn = ip_connection_map.get(key);
 			conn.fetchData(commandList);
 		}
 		
@@ -685,6 +685,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		contact_engineer.setVisibility(View.INVISIBLE);
 		engineer_mode.setVisibility(View.INVISIBLE);
+
 		
 	}
 	
