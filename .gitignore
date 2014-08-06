@@ -28,3 +28,6 @@ proguard/
 # Intellij IDEA
 .idea
 *.iml
+
+# Experiment modules
+MediaGallaryAccess/

@@ -686,7 +686,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		contact_engineer.setVisibility(View.INVISIBLE);
 		engineer_mode.setVisibility(View.INVISIBLE);
 
-		
+
 	}
 	
 	/**
