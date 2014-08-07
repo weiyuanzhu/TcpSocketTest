@@ -186,9 +186,12 @@
 	<string name="action_st">ST</string>
 	<string name="action_id">ID</string>
 	<string name="action_refresh">Actualiser</string>
-	
-	
-	
+
+    <string name="pref_category_custom">CUSTOM APP PHOTOS</string>
+    <string name="pref_title_customIcon">"Choisissez l'image de la galerie multimédia"</string>
+    <string name="pref_subTitle_customIcon">"Emplacement de l'image: " <xliff:g>%1$s</xliff:g> </string>
+    <string name="pref_icon_default">image par défaut</string>
+
 	
 	
 	

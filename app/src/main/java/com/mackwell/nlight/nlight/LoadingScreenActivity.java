@@ -478,10 +478,6 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		dataList = new ArrayList<Map<String,Object>>();
 		
-		//ipList.add("192.168.1.17");
-		
-
-
 	}
 	
 	public void demoMode(View view){

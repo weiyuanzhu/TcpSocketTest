@@ -165,8 +165,7 @@ public class TestActivity extends BaseActivity implements TCPConnection.CallBack
 	private void preference()
 	{
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-		//boolean save = sharedPref.
-		
+
 	}
 
 	

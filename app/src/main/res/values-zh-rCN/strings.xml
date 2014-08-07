@@ -187,8 +187,12 @@
 	<string name="action_st">ST</string>
 	<string name="action_id">ID</string>
 	<string name="action_refresh">刷新</string>
-	
-    
+
+    <string name="pref_category_custom">自定义图片</string>
+    <string name="pref_title_customIcon">从媒体库选择图片</string>
+    <string name="pref_subTitle_customIcon">文件位置: <xliff:g>%1$s</xliff:g> </string>
+    <string name="pref_icon_default">默认图片</string>
+
     
 	
 	

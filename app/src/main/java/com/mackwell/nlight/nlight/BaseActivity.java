@@ -1,5 +1,7 @@
 package com.mackwell.nlight.nlight;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.List;
 
 
@@ -7,11 +9,15 @@ import com.mackwell.nlight.R;
 import com.mackwell.nlight.socket.*;
 import com.mackwell.nlight.socket.TCPConnection.CallBack;
 
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 
 /**
@@ -35,13 +41,41 @@ public class BaseActivity extends Activity implements CallBack{
 	@SuppressWarnings("unused")
 	private TCPConnection connection;
 
+    //Android app shared preference object
+    protected SharedPreferences sharedPreferences = null;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_base);
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 	}
 
-	@Override
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+//      update activity action bar icon, when actionbar exist
+        String imageLocation = sharedPreferences.getString("pref_app_icons","default image");
+        Uri uri = Uri.parse(imageLocation);
+
+
+
+        if(!imageLocation.equals("default image")) try {
+            InputStream stream = getContentResolver().openInputStream(uri);
+            Drawable d = Drawable.createFromStream(stream, "test");
+            if (getActionBar()!=null) {
+                getActionBar().setIcon(d);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.base, menu);
