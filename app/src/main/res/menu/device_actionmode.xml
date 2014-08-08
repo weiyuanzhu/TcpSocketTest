@@ -6,6 +6,7 @@
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/action_ft"
+         android:icon="@drawable/ft_gray"
        />
      
      <item
@@ -20,11 +21,12 @@
         android:id="@+id/device_st"
         android:orderInCategory="102"
         android:showAsAction="always"
+        android:icon="@drawable/stop_grey2"
         android:title="@string/action_st"/>
       
       <item
         android:id="@+id/device_id"
-        android:icon="@drawable/id_blue"
+        android:icon="@drawable/id_grey"
         android:orderInCategory="103"
         android:showAsAction="always"
         android:title="@string/action_id"
