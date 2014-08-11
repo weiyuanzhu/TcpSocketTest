@@ -1,21 +1,52 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/device_select_all_faulty"
         android:orderInCategory="100"
         android:showAsAction="never"
+        android:title="@string/action_select_allFaulty"/>
+
+    <item
+        android:id="@+id/device_select_loop1_all"
+        android:orderInCategory="101"
+        android:showAsAction="never"
+        android:title="@string/action_select_loop1"/>
+
+    <item
+        android:id="@+id/device_select_loop2_all"
+        android:orderInCategory="102"
+        android:showAsAction="never"
+        android:title="@string/action_select_loop2"/>
+
+
+
+    <item
+        android:id="@+id/device_select_all"
+        android:orderInCategory="103"
+        android:showAsAction="never"
+        android:title="@string/action_select_allDevice"/>
+
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="104"
+        android:showAsAction="never"
         android:title="@string/action_settings"/>
+
+
     
     <item
         android:id="@+id/action_about"
-        android:orderInCategory="101"
+        android:orderInCategory="105"
         android:showAsAction="never"
         android:title="@string/action_about"/>
     <item 
         android:id="@+id/action_sort"
+        android:orderInCategory="100"
         android:title="@string/action_sort_device_by"
-        android:showAsAction="ifRoom"
-        />
+        android:showAsAction="always"/>
+
+
         
         
         

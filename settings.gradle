@@ -1,1 +1,1 @@
-include ':app', ':mediaGalaryTest'
+include ':app', ':mediaGalaryTest', ':PrintPDF'

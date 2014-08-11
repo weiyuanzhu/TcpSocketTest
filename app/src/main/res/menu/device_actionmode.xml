@@ -66,7 +66,7 @@
        
        
        <item
-        android:id="@+id/device_deselect_all"
+        android:id="@+id/device_select_all"
         android:orderInCategory="109"
         android:showAsAction="never"
         android:title="@string/action_deselect_allDevice"/>

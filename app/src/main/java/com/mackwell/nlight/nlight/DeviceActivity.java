@@ -278,7 +278,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 			fragmentTransaction.commit();
 		}
 		
-		imageView.setImageResource(R.drawable.mackwell_logo);
+		imageView.setImageDrawable(appImage);
 		imageView.setVisibility(View.VISIBLE);
 		messageTextView.setVisibility(View.VISIBLE);
 		messageTextView.setText(R.string.text_multi_selection_mode);
@@ -398,10 +398,19 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	    		Intent intent = NavUtils.getParentActivityIntent(this);
 	    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	    		NavUtils.navigateUpTo(this, intent);
-	    		
-	    		
-	    		
 	    		return true;
+            case R.id.device_select_all_faulty:
+                deviceListFragment.startActionMode(item.getItemId());
+                return true;
+            case R.id.device_select_loop1_all:
+                deviceListFragment.startActionMode(item.getItemId());
+                return true;
+            case R.id.device_select_loop2_all:
+                deviceListFragment.startActionMode(item.getItemId());
+                return true;
+            case R.id.device_select_all:
+                deviceListFragment.startActionMode(item.getItemId());
+                return true;
 	    	case R.id.action_about:
 	        	Toast.makeText(this, getAppVersion(), Toast.LENGTH_SHORT).show();
 	            return true;

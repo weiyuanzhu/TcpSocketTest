@@ -181,6 +181,7 @@
 	<string name="action_stop_id">Arrêtez identifier</string>
 	<string name="action_select_allFaulty">Sélectionner tous les défauts</string>
 	<string name="action_deselect_allDevice">Désélectionner tous les périphériques</string>	
+	<string name="action_select_allDevice">Sélectionner tous les périphériques</string>
 	<string name="action_ft">FT</string>
 	<string name="action_dt">DT</string>
 	<string name="action_st">ST</string>

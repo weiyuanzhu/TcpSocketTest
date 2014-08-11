@@ -84,10 +84,15 @@ public class SettingsFragment extends PreferenceFragment {
         super.onActivityResult(requestCode, resultCode, data);
 
 //      put uri information to preference object "pref_app_icons"
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString("pref_app_icons",data.getDataString());
-        editor.commit();
+//      checks if result data is null
+        if (data!=null) {
+
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("pref_app_icons",data.getDataString());
+            editor.commit();
+        }
+
 
     }
 }

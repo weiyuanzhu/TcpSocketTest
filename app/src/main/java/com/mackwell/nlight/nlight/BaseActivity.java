@@ -43,6 +43,7 @@ public class BaseActivity extends Activity implements CallBack{
 
     //Android app shared preference object
     protected SharedPreferences sharedPreferences = null;
+    protected Drawable appImage = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,9 @@ public class BaseActivity extends Activity implements CallBack{
 		setContentView(R.layout.activity_base);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+
+
 	}
 
 
@@ -65,9 +69,9 @@ public class BaseActivity extends Activity implements CallBack{
 
         if(!imageLocation.equals("default image")) try {
             InputStream stream = getContentResolver().openInputStream(uri);
-            Drawable d = Drawable.createFromStream(stream, "test");
+            appImage = Drawable.createFromStream(stream, "test");
             if (getActionBar()!=null) {
-                getActionBar().setIcon(d);
+                getActionBar().setIcon(appImage);
             }
 
         } catch (FileNotFoundException e) {

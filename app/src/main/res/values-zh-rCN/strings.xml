@@ -181,7 +181,8 @@
 
 	<string name="action_stop_id">停止搜索</string>
 	<string name="action_select_allFaulty">选择异常设备</string>
-	<string name="action_deselect_allDevice">取消选择</string>	
+	<string name="action_deselect_allDevice">取消选择</string>
+	<string name="action_select_allDevice">选择所有设备</string>
 	<string name="action_ft">FT</string>
 	<string name="action_dt">DT</string>
 	<string name="action_st">ST</string>

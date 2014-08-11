@@ -182,7 +182,20 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 	}
 	
 	public boolean isAllDeviceSelected() {
-		return allDeviceSelected;
+
+        for(int i = 0; i<checkedList.size();i++) {
+            SparseBooleanArray s = checkedList.get(i);
+            int size = 1 + listDataHeader.get(i).getDeviceNumber();
+            for (int j = 1; j < size; j++) {
+                if (s.get(j) == false) {
+                    return false;
+                }
+
+
+            }
+
+        }
+        return true;
 	}
 
 	public void setAllDeviceSelected(boolean allDeviceSelected) {
