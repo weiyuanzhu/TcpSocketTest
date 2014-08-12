@@ -372,8 +372,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		// TODO Auto-generated method stub
 		super.onResume();
 		
-		//reset panelToLoad to 0 to prevent unexpected error
+		//reset panelToLoad and clear panelList to prevent unexpected error
 		panelToLoad = 0;
+        panelList.clear();
 		 		
 		
 		//reset progress bar and progress
