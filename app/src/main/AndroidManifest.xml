@@ -33,7 +33,7 @@
             android:name="com.mackwell.nlight.nlight.LoadingScreenActivity"
             android:label="@string/title_activity_loading_screen"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" 
-            android:screenOrientation="landscape">
+            android:screenOrientation="userLandscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -56,14 +56,14 @@
         <activity
             android:name="com.mackwell.nlight.nlight.PanelActivity"
             android:label="@string/app_name"
-            android:screenOrientation="landscape" 
+            android:screenOrientation="userLandscape"
             android:parentActivityName="com.mackwell.nlight.nlight.LoadingScreenActivity">
         </activity>
         <activity
             android:name="com.mackwell.nlight.nlight.DeviceActivity"
             android:label="@string/title_activity_device"
             android:parentActivityName="com.mackwell.nlight.nlight.PanelActivity"
-            android:screenOrientation="landscape">
+            android:screenOrientation="userLandscape">
             <intent-filter>
             	<action android:name="android.intent.action.SEARCH" />
        		</intent-filter>

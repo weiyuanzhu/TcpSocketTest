@@ -1,7 +1,5 @@
 package com.mackwell.nlight.nlight;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -13,14 +11,11 @@ import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
-import android.view.ActionMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -112,7 +107,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	
 	private TCPConnection connection = null;
 	
-	private int currentDeviceAddress = 0;
+	private int currentDevicAddress = 0;
 	private int currentGroupPosition = 0;
 	
 	
@@ -204,7 +199,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		//update both device fragment and device list display
 		deviceInfoFragment.updateLocation();
-		deviceListFragment.updateLocation(currentGroupPosition,currentDeviceAddress, input);
+		deviceListFragment.updateLocation(currentGroupPosition, currentDevicAddress, input);
 		
 		//send command to panel if not in demo mode
 		
@@ -212,7 +207,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 			List<Integer> buffer = new ArrayList<Integer>();
 		
 		
-			buffer.add(currentDeviceAddress);		
+			buffer.add(currentDevicAddress);
 			buffer.addAll(DataParser.convertString(input));
 			System.out.println(buffer);
 			List<char[] > commandList = SetCmdEnum.SET_DEVICE_NAME.set(buffer);
@@ -234,10 +229,10 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	@Override
 	public void onDeviceItemClicked(int groupPosition, int childPosition) {
 		
-		currentDeviceAddress = childPosition;
+		currentDevicAddress = childPosition;
 		currentGroupPosition = groupPosition;
 		
-		System.out.println("current device:-------------->" + currentDeviceAddress);
+		System.out.println("current device:-------------->" + currentDevicAddress);
 		
 		imageView.setVisibility(View.INVISIBLE);
 		messageTextView.setVisibility(View.INVISIBLE);
@@ -304,7 +299,9 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_device);
-		
+
+        Log.i("DeviceActivity","onCreate()");
+
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		mHandler = new Handler();
@@ -352,7 +349,13 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		//start auto refresh
 		mHandler.post(auroRefreshAllDevices);
 		mHandler.postDelayed(autoRefreshCurrentDevice,TimeUnit.SECONDS.toMillis(1));
-		
+
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        if(deviceInfoFragment != null){
+            fragmentTransaction.remove(deviceInfoFragment);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.commit();
+        }
 	}
 	
 	
@@ -474,11 +477,35 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i("DeviceActivity","onResume()");
+        if(deviceInfoFragment !=null){
+            messageTextView.setVisibility(View.INVISIBLE);
+            imageView.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("GroupPosition",currentGroupPosition);
+        outState.putInt("DevicePosition", currentDevicAddress);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onStop() {
+
+
+
+        super.onStop();
 
     }
 
     @Override
 	protected void onDestroy() {
+
+        currentSelectedDevice = null;
+
 		if(connection!=null){
 			connection.closeConnection();
 			connection = null;
