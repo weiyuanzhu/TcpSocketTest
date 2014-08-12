@@ -31,7 +31,9 @@
     </ListView>
         
     </RelativeLayout>
-    
+
+
+
     <TextView
         android:id="@+id/deviceList_stamp_textView"
         android:layout_width="wrap_content"
