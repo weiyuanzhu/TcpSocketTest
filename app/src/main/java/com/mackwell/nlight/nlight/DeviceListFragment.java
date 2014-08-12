@@ -509,7 +509,12 @@ public class DeviceListFragment extends Fragment {
             if (groupPosition!=-1 && childPosition!=-1) {
                 currentGroupPosition = groupPosition;
                 currentChildPosition = childPosition;
-                mListener.onDeviceItemClicked(groupPosition,childPosition);
+                if (childPosition==0) {
+                    mListener.onGroupExpandOrCollapse(groupPosition);
+                }
+                else{
+                    mListener.onDeviceItemClicked(groupPosition,childPosition);
+                }
                 mAdapter.selectItem(groupPosition,childPosition);
             }
         }
