@@ -10,37 +10,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/fragment_device_info_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp"
-        android:text="Device Details"
-        android:textAppearance="?android:attr/textAppearanceLarge" 
-        android:visibility="gone"/>
+        <TextView
+            android:id="@+id/fragment_device_info_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="Device Details"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:visibility="gone"/>
 
-    <ListView
-        android:id="@+id/android:list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/fragment_device_info_name"
-        android:layout_marginTop="20dip"
-        android:layout_centerHorizontal="true" >
+        <ListView
+            android:id="@+id/android:list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/deviceList_stamp_textView"
+            android:layout_below="@+id/fragment_device_info_name"
+            android:layout_marginTop="30dip"
+            android:layout_marginBottom="30dip"
+            android:layout_centerHorizontal="true"
+            android:scrollbars="vertical">
 
-    </ListView>
+        </ListView>
+
+        <TextView
+            android:id="@+id/deviceList_stamp_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:text="Medium Text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/fragment_device_info_name"
+            android:layout_toEndOf="@+id/fragment_device_info_name" />
         
     </RelativeLayout>
 
 
 
-    <TextView
-        android:id="@+id/deviceList_stamp_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
-        android:layout_margin="5dip"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+
 
 </FrameLayout>
