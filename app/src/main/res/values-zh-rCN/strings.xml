@@ -181,14 +181,19 @@
 
 	<string name="action_stop_id">停止搜索</string>
 	<string name="action_select_allFaulty">选择异常设备</string>
-	<string name="action_deselect_allDevice">取消选择</string>	
+	<string name="action_deselect_allDevice">取消选择</string>
+	<string name="action_select_allDevice">选择所有设备</string>
 	<string name="action_ft">FT</string>
 	<string name="action_dt">DT</string>
 	<string name="action_st">ST</string>
 	<string name="action_id">ID</string>
 	<string name="action_refresh">刷新</string>
-	
-    
+
+    <string name="pref_category_custom">自定义图片</string>
+    <string name="pref_title_customIcon">从媒体库选择App图片</string>
+    <string name="pref_subTitle_customIcon">文件位置: <xliff:g>%1$s</xliff:g> </string>
+    <string name="pref_icon_default">默认图片</string>
+
     
 	
 	

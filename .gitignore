@@ -30,4 +30,5 @@ proguard/
 *.iml
 
 # Experiment modules
-MediaGallaryAccess/
+mediaGalaryTest/
+PrintPDF/

@@ -1,5 +1,7 @@
 package com.mackwell.nlight.nlight;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,6 +14,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -114,8 +118,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	
 	private SearchView searchView= null; //search view for search button on the action bar
 	
-	private SharedPreferences sharedPreferences = null;
-	
+
 	//Setters and Getters
 	
 		/**
@@ -275,7 +278,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 			fragmentTransaction.commit();
 		}
 		
-		imageView.setImageResource(R.drawable.mackwell_logo);
+		imageView.setImageDrawable(appImage);
 		imageView.setVisibility(View.VISIBLE);
 		messageTextView.setVisibility(View.VISIBLE);
 		messageTextView.setText(R.string.text_multi_selection_mode);
@@ -395,10 +398,19 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	    		Intent intent = NavUtils.getParentActivityIntent(this);
 	    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	    		NavUtils.navigateUpTo(this, intent);
-	    		
-	    		
-	    		
 	    		return true;
+            case R.id.device_select_all_faulty:
+                deviceListFragment.startActionMode(item.getItemId());
+                return true;
+            case R.id.device_select_loop1_all:
+                deviceListFragment.startActionMode(item.getItemId());
+                return true;
+            case R.id.device_select_loop2_all:
+                deviceListFragment.startActionMode(item.getItemId());
+                return true;
+            case R.id.device_select_all:
+                deviceListFragment.startActionMode(item.getItemId());
+                return true;
 	    	case R.id.action_about:
 	        	Toast.makeText(this, getAppVersion(), Toast.LENGTH_SHORT).show();
 	            return true;
@@ -458,11 +470,14 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+    }
 
-	@Override
+    @Override
 	protected void onDestroy() {
 		if(connection!=null){
 			connection.closeConnection();

@@ -372,8 +372,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		// TODO Auto-generated method stub
 		super.onResume();
 		
-		//reset panelToLoad to 0 to prevent unexpected error
+		//reset panelToLoad and clear panelList to prevent unexpected error
 		panelToLoad = 0;
+        panelList.clear();
 		 		
 		
 		//reset progress bar and progress
@@ -478,10 +479,6 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		dataList = new ArrayList<Map<String,Object>>();
 		
-		//ipList.add("192.168.1.17");
-		
-
-
 	}
 	
 	public void demoMode(View view){

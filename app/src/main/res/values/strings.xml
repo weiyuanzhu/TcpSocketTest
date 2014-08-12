@@ -181,10 +181,16 @@
 	<string name="action_stop_id">Stop identify</string>
 	<string name="action_select_allFaulty">Select all faults</string>
 	<string name="action_deselect_allDevice">Deselect all devices</string>
+	<string name="action_select_allDevice">Select all devices</string>
 	<string name="action_ft">FT</string>
 	<string name="action_dt">DT</string>
 	<string name="action_st">ST</string>
 	<string name="action_id">ID</string>
 	<string name="action_refresh">Refresh</string>
-	
+
+    <string name="pref_category_custom">CUSTOM APP PICTURES</string>
+    <string name="pref_title_customIcon">App image, choose from media gallery</string>
+    <string name="pref_subTitle_customIcon">Image location: <xliff:g id="pref_customIcon" default="default image" example="default image">%1$s</xliff:g> </string>
+    <string name="pref_icon_default">default image</string>
+
 </resources>

@@ -44,14 +44,14 @@
 	    </ListPreference>
 	    -->
 	    
-	    
+
 	    <CheckBoxPreference
 	        android:key="pref_auto_refresh_all_devices" 
 	        android:dependency="pref_key_refresh"
 	        android:title="@string/text_autoRefershAllDevices"
 	        android:summary="@string/text_autoRefreshAllDevices_summary"
 	        android:defaultValue="false"/>
-	    
+    </PreferenceCategory>
 	    
 	    <!--  
 	    <ListPreference
@@ -64,8 +64,24 @@
 	        >
 	    </ListPreference>
 	    -->
-	    
-	    
-	</PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="@string/pref_category_custom"
+        android:key="pref_custom_display">
+        <Preference
+            android:key="pref_app_icons"
+            android:title="@string/pref_title_customIcon"
+            android:summary="@string/pref_subTitle_customIcon"
+            android:icon="@drawable/mackwell_logo"
+            android:defaultValue="test222"
+
+            >
+
+
+
+        </Preference>
+
+    </PreferenceCategory>
     
 </PreferenceScreen>

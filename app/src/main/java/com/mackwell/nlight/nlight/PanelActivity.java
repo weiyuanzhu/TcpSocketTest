@@ -6,12 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.annotation.TargetApi;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NavUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -246,7 +251,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	
 	//activity life circle
 
-	@Override
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_panel);
@@ -257,7 +263,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	
 		//update connection flags
 		checkConnectivity();
-		
+
 		//get panelList from intent
 		Intent intent = getIntent();
 		panelList = intent.getParcelableArrayListExtra("panelList");
@@ -296,12 +302,19 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		//set home bar back navigation to display
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		
-		
-		
-		
-		
-		//set title with demo
+
+
+
+
+
+
+
+
+
+
+
+
+        //set title with demo
 		
 		getActionBar().setTitle(isDemo? R.string.title_activity_panel_demo: R.string.title_activity_panel_live);
 		
@@ -354,7 +367,12 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	        	View menuItemView = findViewById(R.id.action_show_devices);
 	        	showDropDownMenu(menuItemView);
 	        	return true;
-	        
+            case android.R.id.home:
+
+                intent = NavUtils.getParentActivityIntent(this);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                NavUtils.navigateUpTo(this, intent);
+	            return true;
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
@@ -394,9 +412,25 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
-	
-	
-	@Override
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i("PanalActivity","onResume");
+
+//      set panelInfoImage's icon address
+        String imageLocation = sharedPreferences.getString("pref_app_icons","default image");
+        Uri uri = Uri.parse(imageLocation);
+
+
+
+        if(!imageLocation.equals("default image"))  {
+            panelInfoImage.setImageURI(uri);
+        }
+
+
+    }
+
+    @Override
 	protected void onStop() {
 		
 		if(panelMap!=null && ip_connection_map!=null){

@@ -181,14 +181,18 @@
 	<string name="action_stop_id">Arrêtez identifier</string>
 	<string name="action_select_allFaulty">Sélectionner tous les défauts</string>
 	<string name="action_deselect_allDevice">Désélectionner tous les périphériques</string>	
+	<string name="action_select_allDevice">Sélectionner tous les périphériques</string>
 	<string name="action_ft">FT</string>
 	<string name="action_dt">DT</string>
 	<string name="action_st">ST</string>
 	<string name="action_id">ID</string>
 	<string name="action_refresh">Actualiser</string>
-	
-	
-	
+
+    <string name="pref_category_custom">CUSTOM APP PHOTOS</string>
+    <string name="pref_title_customIcon">"Choisissez app l'image de la galerie multimédia"</string>
+    <string name="pref_subTitle_customIcon">"Emplacement de l'image: " <xliff:g>%1$s</xliff:g> </string>
+    <string name="pref_icon_default">image par défaut</string>
+
 	
 	
 	

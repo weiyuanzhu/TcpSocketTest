@@ -1,6 +1,5 @@
 package com.mackwell.nlight.nlight;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -19,14 +18,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.AbsListView;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -103,8 +100,17 @@ public class DeviceListFragment extends Fragment {
             	mItem2.setTitle(R.string.action_deselect_loop2);
             }else{
             	mItem2.setTitle(R.string.action_select_loop2);
-            }	
-			return false;
+            }
+
+            MenuItem mItem3 = menu.findItem(R.id.device_select_all);
+            if (mAdapter.isAllDeviceSelected()) {
+                mItem3.setTitle(R.string.action_deselect_allDevice);
+            }else{
+                mItem3.setTitle(R.string.action_select_allDevice);
+
+            }
+
+			return true;
 		}
 		
 		@Override
@@ -184,15 +190,20 @@ public class DeviceListFragment extends Fragment {
 						mAdapter.deselectLoop2();
 					}else{
 						mAdapter.selectLoop2();
-				}
+                    }
 
 					
 					mAdapter.notifyDataSetChanged();
 					mActionMode.updateCounter();
 					break;
-				case R.id.device_deselect_all:
-					mAdapter.clearCheck();
-					mAdapter.notifyDataSetChanged();
+				case R.id.device_select_all:
+                    if (mAdapter.isAllDeviceSelected()) {
+                        mAdapter.clearCheck();
+                    } else {
+                        mAdapter.selectAllDevices();
+                    }
+
+                    mAdapter.notifyDataSetChanged();
 					mActionMode.updateCounter();
 					break;
 				case R.id.device_select_all_faulty:
@@ -597,7 +608,32 @@ public class DeviceListFragment extends Fragment {
 	public void updateDeviceList(){
 		mAdapter.notifyDataSetChanged();
 	}
-		
+
+    protected void startActionMode(int id){
+        mAdapter.setMultiSelectMode(true);
+        mAdapter.clearCheck();
+
+        switch (id) {
+            case R.id.device_select_all_faulty:
+                mAdapter.selectFaultyDevices();
+                break;
+            case R.id.device_select_loop1_all:
+                mAdapter.selectLoop1();
+                break;
+            case R.id.device_select_loop2_all:
+                mAdapter.selectLoop2();
+                break;
+            case R.id.device_select_all:
+                mAdapter.selectAllDevices();
+                break;
+        }
+        deviceListView.setItemChecked(0,true);
+
+        deviceListView.expandGroup(0);
+        deviceListView.expandGroup(1);
+
+    }
+
 }
 
 
