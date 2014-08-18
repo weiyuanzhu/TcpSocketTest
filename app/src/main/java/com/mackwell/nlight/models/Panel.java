@@ -395,7 +395,8 @@ public class Panel  implements Parcelable {
 		dest.writeLong(serialNumber);
 		dest.writeIntArray(gtinArray);
 		dest.writeInt(overAllStatus);
-	}
+        dest.writeByte((byte) (engineerMode ? 1 : 0));
+    }
 	
 	public void readFromParcel(Parcel source)
 	{
@@ -418,6 +419,7 @@ public class Panel  implements Parcelable {
 		
 		source.readIntArray(gtinArray);
 		overAllStatus = source.readInt();
+        engineerMode = source.readByte() !=0;
 
 	
 	}

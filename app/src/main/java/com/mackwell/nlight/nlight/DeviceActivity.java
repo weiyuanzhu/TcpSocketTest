@@ -399,8 +399,12 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	    switch (item.getItemId()) {
 	    	case android.R.id.home:
 	    		Intent intent = NavUtils.getParentActivityIntent(this);
-	    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	    		NavUtils.navigateUpTo(this, intent);
+                intent.putExtra("ip",panel.getIp());
+                intent.putExtra("panel",panel);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//	    		NavUtils.navigateUpTo(this, intent);
+                setResult(1,intent);
+                finish();
 	    		return true;
             case R.id.device_select_all_faulty:
                 deviceListFragment.startActionMode(item.getItemId());

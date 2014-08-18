@@ -407,9 +407,21 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
-		System.out.println("-----------PanelActivity onActivityResult------------");
-		super.onActivityResult(requestCode, resultCode, data);
+
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("-----------PanelActivity onActivityResult------------");
+
+        Panel panel = data.getParcelableExtra("panel");
+        String ip = data.getStringExtra("ip");
+
+        currentDisplayingPanel = panel;
+        panelMap.put(ip, panel);
+
+
+
+
+
+
 	}
 
     @Override
@@ -632,7 +644,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			intent.putExtra("loop1",panel.getLoop1());
 			intent.putExtra("loop2",panel.getLoop2());
 			intent.putExtra(LoadingScreenActivity.DEMO_MODE, isDemo);
-			startActivity(intent);
+			startActivityForResult(intent,0);
 			
 		}
 		
