@@ -41,7 +41,9 @@ import com.mackwell.nlight.util.SetCmdEnum;
  *
  */
 public class PanelActivity extends BaseActivity implements OnPanelListItemClickedCallBack, TCPConnection.CallBack, PopupMenu.OnMenuItemClickListener, NoticeDialogListener{
-	
+
+    private boolean spliteScreen = false;
+
 	private List<Panel> panelList = null;
 	private Map<String,Panel> panelMap = null;
 	private Map<String,TCPConnection> ip_connection_map = null;
@@ -204,29 +206,29 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		
 		System.out.println(location + " " +  ip + "positon: " + index);
-		
-		currentDisplayingPanel = panelMap.get(ip);
-		
-		previousPanelPosition = currentPanelPosition==-1? -1 : currentPanelPosition;
-		currentPanelPosition = index;
-		
-		if(currentDisplayingPanel.isEngineerMode()){
-			panelInfoFragmentTransation(index);
-		}else{
-			updatePanelInfoFragment();
-			
-		}
-		
-		int faults = currentDisplayingPanel.getFaultDeviceNo();
-		if(faults>0){
-			faultTextView.setText(getResources().getString(R.string.text_panelstatus_fault) + faults );
-		}
-		else{
-			faultTextView.setText(R.string.text_panelstatus_ok);
-		}
-		
-		
-		//test for pass code dialog
+
+        if(spliteScreen) {
+            currentDisplayingPanel = panelMap.get(ip);
+
+            previousPanelPosition = currentPanelPosition == -1 ? -1 : currentPanelPosition;
+            currentPanelPosition = index;
+
+            if (currentDisplayingPanel.isEngineerMode()) {
+                panelInfoFragmentTransation(index);
+            } else {
+                updatePanelInfoFragment();
+
+            }
+
+            int faults = currentDisplayingPanel.getFaultDeviceNo();
+            if (faults > 0) {
+                faultTextView.setText(getResources().getString(R.string.text_panelstatus_fault) + faults);
+            } else {
+                faultTextView.setText(R.string.text_panelstatus_ok);
+            }
+
+
+            //test for pass code dialog
 		/*if(isDemo && !passcodeEntered.equals(currentDisplayingPanel.getPasscode())){
 			InputDialogFragment dialog = new InputDialogFragment();
 			
@@ -239,8 +241,12 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			
 			
 		}*/
-		
-		updateImage();
+
+            updateImage();
+        }
+        else{
+
+        }
 		
 	}
 	
@@ -251,101 +257,100 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	
 	//activity life circle
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_panel);
-		
-		
-
-		
-	
-		//update connection flags
-		checkConnectivity();
-
-		//get panelList from intent
-		Intent intent = getIntent();
-		panelList = intent.getParcelableArrayListExtra("panelList");
-		isDemo = intent.getBooleanExtra(LoadingScreenActivity.DEMO_MODE, true);
-		
-		//check panelList
-		if(panelList==null){
-					//create demo panels if no panel list is passed in
-			createDummyPanels();
-						
-		}
-				
-		//initial panel related fields
-		initialFields();
-		
-		// save panel name to shared preference
-		savePanelToPreference();
-		
-		
-		//set panel fragments
-		
-		panelInfoImage = (ImageView) findViewById(R.id.panelInfo_image);
-		panelContact = (TextView)findViewById( R.id.panelInfo_contact_textView);
-		contact_engineer = (Button) findViewById(R.id.panel_contatc_engineer_btn);
-		engineer_mode = (Button) findViewById(R.id.panel_engineer_mode_btn);
-		faultTextView = (TextView) findViewById(R.id.panel_faults_textView);
-		
-		
-		
-		
-		panelListFragment = (PanelListFragment) getFragmentManager().findFragmentById(R.id.fragment_panel_list); 
-				
-		//pass isDemo and isConnected to panelListFragment
-		panelListFragment.setDemo(isDemo);
-		panelListFragment.setConnected(isConnected);
-		
-		//set home bar back navigation to display
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-
-
-
-
-
-
-
-
-
-
-        //set title with demo
-		
-		getActionBar().setTitle(isDemo? R.string.title_activity_panel_demo: R.string.title_activity_panel_live);
-		
-		getActionBar().setSubtitle(R.string.subtitle_activity_panel);
-		
-		
-		
-		System.out.println("DeomoMode--------> " + isDemo);
-		
-		
-		
-		
-		System.out.println("All panel get: " + panelList.size());
-		
-		
-		//if panelList exist, init FragmentList and pass panelList to PanelListFragment
-		panelListFragment.setPanelList(panelList);
-		
-		
-
-		
-	}
-
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_panel);
+
+        if(findViewById(R.id.panel_detail_container)!=null)
+        {
+            spliteScreen = true;
+
+
+        }
+
+
+
+        //update connection flags
+        checkConnectivity();
+
+        //get panelList from intent
+        Intent intent = getIntent();
+        panelList = intent.getParcelableArrayListExtra("panelList");
+        isDemo = intent.getBooleanExtra(LoadingScreenActivity.DEMO_MODE, true);
+
+        //check panelList
+        if(panelList==null){
+            //create demo panels if no panel list is passed in
+            createDummyPanels();
+
+        }
+
+        //initial panel related fields
+        initialFields();
+
+        // save panel name to shared preference
+        savePanelToPreference();
+
+
+        //set panel fragments
+
+        panelInfoImage = (ImageView) findViewById(R.id.panelInfo_image);
+        panelContact = (TextView)findViewById( R.id.panelInfo_contact_textView);
+        contact_engineer = (Button) findViewById(R.id.panel_contatc_engineer_btn);
+        engineer_mode = (Button) findViewById(R.id.panel_engineer_mode_btn);
+        faultTextView = (TextView) findViewById(R.id.panel_faults_textView);
+
+
+
+
+
+
+        //set home bar back navigation to display
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        panelListFragment = (PanelListFragment) getFragmentManager().findFragmentById(R.id.fragment_panel_list);
+
+        //pass isDemo and isConnected to panelListFragment
+        panelListFragment.setDemo(isDemo);
+        panelListFragment.setConnected(isConnected);
+
+
+
+        //set title with demo
+
+        getActionBar().setTitle(isDemo? R.string.title_activity_panel_demo: R.string.title_activity_panel_live);
+
+        getActionBar().setSubtitle(R.string.subtitle_activity_panel);
+
+
+
+        System.out.println("DeomoMode--------> " + isDemo);
+
+
+
+
+        System.out.println("All panel get: " + panelList.size());
+
+
+        //if panelList exist, init FragmentList and pass panelList to PanelListFragment
+        panelListFragment.setPanelList(panelList);
+
+
+
+
+    }
+
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {

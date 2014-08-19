@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
     android:baselineAligned="false"
@@ -12,76 +13,8 @@
         android:id="@+id/fragment_panel_list"
         android:layout_width="0dp"
         android:layout_height="match_parent" 
-        android:layout_weight="1"/>
-    
-    <FrameLayout
-        android:id="@+id/panel_detail_container"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="2"
-        >
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_panel_list" />
 
-       
-    
-            
-          
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-            
-        <ImageView
-            android:id="@+id/panelInfo_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:contentDescription="@string/title_activity_panel_info"
-            android:src="@drawable/mackwell_logo" />
-
-        <TextView
-            android:id="@+id/panelInfo_contact_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/panelInfo_contact"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/panel_contatc_engineer_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/panel_engineer_mode_btn"
-            android:layout_alignParentRight="true"
-            android:text="@string/btn_contact_engineer" 
-            android:onClick="contactEngineerBtn"
-            android:visibility="gone"/>
-
-        <Button
-            android:id="@+id/panel_engineer_mode_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/panel_contatc_engineer_btn"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:onClick="engineerModeBtn"
-            android:text="@string/btn_engineer_mode"
-            android:visibility="gone"/>
-
-        <TextView
-            android:id="@+id/panel_faults_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/panelInfo_image"
-            android:layout_centerHorizontal="true"
-            android:text="@string/app_name"
-            android:visibility="gone"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        </RelativeLayout>
-
-    </FrameLayout>
 
 </LinearLayout>
