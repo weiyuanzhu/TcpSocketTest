@@ -207,6 +207,10 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		System.out.println(location + " " +  ip + "positon: " + index);
 
+        // In split screen mode, show the detail view in this activity by
+        // adding or replacing the detail fragment using a
+        // fragment transaction.
+
         if(spliteScreen) {
             currentDisplayingPanel = panelMap.get(ip);
 
@@ -271,9 +275,23 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_panel);
 
+
+        // The detail container view will be present only in the
+        // large-screen landscape layouts (res/values-w720dp).
+        // If this view is present, then the
+        // activity should be in split screen mode.
+
         if(findViewById(R.id.panel_detail_container)!=null)
         {
             spliteScreen = true;
+
+            //set panel fragments
+
+            panelInfoImage = (ImageView) findViewById(R.id.panelInfo_image);
+            panelContact = (TextView)findViewById( R.id.panelInfo_contact_textView);
+            contact_engineer = (Button) findViewById(R.id.panel_contatc_engineer_btn);
+            engineer_mode = (Button) findViewById(R.id.panel_engineer_mode_btn);
+            faultTextView = (TextView) findViewById(R.id.panel_faults_textView);
 
 
         }
@@ -302,13 +320,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         savePanelToPreference();
 
 
-        //set panel fragments
 
-        panelInfoImage = (ImageView) findViewById(R.id.panelInfo_image);
-        panelContact = (TextView)findViewById( R.id.panelInfo_contact_textView);
-        contact_engineer = (Button) findViewById(R.id.panel_contatc_engineer_btn);
-        engineer_mode = (Button) findViewById(R.id.panel_engineer_mode_btn);
-        faultTextView = (TextView) findViewById(R.id.panel_faults_textView);
 
 
 
@@ -416,11 +428,15 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println("-----------PanelActivity onActivityResult------------");
 
-        Panel panel = data.getParcelableExtra("panel");
-        String ip = data.getStringExtra("ip");
+        //result from device activity
+        if (requestCode==1) {
+            Panel panel = data.getParcelableExtra("panel");
+            String ip = data.getStringExtra("ip");
 
-        currentDisplayingPanel = panel;
-        panelMap.put(ip, panel);
+            currentDisplayingPanel = panel;
+            panelMap.put(ip, panel);
+
+        }
 
 
 
@@ -440,7 +456,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
 
 
-        if(!imageLocation.equals("default image"))  {
+        if(!imageLocation.equals("default image") && spliteScreen)  {
             panelInfoImage.setImageURI(uri);
         }
 
@@ -649,7 +665,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			intent.putExtra("loop1",panel.getLoop1());
 			intent.putExtra("loop2",panel.getLoop2());
 			intent.putExtra(LoadingScreenActivity.DEMO_MODE, isDemo);
-			startActivityForResult(intent,0);
+			startActivityForResult(intent,1);
 			
 		}
 		
