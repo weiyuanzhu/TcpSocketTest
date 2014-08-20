@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,6 +42,8 @@ import com.mackwell.nlight.util.SetCmdEnum;
  *
  */
 public class PanelActivity extends BaseActivity implements OnPanelListItemClickedCallBack, TCPConnection.CallBack, PopupMenu.OnMenuItemClickListener, NoticeDialogListener{
+
+    private static final int REQUEST_PANEL = 1;
 
     private boolean spliteScreen = false;
 
@@ -249,6 +252,12 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
             updateImage();
         }
         else{
+            //navigate to panelInfoActivity;
+            currentDisplayingPanel = panelMap.get(ip);
+
+            Intent intent = new Intent(this,PanelInfoActivity.class);
+            intent.putExtra("panel",currentDisplayingPanel);
+            startActivity(intent);
 
         }
 		
@@ -405,7 +414,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			case R.id.action_show_loops:
 				System.out.println("Show Loops");
 				if(currentDisplayingPanel != null && currentDisplayingPanel.isEngineerMode()){
-					showDevices(currentDisplayingPanel);
+                    showDevices(currentDisplayingPanel);
 				}
 				return true;
 			/*case R.id.action_show_faulty_devices:
@@ -422,14 +431,25 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		}
 	}
 
-	@Override
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Panel panel = intent.getParcelableExtra("panel");
+        String ip = intent.getStringExtra("ip");
+
+        currentDisplayingPanel = panel;
+        panelMap.put(ip, panel);
+    }
+
+    @Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
         System.out.println("-----------PanelActivity onActivityResult------------");
 
         //result from device activity
-        if (requestCode==1) {
+        if (requestCode==REQUEST_PANEL && resultCode == Activity.RESULT_OK) {
             Panel panel = data.getParcelableExtra("panel");
             String ip = data.getStringExtra("ip");
 
@@ -665,8 +685,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			intent.putExtra("loop1",panel.getLoop1());
 			intent.putExtra("loop2",panel.getLoop2());
 			intent.putExtra(LoadingScreenActivity.DEMO_MODE, isDemo);
-			startActivityForResult(intent,1);
-			
+			startActivityForResult(intent,REQUEST_PANEL);
+//			startActivity(intent);
 		}
 		
 	}

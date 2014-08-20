@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
@@ -403,7 +404,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
                 intent.putExtra("panel",panel);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //	    		NavUtils.navigateUpTo(this, intent);
-                setResult(1,intent);
+                setResult(Activity.RESULT_OK,intent);
                 finish();
 	    		return true;
             case R.id.device_select_all_faulty:
