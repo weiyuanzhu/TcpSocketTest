@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.mackwell.nlight.R;
@@ -52,6 +53,30 @@ public class PanelInfoActivity extends Activity {
 		return true;
 	}
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+
+        switch (item.getItemId())
+        {
+
+            case android.R.id.home:
+                finish();
+                return true;
+
+            case R.id.action_show_devices:
+                Intent intent = new Intent(this,DeviceActivity.class);
+                intent.putExtra("panel",panel);
+                startActivity(intent);
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+
+
+    }
 
     private void updatePanelInfoFragment(){
 

@@ -64,7 +64,7 @@
             android:name="com.mackwell.nlight.nlight.DeviceActivity"
             android:label="@string/title_activity_device"
             android:parentActivityName="com.mackwell.nlight.nlight.PanelActivity"
-            android:screenOrientation="userLandscape">
+            >
             <intent-filter>
             	<action android:name="android.intent.action.SEARCH" />
        		</intent-filter>

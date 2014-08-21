@@ -45,7 +45,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
     private static final int REQUEST_PANEL = 1;
 
-    private boolean spliteScreen = false;
+    private boolean splitScreen = false;
 
 	private List<Panel> panelList = null;
 	private Map<String,Panel> panelMap = null;
@@ -214,7 +214,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         // adding or replacing the detail fragment using a
         // fragment transaction.
 
-        if(spliteScreen) {
+        if(splitScreen) {
             currentDisplayingPanel = panelMap.get(ip);
 
             previousPanelPosition = currentPanelPosition == -1 ? -1 : currentPanelPosition;
@@ -273,7 +273,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.panel, menu);
 		return true;
 	}
 
@@ -292,7 +292,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
         if(findViewById(R.id.panel_detail_container)!=null)
         {
-            spliteScreen = true;
+            splitScreen = true;
 
             //set panel fragments
 
@@ -301,7 +301,6 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
             contact_engineer = (Button) findViewById(R.id.panel_contatc_engineer_btn);
             engineer_mode = (Button) findViewById(R.id.panel_engineer_mode_btn);
             faultTextView = (TextView) findViewById(R.id.panel_faults_textView);
-
 
         }
 
@@ -328,14 +327,6 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         // save panel name to shared preference
         savePanelToPreference();
 
-
-
-
-
-
-
-
-
         //set home bar back navigation to display
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -347,38 +338,26 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         panelListFragment.setConnected(isConnected);
 
 
-
         //set title with demo
 
         getActionBar().setTitle(isDemo? R.string.title_activity_panel_demo: R.string.title_activity_panel_live);
 
         getActionBar().setSubtitle(R.string.subtitle_activity_panel);
 
-
-
         System.out.println("DeomoMode--------> " + isDemo);
-
-
-
 
         System.out.println("All panel get: " + panelList.size());
 
 
         //if panelList exist, init FragmentList and pass panelList to PanelListFragment
         panelListFragment.setPanelList(panelList);
-
-
-
-
     }
 
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
 	        case R.id.action_about:
-	        	
 	        	Toast.makeText(this, getAppVersion(), Toast.LENGTH_SHORT).show();
-	        	
 	            return true;
 	        case R.id.action_settings:
 	            Intent intent = new Intent(this,SettingsActivity.class);
@@ -388,13 +367,11 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	        	Toast.makeText(this, R.string.toast_refresh_panelStatus, Toast.LENGTH_LONG).show();
 	        	panelListFragment.refreshStatus(isDemo, isConnected);
 	        	return true;
-	    
 	        case R.id.action_show_devices:
 	        	View menuItemView = findViewById(R.id.action_show_devices);
 	        	showDropDownMenu(menuItemView);
 	        	return true;
             case android.R.id.home:
-
                 intent = NavUtils.getParentActivityIntent(this);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 NavUtils.navigateUpTo(this, intent);
@@ -476,7 +453,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
 
 
-        if(!imageLocation.equals("default image") && spliteScreen)  {
+        if(!imageLocation.equals("default image") && splitScreen)  {
             panelInfoImage.setImageURI(uri);
         }
 
@@ -702,6 +679,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 				SharedPreferences.Editor editor = sp.edit();
 				editor.putString(panel.getIp(), panel.getPanelLocation());
 				editor.commit();
+
 			}
 			
 		};

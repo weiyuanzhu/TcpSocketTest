@@ -180,7 +180,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			rxBufferMap.put(ip, new ArrayList<Integer>());
 			
 		}
-		//on main thread
+		//on panel thread
 		//show progress bar and text
 		
 		//set isDemo flag

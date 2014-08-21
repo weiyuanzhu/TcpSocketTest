@@ -7,4 +7,5 @@
     http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
     -->
     <item type="layout" name="activity_panel">@layout/activity_panel_split</item>
+    <item type="layout" name="activity_device">@layout/activity_device_split</item>
 </resources>

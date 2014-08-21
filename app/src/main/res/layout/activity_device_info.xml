@@ -1,53 +1,37 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/device_detail_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".DeviceInfoActivity" >
+    tools:context=".DeviceInfoActivity"
+    tools:ignore="MergeRootFrame"
+    >
 
-    <TextView
-        android:id="@+id/devicetitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" 
-        android:textSize="20pt"/>
 
-    <ListView
-        android:id="@+id/android:list"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/devicetitle"
-        android:layout_centerHorizontal="true" >
+        android:layout_height="match_parent" >
 
-    </ListView>
+        <ImageView
+            android:id="@+id/deviceInfo_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/title_activity_panel_info"
+            android:src="@drawable/mackwell_logo" />
 
-    <Button
-        android:id="@+id/device_stBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/device_ftBtn"
-        android:text="StopTest" 
-        android:onClick="stopTest"/>
+        <TextView
+            android:id="@+id/deviceInfo_faultyNo_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/deviceInfo_image"
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical"
+            android:text="Faulty device no: "
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/device_dtBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/device_stBtn"
-        android:text="DT_Test" />
+    </RelativeLayout>
 
-    <Button
-        android:id="@+id/device_ftBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/android:list"
-        android:layout_alignParentBottom="true"
-        android:onClick="ftTest"
-        android:text="FT_Test" />
-
-</RelativeLayout>
+</FrameLayout>

@@ -36,6 +36,8 @@ public class SettingsFragment extends PreferenceFragment {
                 //start media image activity for pick images
                 Intent i = new Intent(
                         Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//                flat test
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 startActivityForResult(i, RESULT_LOAD_IMAGE);
 
