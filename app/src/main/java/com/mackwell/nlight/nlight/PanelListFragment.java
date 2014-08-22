@@ -22,8 +22,6 @@ import android.widget.SimpleAdapter;
 import com.mackwell.nlight.R;
 import com.mackwell.nlight.models.Panel;
 import com.mackwell.nlight.socket.TCPConnection;
-import com.mackwell.nlight.util.CommandFactory;
-import com.mackwell.nlight.util.Constants;
 
 
 /**
@@ -53,11 +51,11 @@ public class PanelListFragment extends ListFragment implements TCPConnection.Cal
 	private Button getAllPanelsBtn;
 	private Button passTest;
 
-	private OnPanelListItemClickedCallBack mCallBack;
+	private OnPanelListItemClickedCallBack mListener;
 	
 	private List<Map<String,Object>> dataList = null;
 	private SimpleAdapter simpleAdapter;
-	private int mCurCheckPosition = 0;
+	private int mCurCheckPosition = -1;
 	
 	//private List<TCPConnection> connectionList;
 	private List<char[]> commandList;
@@ -109,7 +107,7 @@ public class PanelListFragment extends ListFragment implements TCPConnection.Cal
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-			mCallBack = (OnPanelListItemClickedCallBack) activity;
+			mListener = (OnPanelListItemClickedCallBack) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
 					+ " must implement OnFragmentInteractionListener");
@@ -175,10 +173,18 @@ public class PanelListFragment extends ListFragment implements TCPConnection.Cal
 				new String[]{"location","img"},
 				new int[]{R.id.location,R.id.img});
 		setListAdapter(simpleAdapter);
-		
-		
-		
-		//create TCPConnection for each panel and open rx threads for listening 
+
+        //restore fragment state from saved state
+        if (savedInstanceState!=null) {
+            int position = savedInstanceState.getInt("position");
+            mCurCheckPosition = position;
+            getListView().setItemChecked(position,true);
+            if (position!=-1) {
+                mListener.onListItemClicked(panelList.get(position).getIp(), panelList.get(position).getPanelLocation(), position);
+            }
+
+        }
+        //create TCPConnection for each panel and open rx threads for listening
 		//if it is in live mode
 		/*if(!isDemo && isConnected){
 			
@@ -201,6 +207,8 @@ public class PanelListFragment extends ListFragment implements TCPConnection.Cal
 		
 		
 	}
+
+
 
 	@Override
 	public void onPause() {
@@ -229,13 +237,13 @@ public class PanelListFragment extends ListFragment implements TCPConnection.Cal
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		mCallBack = null;
+		mListener = null;
 	}
 	
 	@Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("curChoice", mCurCheckPosition);
+        outState.putInt("position", mCurCheckPosition);
     }
 
 	@Override
@@ -249,7 +257,7 @@ public class PanelListFragment extends ListFragment implements TCPConnection.Cal
 		
 		getListView().setItemChecked(position, true);
 		
-		mCallBack.onListItemClicked(ip, location,position);
+		mListener.onListItemClicked(ip, location, position);
 		
 	}
 	
@@ -308,7 +316,7 @@ public class PanelListFragment extends ListFragment implements TCPConnection.Cal
 
 		@Override
 		public void onClick(View arg0) {
-			mCallBack.getAllPanels();
+			mListener.getAllPanels();
 			
 		}
 		
@@ -319,7 +327,7 @@ public class PanelListFragment extends ListFragment implements TCPConnection.Cal
 	{
 		@Override
 		public void onClick(View arg0) {
-			mCallBack.passTest();
+			mListener.passTest();
 			
 		}
 		
@@ -388,4 +396,11 @@ public class PanelListFragment extends ListFragment implements TCPConnection.Cal
 	{
 		getListView().clearChoices();
 	}
+
+    @Override
+    public void setSelection(int position) {
+        super.setSelection(position);
+
+        getListView().setItemChecked(position, true);
+    }
 }

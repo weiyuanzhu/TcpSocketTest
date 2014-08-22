@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -169,7 +170,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 					if (input.equals(currentDisplayingPanel.getPasscode()))
 					{
 
-						panelInfoFragmentTransation(currentPanelPosition);
+						panelInfoFragmentTransaction(currentPanelPosition);
 						currentDisplayingPanel.setEngineerMode(true);
 					}
 					else{
@@ -221,7 +222,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
             currentPanelPosition = index;
 
             if (currentDisplayingPanel.isEngineerMode()) {
-                panelInfoFragmentTransation(index);
+                panelInfoFragmentTransaction(index);
             } else {
                 updatePanelInfoFragment();
 
@@ -292,10 +293,11 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
         if(findViewById(R.id.panel_detail_container)!=null)
         {
+            //flag true for split screen
             splitScreen = true;
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
 
             //set panel fragments
-
             panelInfoImage = (ImageView) findViewById(R.id.panelInfo_image);
             panelContact = (TextView)findViewById( R.id.panelInfo_contact_textView);
             contact_engineer = (Button) findViewById(R.id.panel_contatc_engineer_btn);
@@ -434,13 +436,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
             panelMap.put(ip, panel);
 
         }
-
-
-
-
-
-
 	}
+
 
     @Override
     protected void onResume() {
@@ -452,13 +449,15 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         Uri uri = Uri.parse(imageLocation);
 
 
-
-        if(!imageLocation.equals("default image") && splitScreen)  {
+//      when split screen and no panel selected and result has a valid file path
+        if(!imageLocation.equals("default image") && splitScreen && currentPanelPosition==-1)  {
             panelInfoImage.setImageURI(uri);
         }
 
 
     }
+
+
 
     @Override
 	protected void onStop() {
@@ -475,6 +474,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 				}
 			}
 		}
+
+
 		super.onStop();
 	}
 
@@ -717,7 +718,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 	}
 	
-	private void panelInfoFragmentTransation(int index){
+	private void panelInfoFragmentTransaction(int index){
 		panelInfoImage.setVisibility(View.INVISIBLE);
 		panelContact.setVisibility(View.INVISIBLE);
 		faultTextView.setVisibility(View.INVISIBLE);
@@ -737,9 +738,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			
 			fragmentList.set(index, panelFragment);
 		}
-		
-		
-		
+
 		
 		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 		
@@ -750,7 +749,6 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		contact_engineer.setVisibility(View.INVISIBLE);
 		engineer_mode.setVisibility(View.INVISIBLE);
-
 
 	}
 	
@@ -776,8 +774,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			
 			contact_engineer.setVisibility(View.VISIBLE);
 			engineer_mode.setVisibility(View.VISIBLE);
-		
-		
+
 	}
 	
 	
@@ -794,12 +791,10 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			default: break;
 		}
 		
-		
 	}
 	
 	public void contactEngineerBtn(View view){
-		
-		
+
 		if(currentDisplayingPanel!=null && !currentDisplayingPanel.isEngineerMode()){
 			panelInfoImage.setVisibility(panelInfoImage.isShown()? 4:0);
 			faultTextView.setVisibility(faultTextView.isShown()? 4:0);
@@ -814,20 +809,14 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	 * @param view
 	 */
 	public void engineerModeBtn(View view){
-		
-		
+
 		if(currentDisplayingPanel!=null && !currentDisplayingPanel.isEngineerMode()){
 			InputDialogFragment dialog = new InputDialogFragment();
 		
 			//dialog.setHint("Enter passcode");
 			dialog.setType(InputDialogFragment.ENTER_PASSCODE);
 			dialog.show(getFragmentManager(), "inputDialog");
-			
-			
-		} 
-		
-		
-		
+		}
 	}
 	
 	/**

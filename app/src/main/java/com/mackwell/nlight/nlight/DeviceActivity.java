@@ -12,6 +12,7 @@ import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -318,14 +319,16 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
         System.out.println("Demo: "+ isDemo);
 
         //get panel from intent
-
-
         this.panel = intent.getParcelableExtra("panel");
 
         //check if current screen layout needs a split screen
-        if (findViewById(R.id.device_detail_container)!=null) {
-
+        if (findViewById(R.id.device_detail_container)!=null)
+        {
+            //flag split screen boolean
             splitScreen = true;
+
+            //set screen orientation
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
 
             this.imageView = (ImageView) findViewById(R.id.deviceInfo_image);
             this.messageTextView = (TextView) findViewById(R.id.deviceInfo_faultyNo_text);
