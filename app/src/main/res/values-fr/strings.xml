@@ -195,8 +195,7 @@
 
     <string name="toast_select_panel">"S'il vous plaît sélectionner un panneau"</string>
     <string name="toast_enter_engineer_mode">"S'il vous plaît entrer en mode ingénieur"</string>
+    <string name="action_show_report">"Voir rapport du groupe spécial</string>
 
-	
-	
-	
+
 </resources>

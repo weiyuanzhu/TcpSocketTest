@@ -3,6 +3,8 @@
     <group android:id="@+id/action_show_devices">
         <item android:id="@+id/action_show_loops"
               android:title="@string/action_showLoops" />
+        <item android:id="@+id/action_show_report"
+              android:title="@string/action_show_report"/>
         
     </group>
 

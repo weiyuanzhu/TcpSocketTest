@@ -196,4 +196,6 @@
     <string name="toast_select_panel">Please select a panel</string>
     <string name="toast_enter_engineer_mode">Please enter engineer mode</string>
 
+    <string name="action_show_report">Show panel report</string>
+
 </resources>

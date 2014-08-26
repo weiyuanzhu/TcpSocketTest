@@ -196,9 +196,7 @@
 
     <string name="toast_select_panel">请选择一个Panel</string>
     <string name="toast_enter_engineer_mode">请进入工程模式</string>
+    <string name="action_show_report" >显示Panel报告</string>
 
-    
-	
-	
-	
+
 </resources>
