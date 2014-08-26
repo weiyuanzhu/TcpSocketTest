@@ -370,9 +370,13 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	        	panelListFragment.refreshStatus(isDemo, isConnected);
 	        	return true;
 	        case R.id.action_show_devices:
-	        	View menuItemView = findViewById(R.id.action_show_devices);
-	        	showDropDownMenu(menuItemView);
-	        	return true;
+                if (currentDisplayingPanel != null) {
+                    View menuItemView = findViewById(R.id.action_show_devices);
+                    showDropDownMenu(menuItemView);
+                } else {
+                    Toast.makeText(this,getResources().getString(R.string.toast_select_panel),Toast.LENGTH_SHORT).show();
+                }
+                return true;
             case android.R.id.home:
                 intent = NavUtils.getParentActivityIntent(this);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -392,9 +396,12 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		{
 			case R.id.action_show_loops:
 				System.out.println("Show Loops");
-				if(currentDisplayingPanel != null && currentDisplayingPanel.isEngineerMode()){
+                if (currentDisplayingPanel != null && currentDisplayingPanel.isEngineerMode()) {
                     showDevices(currentDisplayingPanel);
-				}
+                } else {
+                    Toast.makeText(this,getResources().getString(R.string.toast_enter_engineer_mode),Toast.LENGTH_SHORT).show();
+                }
+
 				return true;
 			/*case R.id.action_show_faulty_devices:
 				System.out.println("Show Faulty Devices");

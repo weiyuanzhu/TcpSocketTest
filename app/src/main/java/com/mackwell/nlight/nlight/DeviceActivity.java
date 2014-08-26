@@ -349,7 +349,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 
         //check connection
 		checkConnectivity();
-        System.out.println("Connecton: " + isConnected);
+        System.out.println("Connection: " + isConnected);
 
 		
 		//set action bar navigate back

@@ -193,6 +193,9 @@
     <string name="pref_subTitle_customIcon">"Emplacement de l'image: " <xliff:g>%1$s</xliff:g> </string>
     <string name="pref_icon_default">image par défaut</string>
 
+    <string name="toast_select_panel">"S'il vous plaît sélectionner un panneau"</string>
+    <string name="toast_enter_engineer_mode">"S'il vous plaît entrer en mode ingénieur"</string>
+
 	
 	
 	
