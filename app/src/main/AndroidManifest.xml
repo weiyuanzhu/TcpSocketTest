@@ -10,16 +10,14 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <supports-screens
-        android:smallScreens="false"
-        android:normalScreens="false"
         android:largeScreens="false"
-        android:xlargeScreens="true"
-        android:requiresSmallestWidthDp="720">
-
-
+        android:normalScreens="false"
+        android:requiresSmallestWidthDp="720"
+        android:smallScreens="false"
+        android:xlargeScreens="true" >
     </supports-screens>
 
     <application
@@ -28,76 +26,76 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light" >
         <meta-data
-     		android:name="android.app.default_searchable"
-      	 	android:value="nlight_android.nlight.DeviceActivity" />
-        
+            android:name="android.app.default_searchable"
+            android:value="nlight_android.nlight.DeviceActivity" />
+
         <activity
-            android:name="com.mackwell.nlight.nlight.PanelStatusActivity"
+            android:name=".nlight.PanelStatusActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.mackwell.nlight.nlight.PanelListActivity"
+            android:name=".nlight.PanelListActivity"
             android:label="@string/title_activity_panel_list" >
         </activity>
         <activity
-            android:name="com.mackwell.nlight.nlight.LoadingScreenActivity"
+            android:name=".nlight.LoadingScreenActivity"
             android:label="@string/title_activity_loading_screen"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
-            android:screenOrientation="userLandscape">>
-
+            android:screenOrientation="userLandscape"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
+>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-             
         </activity>
         <activity
-            android:name="com.mackwell.nlight.nlight.PanelInfoActivity"
+            android:name=".nlight.PanelInfoActivity"
             android:label="@string/title_activity_panel_info" >
         </activity>
         <activity
-            android:name="com.mackwell.nlight.nlight.DeviceListActivity"
+            android:name=".nlight.DeviceListActivity"
             android:label="@string/title_activity_device_list" >
         </activity>
         <activity
-            android:name="com.mackwell.nlight.nlight.DeviceInfoActivity"
+            android:name=".nlight.DeviceInfoActivity"
             android:label="@string/title_activity_device_info" >
         </activity>
         <activity
-            android:name="com.mackwell.nlight.nlight.PanelActivity"
+            android:name=".nlight.PanelActivity"
             android:label="@string/app_name"
-
-            android:parentActivityName="com.mackwell.nlight.nlight.LoadingScreenActivity">
+            android:parentActivityName=".nlight.LoadingScreenActivity" >
         </activity>
         <activity
-            android:name="com.mackwell.nlight.nlight.DeviceActivity"
+            android:name=".nlight.DeviceActivity"
             android:label="@string/title_activity_device"
-            android:parentActivityName="com.mackwell.nlight.nlight.PanelActivity"
-            >
+            android:parentActivityName=".nlight.PanelActivity" >
             <intent-filter>
-            	<action android:name="android.intent.action.SEARCH" />
-       		</intent-filter>
-            <meta-data android:name="android.app.searchable"
-                   android:resource="@xml/searchable"/>
-            
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name="com.mackwell.nlight.nlight.BaseActivity"
+            android:name=".nlight.BaseActivity"
             android:label="@string/title_activity_base" >
         </activity>
         <activity
-            android:name="com.mackwell.nlight.nlight.SettingsActivity"
+            android:name=".nlight.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
-		    android:name="com.mackwell.nlight.test.TestActivity"
-		    android:label="@string/app_name">
-            
-       
-		</activity>            
-        
-        
+            android:name=".test.TestActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name=".nlight.ReportActivity"
+            android:theme="@style/Theme.AppCompat.Light"
+            android:label="@string/title_activity_report" >
+
+        </activity>
     </application>
 
 </manifest>
