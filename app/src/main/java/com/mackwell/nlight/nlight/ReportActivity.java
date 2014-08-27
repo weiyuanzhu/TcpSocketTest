@@ -4,6 +4,7 @@ import android.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,13 +12,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mackwell.nlight.R;
+import com.mackwell.nlight.socket.TCPConnection;
 
 public class ReportActivity extends BaseActivity {
+
+    private static final String TAG = "ReportActivity";
+
+    private String ip;
+    private boolean demo;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
+
+        ip = getIntent().getStringExtra("ip");
 
         ReportFragment fragment = ReportFragment.newInstance("arg1","arg2");
 
@@ -49,8 +59,22 @@ public class ReportActivity extends BaseActivity {
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.action_fetch_report:
+                Log.i(TAG,"fetch_report");
+                fetchReport();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+
+    private void fetchReport()
+    {
+        Log.i(TAG,ip);
+        if (isConnected && !isDemo) {
+            connection = new TCPConnection(this,ip);
+        }
     }
 
     /**

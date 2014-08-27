@@ -108,9 +108,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	
 	private ImageView imageView = null;
 	private TextView messageTextView = null;
-	
-	private TCPConnection connection = null;
-	
+
 	private int currentDevicAddress = 0;
 	private int currentGroupPosition = 0;
 	

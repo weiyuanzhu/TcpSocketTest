@@ -410,6 +410,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 				Log.i(TAG,"Show report");
                 if (currentDisplayingPanel != null) {
                     Intent intent = new Intent(this, ReportActivity.class);
+                    intent.putExtra("ip",currentDisplayingPanel.getIp());
+                    intent.putExtra("demo",isDemo);
                     startActivity(intent);
                 } else {
                     ReportFragment fragment = ReportFragment.newInstance("arg1","arg2");
@@ -449,6 +451,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         if (requestCode==REQUEST_PANEL && resultCode == Activity.RESULT_OK) {
             Panel panel = data.getParcelableExtra("panel");
             String ip = data.getStringExtra("ip");
+
 
             currentDisplayingPanel = panel;
             panelMap.put(ip, panel);
