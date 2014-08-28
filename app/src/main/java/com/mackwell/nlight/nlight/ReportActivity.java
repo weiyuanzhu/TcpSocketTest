@@ -13,6 +13,9 @@ import android.view.ViewGroup;
 
 import com.mackwell.nlight.R;
 import com.mackwell.nlight.socket.TCPConnection;
+import com.mackwell.nlight.util.GetCmdEnum;
+
+import java.util.List;
 
 public class ReportActivity extends BaseActivity {
 
@@ -21,6 +24,12 @@ public class ReportActivity extends BaseActivity {
     private String ip;
     private boolean demo;
 
+
+    @Override
+    public void receive(List<Integer> rx, String ip) {
+        Log.d(TAG,ip);
+       System.out.println(rx);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +46,9 @@ public class ReportActivity extends BaseActivity {
         fragmentTransaction.commit();
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        if(isConnected && !isDemo) connection = new TCPConnection(this,ip);
 
     }
 
@@ -73,7 +85,8 @@ public class ReportActivity extends BaseActivity {
     {
         Log.i(TAG,ip);
         if (isConnected && !isDemo) {
-            connection = new TCPConnection(this,ip);
+//            connection = new TCPConnection(this,ip);
+            connection.fetchData(GetCmdEnum.GET_REPORT.get());
         }
     }
 

@@ -359,7 +359,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		getActionBar().setTitle(title);
 		getActionBar().setSubtitle(R.string.subtitle_activity_device);
 		
-		if(!isDemo) this.connection = new TCPConnection(this,panel.getIp());
+		if(isConnected && !isDemo) connection = new TCPConnection(this,panel.getIp());
 		
 
 

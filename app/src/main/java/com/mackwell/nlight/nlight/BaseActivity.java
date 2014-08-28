@@ -80,6 +80,18 @@ public class BaseActivity extends Activity implements CallBack{
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+
+        if(connection!=null){
+            connection.closeConnection();
+            connection = null;
+        }
+
+
+    }
+
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.base, menu);

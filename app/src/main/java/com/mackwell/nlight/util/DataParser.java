@@ -122,9 +122,7 @@ public class DataParser {
 			e.printStackTrace();
 		}
 		return buffer;
-		
-		
-		
+
 	}
 	
 }

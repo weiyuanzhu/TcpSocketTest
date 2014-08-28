@@ -491,8 +491,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 				if(connection!=null){
 					connection.setListening(false);
 					connection.closeConnection();
-					connection = null;
-				}
+                }
 			}
 		}
 
