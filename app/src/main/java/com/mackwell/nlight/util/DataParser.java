@@ -165,7 +165,7 @@ public class DataParser {
                 report.setStatus(reportRawData.get(i+3)==0? true:false);
                 reportList.add(report);
             }
-            System.cu
+
 
         }
 
