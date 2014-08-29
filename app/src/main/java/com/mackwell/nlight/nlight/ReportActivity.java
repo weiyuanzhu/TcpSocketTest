@@ -1,6 +1,7 @@
 package com.mackwell.nlight.nlight;
 
 import android.app.FragmentTransaction;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -12,9 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.mackwell.nlight.R;
+import com.mackwell.nlight.models.Report;
 import com.mackwell.nlight.socket.TCPConnection;
+import com.mackwell.nlight.util.Constants;
+import com.mackwell.nlight.util.DataParser;
 import com.mackwell.nlight.util.GetCmdEnum;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReportActivity extends BaseActivity {
@@ -22,13 +27,23 @@ public class ReportActivity extends BaseActivity {
     private static final String TAG = "ReportActivity";
 
     private String ip;
-    private boolean demo;
+    private List<Integer> reportRawData;
+    private List<Report> reportList;
 
 
     @Override
     public void receive(List<Integer> rx, String ip) {
         Log.d(TAG,ip);
        System.out.println(rx);
+        if (rx.get(1) == Constants.MASTER_GET && rx.get(2) == Constants.GET_REPORT) {
+            reportRawData.addAll(rx.subList(3, rx.size() - 6));
+        } else {
+            if (rx.get(1) == Constants.FINISH) {
+                Log.i(TAG,Integer.toString(reportRawData.size()));
+                System.out.println(reportRawData);
+                reportList = DataParser.getReportList(reportRawData);
+            }
+        }
     }
 
     @Override
@@ -37,6 +52,9 @@ public class ReportActivity extends BaseActivity {
         setContentView(R.layout.activity_report);
 
         ip = getIntent().getStringExtra("ip");
+        isDemo = getIntent().getBooleanExtra("demo",true);
+        reportRawData = new ArrayList<Integer>();
+        reportList = new ArrayList<Report>();
 
         ReportFragment fragment = ReportFragment.newInstance("arg1","arg2");
 
@@ -47,11 +65,18 @@ public class ReportActivity extends BaseActivity {
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         if(isConnected && !isDemo) connection = new TCPConnection(this,ip);
 
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(connection == null){
+            connection = new TCPConnection(this,ip);
+
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -83,7 +108,12 @@ public class ReportActivity extends BaseActivity {
 
     private void fetchReport()
     {
+        reportRawData.clear();
+
+
+
         Log.i(TAG,ip);
+
         if (isConnected && !isDemo) {
 //            connection = new TCPConnection(this,ip);
             connection.fetchData(GetCmdEnum.GET_REPORT.get());
