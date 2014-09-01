@@ -9,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.mackwell.nlight.R;
 import com.mackwell.nlight.models.Report;
@@ -42,6 +44,9 @@ public class ReportFragment extends Fragment {
 
     private ListView mListView;
     private SimpleAdapter mAdapter;
+
+    private TextView textView;
+    private ProgressBar progressBar;
 
 
     /**
@@ -84,6 +89,12 @@ public class ReportFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+
+        textView = (TextView) getActivity().findViewById(R.id.report_textView);
+        progressBar = (ProgressBar) getActivity().findViewById(R.id.report_progressBar);
+
+
         mListView = (ListView) getActivity().findViewById(R.id.report_listView);
 
         mAdapter = new SimpleAdapter(getActivity(),getDataList(),R.layout.report_list_row,new String[] {"date","faults","status"},
@@ -95,20 +106,18 @@ public class ReportFragment extends Fragment {
     private List<Map<String,String>> getDataList(){
 
         ArrayList<Map<String,String>> dataList = new ArrayList<Map<String, String>>();
-        HashMap<String,String> map = new HashMap<String, String>();
+        HashMap<String,String> map;
 
         SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
 
         if (reportList!=null) {
 
-            for(int i=0; i<reportList.size();i++){
-
-                Report report = reportList.get(i);
+            for (Report report : reportList) {
 
                 map = new HashMap<String, String>();
-                map.put("date",format1.format(report.getDate().getTime()));
-                map.put("faults",Integer.toString(report.getFaults()));
-                map.put("status",report.isFaulty()? "OK":"Not OK");
+                map.put("date", format1.format(report.getDate().getTime()));
+                map.put("faults", Integer.toString(report.getFaults()));
+                map.put("status", report.isFaulty() ? "OK" : "Not OK");
                 dataList.add(map);
 
             }
@@ -126,6 +135,9 @@ public class ReportFragment extends Fragment {
         mAdapter = new SimpleAdapter(getActivity(),getDataList(),R.layout.report_list_row,new String[] {"date","faults","status"},
                 new int[] {R.id.report_date_textView,R.id.report_faults_textView,R.id.report_status_textView});
         mListView.setAdapter(mAdapter);
+
+        progressBar.setVisibility(View.INVISIBLE);
+        textView.setVisibility(View.INVISIBLE);
 
 
     }
