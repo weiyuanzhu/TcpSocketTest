@@ -22,7 +22,7 @@
     
     <string name="overall">GetOverallStatus</string>
     <string name="location">位置</string>
-    <string name="status">状态</string>
+    <string name="faulty">状态</string>
     
     <string name="title_activity_panel_list">N-Light</string>
     <string name="title_activity_loading_screen">N-Light</string>

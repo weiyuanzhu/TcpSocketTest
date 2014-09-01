@@ -4,6 +4,7 @@ package com.mackwell.nlight.nlight;
 
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.mackwell.nlight.R;
+import com.mackwell.nlight.models.Report;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +27,8 @@ import java.util.Map;
  *
  */
 public class ReportFragment extends Fragment {
+
+    private static final String TAG= "Report Fragment";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -32,6 +37,8 @@ public class ReportFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private List<Report> reportList;
 
     private ListView mListView;
     private SimpleAdapter mAdapter;
@@ -88,26 +95,40 @@ public class ReportFragment extends Fragment {
     private List<Map<String,String>> getDataList(){
 
         ArrayList<Map<String,String>> dataList = new ArrayList<Map<String, String>>();
-
         HashMap<String,String> map = new HashMap<String, String>();
-        map.put("date","Date/Time");
-        map.put("faults","1");
-        map.put("status","OK");
-        dataList.add(map);
 
-        map = new HashMap<String, String>();
-        map.put("date","Date/Time");
-        map.put("faults","2");
-        map.put("status","NOT OK");
-        dataList.add(map);
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
 
-        map = new HashMap<String, String>();
-        map.put("date","Date/Time");
-        map.put("faults","32");
-        map.put("status","NOT OK");
-        dataList.add(map);
+        if (reportList!=null) {
+
+            for(int i=0; i<reportList.size();i++){
+
+                Report report = reportList.get(i);
+
+                map = new HashMap<String, String>();
+                map.put("date",format1.format(report.getDate().getTime()));
+                map.put("faults",Integer.toString(report.getFaults()));
+                map.put("status",report.isFaulty()? "OK":"Not OK");
+                dataList.add(map);
+
+            }
+
+        }
 
 
         return dataList;
     }
+
+
+    public void updateList(List<Report> reportList){
+        Log.i(TAG,"update report list");
+        this.reportList = reportList;
+        mAdapter = new SimpleAdapter(getActivity(),getDataList(),R.layout.report_list_row,new String[] {"date","faults","status"},
+                new int[] {R.id.report_date_textView,R.id.report_faults_textView,R.id.report_status_textView});
+        mListView.setAdapter(mAdapter);
+
+
+    }
+
+
 }

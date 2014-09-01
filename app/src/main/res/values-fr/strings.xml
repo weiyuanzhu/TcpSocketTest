@@ -23,7 +23,7 @@
 	<string name="overall">GetOverallStatus</string> 
 	<string name="title_activity_loading_screen">N-Light</string> 
 	<string name="location">Location</string> 
-	<string name="status">status</string> 
+	<string name="faulty">faulty</string>
 	<string name="title_activity_panel_info">PanelInfo</string> 
 	<string name="title_activity_device_list">DeviceList</string> 
 	<string name="title_activity_device_info">DeviceInfoActivity</string> 

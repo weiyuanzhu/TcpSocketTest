@@ -26,7 +26,7 @@ v 0.6.0
 ================
 
 ###Updates:
-- 1 Device status is now coloured (Red for faults)
+- 1 Device faulty is now coloured (Red for faults)
 - 2 Icon for FT
 - 3 Add pop-up menu for "Show loops"
 - 4 Added "SearchView" Icon
@@ -41,7 +41,7 @@ v 0.6.0
 
 
 ###Fix:
-- 1 Device failure status error, caused by a snippet of test code
+- 1 Device failure faulty error, caused by a snippet of test code
 - 2 NullPointAccess when accessing connectionList when PanelListFragmetn onPause()
 - 3 Changed logic in DeviceinfoFragment for update device information to prevent crash for updating device information
 
@@ -70,7 +70,7 @@ v 0.4.6.1
 
 ###Update:
 
-Device refresh status will now refresh device list icon too
+Device refresh faulty will now refresh device list icon too
 
 
 
@@ -98,7 +98,7 @@ v 0.4.3
 
 - 1 (MH 2)Long click on device will now release current action mode and start a new one;
 - 2  add refresh button for device action bar
-- 3 perform functionalities will refresh device status now.
+- 3 perform functionalities will refresh device faulty now.
 - 4 deviceInfoFragment and device, add DT last time and lamp operation time;
 - 5 DeviceInfoFragment, device address display for loop2 now displays 0-63 instead of 128-191
 
@@ -242,6 +242,6 @@ v0.1
 ##2014-01-17
 
 - Basic socket connection has been setup.
-- Can get overall status from panel.
+- Can get overall faulty from panel.
 
 

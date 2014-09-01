@@ -19,7 +19,7 @@
     <string name="overall">GetOverallStatus</string>
     <string name="title_activity_loading_screen">N-Light</string>
     <string name="location">Location</string>
-    <string name="status">status</string>
+    <string name="faulty">faulty</string>
     <string name="title_activity_panel_info">PanelInfo</string>
     <string name="title_activity_device_list">DeviceList</string>
     <string name="title_activity_device_info">DeviceInfoActivity</string>
@@ -85,12 +85,12 @@
     <string name="text_fragment_deviceInfo_serialNumber">Serial number</string>
     <string name="text_fragment_deviceInfo_gtin">GTIN</string>
     <string name="text_fragment_deviceInfo_emergencyMode">Emergency mode</string>
-    <string name="text_fragment_deviceInfo_emergencyStatus">Emergency status</string>
-    <string name="text_fragment_deviceInfo_failureStatus">Failure  status</string>
+    <string name="text_fragment_deviceInfo_emergencyStatus">Emergency faulty</string>
+    <string name="text_fragment_deviceInfo_failureStatus">Failure  faulty</string>
     <string name="text_fragment_deviceInfo_batteryLevel">Battery level</string>
     <string name="text_fragment_deviceInfo_durationTest">Last duration test result</string>
     <string name="text_fragment_deviceInfo_emergencyLamp">Total emergency lamp operating time</string>
-    <string name="text_fragment_deviceInfo_communicationStatus">Communication status</string>
+    <string name="text_fragment_deviceInfo_communicationStatus">Communication faulty</string>
     <string name="text_emergencyLamp_value">Less than <xliff id="emergencyLamo_hours">%1$d</xliff> hour(s)</string>
     <string name="text_durationTest_value"><xliff id="emergencyLamo_hours">%1$d</xliff> minute(s)</string>
     <string name="text_deviceLost">Device lost</string>
@@ -149,13 +149,13 @@
     <string name="emergencyStatus_IDENTIFICATION_ACTIVE">Identification Activt,</string>
     <string name="emergencyStatus_PHYSICALLY_SELECTED">Physically Selected,</string>
     <string name="emergencyStatus_NORMAL">-,</string>
-    <string name="toast_refresh_panelStatus">Refreshing panel status</string>
+    <string name="toast_refresh_panelStatus">Refreshing panel faulty</string>
     <string name="toast_expand_loop"><xliff:g id="expand_loop">%1$s</xliff:g> " expanded"</string>
     <string name="toast_ft_inProgress">Function test in progress</string>
     <string name="toast_dt_inProgress">Duration test in progress</string>
     <string name="toast_stop_all">Stopping all pending test</string>
     <string name="toast_id_inProgress">Device identify in progress</string>
-    <string name="toast_refresh_device">Refreshing device status</string>
+    <string name="toast_refresh_device">Refreshing device faulty</string>
     <string name="toast_stop_identify">Stopping identify</string>
     <string name="action_stop_id">Stop identify</string>
     <string name="action_select_allFaulty">Select all faults</string>

@@ -43,7 +43,7 @@
         android:layout_below="@+id/report_faults_textView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
-        android:text="@string/status"
+        android:text="@string/faulty"
         android:textSize="16pt" />
 
     <Button

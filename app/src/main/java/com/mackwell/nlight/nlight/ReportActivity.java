@@ -1,8 +1,7 @@
 package com.mackwell.nlight.nlight;
 
 import android.app.FragmentTransaction;
-import android.provider.ContactsContract;
-import android.support.v7.app.ActionBarActivity;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,15 +24,18 @@ import java.util.List;
 public class ReportActivity extends BaseActivity {
 
     private static final String TAG = "ReportActivity";
+    private static final String TAG_RECEIVE = "ReportActivity_Receive";
 
     private String ip;
     private List<Integer> reportRawData;
     private List<Report> reportList;
+    private Handler mHandler;
+    private ReportFragment fragment;
 
 
     @Override
     public void receive(List<Integer> rx, String ip) {
-        Log.d(TAG,ip);
+        Log.d(TAG_RECEIVE,ip);
        System.out.println(rx);
         if (rx.get(1) == Constants.MASTER_GET && rx.get(2) == Constants.GET_REPORT) {
             reportRawData.addAll(rx.subList(3, rx.size() - 6));
@@ -42,6 +44,7 @@ public class ReportActivity extends BaseActivity {
                 Log.i(TAG,Integer.toString(reportRawData.size()));
                 System.out.println(reportRawData);
                 reportList = DataParser.getReportList(reportRawData);
+                mHandler.post(test);
             }
         }
     }
@@ -56,7 +59,7 @@ public class ReportActivity extends BaseActivity {
         reportRawData = new ArrayList<Integer>();
         reportList = new ArrayList<Report>();
 
-        ReportFragment fragment = ReportFragment.newInstance("arg1","arg2");
+        fragment = ReportFragment.newInstance("arg1","arg2");
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.report_container,fragment);
@@ -66,6 +69,10 @@ public class ReportActivity extends BaseActivity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         if(isConnected && !isDemo) connection = new TCPConnection(this,ip);
+
+        mHandler = new Handler();
+
+
 
     }
 
@@ -135,4 +142,11 @@ public class ReportActivity extends BaseActivity {
             return rootView;
         }
     }
+
+    Runnable test = new Runnable() {
+        @Override
+        public void run() {
+            fragment.updateList(reportList);
+        }
+    };
 }

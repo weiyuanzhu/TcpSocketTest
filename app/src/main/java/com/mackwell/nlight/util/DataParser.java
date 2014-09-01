@@ -3,10 +3,10 @@ package com.mackwell.nlight.util;
 import com.mackwell.nlight.models.Report;
 
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class DataParser {
 	
@@ -134,40 +134,46 @@ public class DataParser {
      * @param timestamp  list of Integer contains timestamp information
      * @return timestamp  String in the specified format
      */
-    public static String getDate(List<Integer> timestamp) {
+    public static Calendar getDateCalendar (List<Integer> timestamp) {
 //		return String.format("%02d", timestamp.get(4)) + "/" + String.format("%02d", timestamp.get(3)) +
 //				"/" + String.format("%02d", timestamp.get(1)) + String.format("%02d", timestamp.get(2));
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, timestamp.get(4));
-        calendar.set(Calendar.MONTH, timestamp.get(3) - 1);
-        calendar.set(Calendar.YEAR, timestamp.get(1) * 100 + timestamp.get(2));
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%02d", calendar.get(Calendar.DAY_OF_MONTH)));
-        sb.append(" ");
-        sb.append(calendar.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault()));
-        sb.append(" ");
-        sb.append(String.format("%02d", calendar.get(Calendar.YEAR)));
-        return sb.toString();
+        calendar.set(Calendar.DAY_OF_MONTH, timestamp.get(3));
+        calendar.set(Calendar.MONTH, timestamp.get(2)-1);
+        calendar.set(Calendar.YEAR, timestamp.get(0) * 100 + timestamp.get(1));
+        calendar.set(Calendar.HOUR_OF_DAY,timestamp.get(4));
+        calendar.set(Calendar.MINUTE,timestamp.get(5));
+
+        return calendar;
     }
 
     public static List<Report> getReportList (List<Integer> reportRawData){
-        ArrayList<Report> reportList = new ArrayList<Report>();
-        Report report;
+        List<List<Integer>> reportDataList = new ArrayList<List<Integer>>();
+
 
         long startTime = System.nanoTime();
 
         for(int i=0; i<reportRawData.size()-3;i++) {
 
-            if (reportRawData.subList(i,i+3).containsAll(REPORT_START_SEQUENCE))
-            {
-                report = new Report();
-                report.setFaults(reportRawData.get(i+3));
-                report.setStatus(reportRawData.get(i+3)==0? true:false);
-                reportList.add(report);
+            if (reportRawData.get(i) == 255) {
+                break;
+            }
+            else if (reportRawData.subList(i, i + 3).containsAll(REPORT_START_SEQUENCE)) {
+
+                int faults = reportRawData.get(i + 3); //faults number in loop1 and loop2
+                int nextMark = i + 18 + faults*6; //next number mark of start of next report
+
+                List<Integer> reportData = reportRawData.subList(i, nextMark);
+                reportDataList.add(reportData);
+
+                i = nextMark + 1; //skip i to start of next report
+
             }
 
 
         }
+
+
 
         long timeElapsed = System.nanoTime() - startTime;
         double time = timeElapsed / 1E9;
@@ -175,10 +181,35 @@ public class DataParser {
 
         System.out.println("Time Elapsed " + time + " seconds");
 
-
-        return reportList;
+        return getList(reportDataList);
 
     }
+
+    private static List<Report> getList (List<List<Integer>> reportDataList){
+
+        ArrayList<Report> reportList = new ArrayList<Report>();
+        Report report;
+
+        for(int i=0; i<reportDataList.size();i++)
+        {
+            List<Integer> reportData = reportDataList.get(i);
+            report = new Report();
+            report.setFaults(reportData.get(3));
+            report.setFaulty(reportData.get(3) == 0);
+            report.setDate(getDateCalendar(reportData.subList(4,10)));
+
+            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+            System.out.println(format1.format(report.getDate().getTime()));
+
+            reportList.add(report);
+
+        }
+
+
+        return reportList;
+    }
+
+
 	
 }
 

@@ -1,6 +1,8 @@
 package com.mackwell.nlight.models;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by weiyuan zhu on 29/08/14.
@@ -14,12 +16,29 @@ public class Report {
 
     private int faults;
     private Calendar date;
-    private boolean status = true;
+    private boolean faulty = true;
+    private List<Device> faultyDeviceList;
 
     /**
      * Getters and Setters
+
      *
      */
+
+    public List<Device> getFaultyDeviceList() {
+        return faultyDeviceList;
+    }
+
+    public void addFaultyDeviceList(Device device) {
+        if(faultyDeviceList == null)
+        {
+            faultyDeviceList = new ArrayList<Device>();
+
+        }
+        faultyDeviceList.add(device);
+    }
+
+
     public int getFaults() {
         return faults;
     }
@@ -28,12 +47,12 @@ public class Report {
         this.faults = faults;
     }
 
-    public boolean isStatus() {
-        return status;
+    public boolean isFaulty() {
+        return faulty;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
+    public void setFaulty(boolean faulty) {
+        this.faulty = faulty;
     }
 
     public Calendar getDate() {
@@ -52,10 +71,10 @@ public class Report {
 
     }
 
-    public Report(int faults, Calendar date, boolean status) {
+    public Report(int faults, Calendar date, boolean faulty) {
         this.faults = faults;
         this.date = date;
-        this.status = status;
+        this.faulty = faulty;
     }
 
 
