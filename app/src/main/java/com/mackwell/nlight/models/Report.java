@@ -1,5 +1,6 @@
 package com.mackwell.nlight.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
  * Created by weiyuan zhu on 29/08/14.
  * Report class representing panel report
  */
-public class Report {
+public class Report implements Serializable{
 
     /**
      * Fields and properties
@@ -17,9 +18,13 @@ public class Report {
     private int faults;
     private Calendar date;
     private boolean faulty = true;
-    private List<Device> faultyDeviceList;
+    private List<List<Integer>> faultyDeviceList;
     private List<List<Integer>> Loop1GroupStatus;
     private List<List<Integer>> Loop2GroupStatus;
+
+
+
+
 
     /**
      * Getters and Setters
@@ -47,17 +52,13 @@ public class Report {
     }
 
 
-    public List<Device> getFaultyDeviceList() {
+    public List<List<Integer>> getFaultyDeviceList() {
         return faultyDeviceList;
     }
 
-    public void addFaultyDeviceList(Device device) {
-        if(faultyDeviceList == null)
-        {
-            faultyDeviceList = new ArrayList<Device>();
+    public void setFaultyDeviceList(List<List<Integer>> list) {
 
-        }
-        faultyDeviceList.add(device);
+        this.faultyDeviceList = list;
     }
 
 

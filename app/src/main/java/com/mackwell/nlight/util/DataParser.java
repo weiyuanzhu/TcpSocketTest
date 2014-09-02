@@ -3,6 +3,7 @@ package com.mackwell.nlight.util;
 import com.mackwell.nlight.models.Report;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
@@ -196,12 +197,11 @@ public class DataParser {
             List<Integer> reportData = reportDataList.get(i);
 
             report = new Report();
+            List<List<Integer>> faultyDeviceList = new ArrayList<List<Integer>>();
 
-            report.setFaults(reportData.get(3));
-            report.setFaulty(reportData.get(3) == 0);
-            report.setDate(getDateCalendar(reportData.subList(4,10)));
 
-            //Loop 1 group faults
+
+            //Loop 1 group totalFaults
 
             for(int h=0;h<2;h++)
             {
@@ -255,6 +255,33 @@ public class DataParser {
 
 
             }
+
+
+            //set report properties
+            int deviceFaults = reportData.get(3);
+
+            if (deviceFaults!=0) {
+                int deviceFlag = 18;
+
+                for (int l=0; l<deviceFaults;l++)
+                {
+                    ArrayList<Integer> faultyDevice = new ArrayList<Integer>();
+
+                    faultyDeviceList.add(reportData.subList(deviceFlag,deviceFlag + 6));
+
+                    deviceFlag += 6;
+                }
+
+
+
+            }
+
+            report.setFaultyDeviceList(faultyDeviceList);
+
+            int totalFaults = deviceFaults + report.getLoop1GroupStatus().size() + report.getLoop2GroupStatus().size();
+            report.setFaults(totalFaults);
+            report.setFaulty(totalFaults==0);
+            report.setDate(getDateCalendar(reportData.subList(4,10)));
 
             //add report to report list
             reportList.add(report);
