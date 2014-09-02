@@ -72,8 +72,6 @@ public class ReportActivity extends BaseActivity {
 
         mHandler = new Handler();
 
-
-
     }
 
     @Override
@@ -117,7 +115,7 @@ public class ReportActivity extends BaseActivity {
     {
         reportRawData.clear();
 
-
+        fragment.showLoading();
 
         Log.i(TAG,ip);
 

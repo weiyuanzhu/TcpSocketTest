@@ -108,7 +108,14 @@ public class ReportFragment extends Fragment {
         ArrayList<Map<String,String>> dataList = new ArrayList<Map<String, String>>();
         HashMap<String,String> map;
 
-        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+
+        map = new HashMap<String, String>();
+        map.put("date", "Date/Time");
+        map.put("faults", "Fault(s) found");
+        map.put("status", "Status");
+        dataList.add(map);
 
         if (reportList!=null) {
 
@@ -117,7 +124,7 @@ public class ReportFragment extends Fragment {
                 map = new HashMap<String, String>();
                 map.put("date", format1.format(report.getDate().getTime()));
                 map.put("faults", Integer.toString(report.getFaults()));
-                map.put("status", report.isFaulty() ? "OK" : "Not OK");
+                map.put("status", report.isFaulty() ? "OK" : "Fault(s) found");
                 dataList.add(map);
 
             }
@@ -136,10 +143,19 @@ public class ReportFragment extends Fragment {
                 new int[] {R.id.report_date_textView,R.id.report_faults_textView,R.id.report_status_textView});
         mListView.setAdapter(mAdapter);
 
+        hideLoading();
+
+
+    }
+
+    public void hideLoading(){
         progressBar.setVisibility(View.INVISIBLE);
         textView.setVisibility(View.INVISIBLE);
+    }
 
-
+    public void showLoading(){
+        progressBar.setVisibility(View.VISIBLE);
+        textView.setVisibility(View.VISIBLE);
     }
 
 
