@@ -174,5 +174,6 @@
     <string name="toast_enter_engineer_mode">Please enter engineer mode</string>
     <string name="action_show_report">Show panel report</string>
     <string name="title_activity_report">ReportActivity</string>
+    <string name="title_activity_report_faults">ReportFaultsActivity</string>
 
 </resources>

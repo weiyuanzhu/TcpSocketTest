@@ -2,12 +2,14 @@ package com.mackwell.nlight.nlight;
 
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
@@ -30,6 +32,11 @@ import java.util.Map;
  */
 public class ReportFragment extends Fragment {
 
+    public interface OnListItemClickedListener {
+
+        public void onCLick(int position);
+    }
+
     private static final String TAG= "Report Fragment";
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,6 +46,8 @@ public class ReportFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private OnListItemClickedListener mListener;
 
     private List<Report> reportList;
 
@@ -71,6 +80,22 @@ public class ReportFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try{
+            mListener = (OnListItemClickedListener) activity;
+        }catch (ClassCastException e)
+        {
+            throw new ClassCastException(activity.toString()
+                    + " must implement ReportFragment.OnListItemClickedListener");
+
+        }
+
+
+
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -100,6 +125,16 @@ public class ReportFragment extends Fragment {
         mAdapter = new SimpleAdapter(getActivity(),getDataList(),R.layout.report_list_row,new String[] {"date","faults","status"},
                 new int[] {R.id.report_date_textView,R.id.report_faults_textView,R.id.report_status_textView});
         mListView.setAdapter(mAdapter);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (i!=0) {
+                    mListener.onCLick(i);
+                }
+            }
+
+        });
 
     }
 

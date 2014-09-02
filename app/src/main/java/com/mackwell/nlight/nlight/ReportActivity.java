@@ -1,6 +1,7 @@
 package com.mackwell.nlight.nlight;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -21,7 +22,7 @@ import com.mackwell.nlight.util.GetCmdEnum;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReportActivity extends BaseActivity {
+public class ReportActivity extends BaseActivity implements ReportFragment.OnListItemClickedListener {
 
     private static final String TAG = "ReportActivity";
     private static final String TAG_RECEIVE = "ReportActivity_Receive";
@@ -48,6 +49,14 @@ public class ReportActivity extends BaseActivity {
             }
         }
     }
+
+    @Override
+    public void onCLick(int position) {
+        Intent intent = new Intent(this,ReportFaultsActivity.class);
+        intent.putExtra("report",reportList.get(position-1));
+        startActivity(intent);
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,6 +133,8 @@ public class ReportActivity extends BaseActivity {
             connection.fetchData(GetCmdEnum.GET_REPORT.get());
         }
     }
+
+
 
     /**
      * A placeholder fragment containing a simple view.

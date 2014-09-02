@@ -265,9 +265,9 @@ public class DataParser {
 
                 for (int l=0; l<deviceFaults;l++)
                 {
-                    ArrayList<Integer> faultyDevice = new ArrayList<Integer>();
+                    ArrayList<Integer> faultyDevice = new ArrayList<Integer>(reportData.subList(deviceFlag,deviceFlag + 6));
 
-                    faultyDeviceList.add(reportData.subList(deviceFlag,deviceFlag + 6));
+                    faultyDeviceList.add(faultyDevice);
 
                     deviceFlag += 6;
                 }
