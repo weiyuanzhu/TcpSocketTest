@@ -303,7 +303,7 @@ public class DeviceInfoFragment extends ListFragment {
 	}
 	
 	
-	private String getEmergencyText(List<Integer> stringId){
+	protected String getEmergencyText(List<Integer> stringId){
 		StringBuilder sb = new StringBuilder();
 		Resources res = getResources();
 		if(device.isCommunicationStatus()){
