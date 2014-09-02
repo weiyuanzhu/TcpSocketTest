@@ -18,12 +18,34 @@ public class Report {
     private Calendar date;
     private boolean faulty = true;
     private List<Device> faultyDeviceList;
+    private List<List<Integer>> Loop1GroupStatus;
+    private List<List<Integer>> Loop2GroupStatus;
 
     /**
      * Getters and Setters
 
      *
      */
+
+    public List<List<Integer>> getLoop2GroupStatus() {
+        return Loop2GroupStatus;
+    }
+
+    public void setLoop2GroupStatus(List<List<Integer>> loop2GroupStatus) {
+        Loop2GroupStatus = loop2GroupStatus;
+    }
+
+
+
+
+    public List<List<Integer>> getLoop1GroupStatus() {
+        return Loop1GroupStatus;
+    }
+
+    public void setLoop1GroupStatus(List<List<Integer>> loop1GroupStatus) {
+        this.Loop1GroupStatus = loop1GroupStatus;
+    }
+
 
     public List<Device> getFaultyDeviceList() {
         return faultyDeviceList;

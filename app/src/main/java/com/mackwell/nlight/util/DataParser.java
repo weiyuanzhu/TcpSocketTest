@@ -3,7 +3,6 @@ package com.mackwell.nlight.util;
 import com.mackwell.nlight.models.Report;
 
 import java.io.UnsupportedEncodingException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
@@ -17,6 +16,8 @@ public class DataParser {
 	static final int UART_NEW_LINE_H = 0x0D;
 	static final int UART_NEW_LINE_L = 0x0A;
     static final List<Integer> REPORT_START_SEQUENCE = Arrays.asList(0x55,0xAA,0xFF);
+    static final List<Integer> GROUP_OK = Arrays.asList(0x00,0x00,0x00);
+
 
 	static public List<List<Integer>> removeJunkBytes(List<Integer> rxBuffer)
 	{
@@ -193,14 +194,69 @@ public class DataParser {
         for(int i=0; i<reportDataList.size();i++)
         {
             List<Integer> reportData = reportDataList.get(i);
+
             report = new Report();
+
             report.setFaults(reportData.get(3));
             report.setFaulty(reportData.get(3) == 0);
             report.setDate(getDateCalendar(reportData.subList(4,10)));
 
-            SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
-            System.out.println(format1.format(report.getDate().getTime()));
+            //Loop 1 group faults
 
+            for(int h=0;h<2;h++)
+            {
+
+                int groupNumber = 16;
+                List<List<Integer>> groupStatusList = new ArrayList<List<Integer>>();
+
+                for(int j = (h*4+10); j < (14 + h*4);j++)
+                {
+                    int group = reportData.get(j);
+                    int flag = 0x80;
+
+
+                    for (int k = 0; k<4; k++)
+                    {
+                        int ft;
+                        int dt;
+
+                        ArrayList<Integer> groupStatus = new ArrayList<Integer>();
+                        groupStatus.add(groupNumber);
+
+
+
+                        groupStatus.add((group & flag)>0 ? 1:0);
+                        flag /=2;
+
+                        groupStatus.add((group & flag)>0 ? 1:0);
+                        flag /= 2;
+
+                        if(groupStatus.get(1)!=0 || groupStatus.get(2)!=0)  groupStatusList.add(groupStatus);
+
+
+
+                        groupNumber --;
+                    } // end of 1 byte
+
+
+
+
+                } // end of 4 bytes
+
+                //set group status to report
+                switch(h)
+                {
+                    case 0: report.setLoop1GroupStatus(groupStatusList);
+                        break;
+                    case 1: report.setLoop2GroupStatus(groupStatusList);
+                        break;
+                    default: break;
+                }
+
+
+            }
+
+            //add report to report list
             reportList.add(report);
 
         }
