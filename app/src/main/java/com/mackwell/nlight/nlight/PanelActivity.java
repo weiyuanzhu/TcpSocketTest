@@ -846,10 +846,10 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	private String getContactDetails(){
 		StringBuilder sb = new StringBuilder();
 		sb.append(getResources().getString(R.string.text_contat_engineer) + "\n");
-		sb.append(getResources().getString(R.string.text_control_panel_location) + currentDisplayingPanel.getPanelLocation() + "\n");
-		sb.append(getResources().getString(R.string.text_contact_name) + currentDisplayingPanel.getContact()+ "\n");
-		sb.append(getResources().getString(R.string.text_contact_tel) + currentDisplayingPanel.getTel() + "\n");
-		sb.append(getResources().getString(R.string.text_contact_mobile) + currentDisplayingPanel.getMobile());
+		sb.append(getResources().getString(R.string.text_control_panel_location)+ "        " + currentDisplayingPanel.getPanelLocation() + "\n");
+		sb.append(getResources().getString(R.string.text_contact_name) + "                      " + currentDisplayingPanel.getContact()+ "\n");
+		sb.append(getResources().getString(R.string.text_contact_tel) + "                               " + currentDisplayingPanel.getTel() + "\n");
+		sb.append(getResources().getString(R.string.text_contact_mobile) + "                                   " + currentDisplayingPanel.getMobile());
 		
 		return sb.toString();
 	}
