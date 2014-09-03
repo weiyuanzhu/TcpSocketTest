@@ -46,6 +46,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
     private static final String TAG = "ReportActivity";
     private static final String TAG_RECEIVE = "ReportActivity_Receive";
+    private static final int ROW_PER_PAGE = 16;
 
     private String ip;
     private String location;
@@ -357,6 +358,8 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
         int titleBaseLine = 72;
         int leftMargin = 54;
+        int rightMargin = 104;
+        int bottomMargin = 20;
 
 
 
@@ -379,11 +382,11 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         canvas.drawText("Status", leftMargin + 300,titleBaseLine  + 150,paint);
         canvas.drawLine(leftMargin, titleBaseLine  + 160,leftMargin+450,titleBaseLine+160,paint);
 
-        int remain = reportList.size() - pagenumber*18;
-        int n = remain > 18? (pagenumber+1) * 18: reportList.size();
+        int remain = reportList.size() - pagenumber* ROW_PER_PAGE;
+        int n = remain > ROW_PER_PAGE? (pagenumber+1) * ROW_PER_PAGE: reportList.size();
 
         Report report;
-        for(int i=(pagenumber * 18),j=0; i<n ; i++,j++) {
+        for(int i=(pagenumber * ROW_PER_PAGE),j=0; i<n ; i++,j++) {
             report = reportList.get(i);
             canvas.drawText(dateFormat.format(report.getDate().getTime()), leftMargin, titleBaseLine + 180 + j*30, paint);
             canvas.drawText(Integer.toString(report.getFaults()), leftMargin + 200, titleBaseLine + 180 + j*30, paint);
@@ -393,7 +396,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
         pagenumber ++ ;
 
-
+        canvas.drawText("Page " + Integer.toString(pagenumber),pageWidth-rightMargin,pageHeight-bottomMargin,paint);
 
 
         /*if (pagenumber % 2 == 0) {
