@@ -16,6 +16,7 @@ import android.print.PageRange;
 import android.print.PrintAttributes;
 import android.print.PrintDocumentAdapter;
 import android.print.PrintDocumentInfo;
+import android.print.PrintManager;
 import android.print.pdf.PrintedPdfDocument;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -179,7 +180,13 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     };
 
     private void saveReport(){
+        Log.i("printPDF","print clicked");
 
+        PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
+
+        String jobName = this.getString(R.string.app_name) + " Document";
+
+        printManager.print(jobName,new MyPrintDocumentAdapter(this),null);
 
     }
 
@@ -275,7 +282,6 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     }
 
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void drawPage(PdfDocument.Page page, int pagenumber)
     {
         Canvas canvas = page.getCanvas();
