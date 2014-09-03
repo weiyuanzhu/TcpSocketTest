@@ -3,7 +3,7 @@
 
     <string name="app_name">N-Light Connect</string>
     <string name="app_version">
-        	版本: <xliff:g id="promotion_code">beta 0.7.2</xliff:g>
+        	版本: <xliff:g id="promotion_code">beta 0.8.0</xliff:g>
     </string>
     
     <string name="action_settings">设置</string>
