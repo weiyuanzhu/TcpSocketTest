@@ -1,14 +1,15 @@
 package com.mackwell.nlight.nlight;
 
-import android.annotation.TargetApi;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
-import android.os.Build;
 import android.os.CancellationSignal;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
@@ -46,7 +47,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
     private static final String TAG = "ReportActivity";
     private static final String TAG_RECEIVE = "ReportActivity_Receive";
-    private static final int ROW_PER_PAGE = 16;
+    private static final int ROW_PER_PAGE = 20;
 
     private String ip;
     private String location;
@@ -188,8 +189,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_report, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_report, container, false);
         }
     }
 
@@ -215,25 +215,24 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     private List<Report> initReportList(){
 
         List<Report> list = new ArrayList<Report>();
-        Report report = new Report(1, Calendar.getInstance(),true);
+        Report report;
+        List<List<Integer>> list2;
+        List<Integer> list3;
 
-        List<List<Integer>> list2 = new ArrayList<List<Integer>>();
-        List<Integer> list3 =  Arrays.asList(new Integer[] {1,130,255,255,255,255});
-        list2.add(list3);
-        report.setFaultyDeviceList(list2);
+        for(int i=0; i<37; i++){
 
+            report = new Report(1, Calendar.getInstance(),true);
 
-        list.add(report);
-
-        report = new Report(1, Calendar.getInstance(),true);
-
-        list2 = new ArrayList<List<Integer>>();
-        list3 =  Arrays.asList(new Integer[] {2,128,255,255,255,255});
-        list2.add(list3);
-        report.setFaultyDeviceList(list2);
+            list2 = new ArrayList<List<Integer>>();
+            list3 =  Arrays.asList(1,130,255,255,255,255);
+            list2.add(list3);
+            report.setFaultyDeviceList(list2);
+            list.add(report);
+        }
 
 
-        list.add(report);
+
+
 
 
 
@@ -279,7 +278,10 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
             }
 
             //calculate total page number
-            totalpages = ((reportList.size() * 40) / (pageHeight-200)) + 1;
+
+
+
+            totalpages = ((reportList.size() * 33) / (pageHeight-150)) + 1;
             ReportActivity.this.totalpages = totalpages;
 
 
@@ -336,9 +338,9 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     }
 
     private boolean pagesInRange(PageRange[] pageRanges,int page) {
-        for (int i=0; i<pageRanges.length;i++) {
+        for (PageRange pageRange : pageRanges) {
 
-            if ((page >= pageRanges[i].getStart()) && (page <= pageRanges[i].getEnd())) {
+            if ((page >= pageRange.getStart()) && (page <= pageRange.getEnd())) {
                 return true;
             }
         }
@@ -355,8 +357,9 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         Canvas canvas = page.getCanvas();
 
 
-
-        int titleBaseLine = 72;
+        int imageBaseLine = 10;
+        int imageLeftMargin = 100;
+        int titleBaseLine = 130;
         int leftMargin = 54;
         int rightMargin = 104;
         int bottomMargin = 20;
@@ -365,22 +368,30 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
         Paint paint = new Paint();
         paint.setColor(Color.BLACK);
-        paint.setTextSize(50);
-
-        canvas.drawText("N-Light panel report" , leftMargin, titleBaseLine, paint);
-
-        paint.setTextSize(20);
-
-        canvas.drawText("Report type: Panel status report", leftMargin,titleBaseLine + 50,paint);
-
-        canvas.drawText("Panel location: " + location, leftMargin,titleBaseLine + 80,paint);
 
 
+        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.nlight_connect);
 
-        canvas.drawText("Date/Time", leftMargin,titleBaseLine + 150,paint);
-        canvas.drawText("Fault(s) found", leftMargin + 150,titleBaseLine + 150,paint);
-        canvas.drawText("Status", leftMargin + 300,titleBaseLine  + 150,paint);
-        canvas.drawLine(leftMargin, titleBaseLine  + 160,leftMargin+450,titleBaseLine+160,paint);
+        Matrix matrix=new Matrix();
+        matrix.postScale(0.15f, 0.15f);
+        Bitmap dstbmp=Bitmap.createBitmap(bmp,0,0,bmp.getWidth(),bmp.getHeight(),matrix,true);
+        canvas.drawBitmap(dstbmp, imageLeftMargin, imageBaseLine, null);
+
+        paint.setTextSize(40);
+        canvas.drawText("Panel report" , leftMargin, titleBaseLine, paint);
+
+        paint.setTextSize(15);
+
+        canvas.drawText("Report type: Panel status report", leftMargin,titleBaseLine + 40,paint);
+
+        canvas.drawText("Panel location: " + location, leftMargin,titleBaseLine + 60,paint);
+
+        paint.setTextSize(12);
+
+        canvas.drawText("Date/Time", leftMargin,titleBaseLine + 100,paint);
+        canvas.drawText("Fault(s) found", leftMargin + 170,titleBaseLine + 100,paint);
+        canvas.drawText("Status", leftMargin + 320,titleBaseLine  + 100,paint);
+        canvas.drawLine(leftMargin, titleBaseLine  + 108,leftMargin+450,titleBaseLine+108,paint);
 
         int remain = reportList.size() - pagenumber* ROW_PER_PAGE;
         int n = remain > ROW_PER_PAGE? (pagenumber+1) * ROW_PER_PAGE: reportList.size();
@@ -388,10 +399,10 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         Report report;
         for(int i=(pagenumber * ROW_PER_PAGE),j=0; i<n ; i++,j++) {
             report = reportList.get(i);
-            canvas.drawText(dateFormat.format(report.getDate().getTime()), leftMargin, titleBaseLine + 180 + j*30, paint);
-            canvas.drawText(Integer.toString(report.getFaults()), leftMargin + 200, titleBaseLine + 180 + j*30, paint);
-            canvas.drawText(report.isFaulty() ? "Fault(s) found" : "OK", leftMargin + 330, titleBaseLine + 180 + j*30, paint);
-            canvas.drawLine(leftMargin, titleBaseLine + 190 + j*30, leftMargin + 450, titleBaseLine + 190 + j*30, paint);
+            canvas.drawText(dateFormat.format(report.getDate().getTime()), leftMargin, titleBaseLine + 125 + j*25, paint);
+            canvas.drawText(Integer.toString(report.getFaults()), leftMargin + 200, titleBaseLine + 125 + j*25, paint);
+            canvas.drawText(report.isFaulty() ? "Fault(s) found" : "OK", leftMargin + 330, titleBaseLine + 125 + j*25, paint);
+            canvas.drawLine(leftMargin, titleBaseLine + 133 + j*25, leftMargin + 450, titleBaseLine + 133 + j*25, paint);
         }
 
         pagenumber ++ ;
