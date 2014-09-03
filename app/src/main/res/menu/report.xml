@@ -7,9 +7,14 @@
         android:orderInCategory="100"
         app:showAsAction="never" />
     <item android:id="@+id/action_fetch_report"
-        android:title="Get Report"
+        android:title="Get report"
         android:orderInCategory="101"
         app:showAsAction="ifRoom"/>
+    <item android:id="@+id/action_save_report"
+        android:title="Save report"
+        android:orderInCategory="102"
+        app:showAsAction="always"/>
+
 
 
 </menu>

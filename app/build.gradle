@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.mackwell.nlight"
-        minSdkVersion 13
+        minSdkVersion 19
         targetSdkVersion 19
     }
 
