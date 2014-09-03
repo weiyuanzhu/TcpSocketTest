@@ -40,6 +40,8 @@ public class ReportFaultsActivity extends BaseActivity {
                 new String[] {"loop","device","serial","location","description"},
                 new int[] {R.id.report_fault_loop_textView,R.id.report_fault_device_textView,R.id.report_fault_serial_textView,R.id.report_fault_location_textView,R.id.report_fault_description_textView});
         mListView.setAdapter(mAdapter);
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
@@ -56,10 +58,16 @@ public class ReportFaultsActivity extends BaseActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
+        switch(id)
+        {
+            case R.id.action_settings:
+                return true;
+            case android.R.id.home:
+                finish();
+                return  true;
+            default: return super.onOptionsItemSelected(item);
+
         }
-        return super.onOptionsItemSelected(item);
     }
 
     private List<Map<String,String>> getDataList(){
@@ -91,9 +99,9 @@ public class ReportFaultsActivity extends BaseActivity {
 
 
                 map.put("loop", (address & 0x80)==0? "Loop1" : "Loop2" );
-                map.put("device", Integer.toString(address>192? (address-192) : (address-64)));
+                map.put("device", Integer.toString(address>=192? (address-192) : (address-64)));
                 map.put("serial", Long.toString(serialNumber));
-                map.put("location", "Location");
+                map.put("location", "-");
                 map.put("description", getFailureStatusText(fs));
                 dataList.add(map);
 
