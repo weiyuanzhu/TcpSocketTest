@@ -280,7 +280,7 @@ public class DataParser {
 
             int totalFaults = deviceFaults + report.getLoop1GroupStatus().size() + report.getLoop2GroupStatus().size();
             report.setFaults(totalFaults);
-            report.setFaulty(totalFaults==0);
+            report.setFaulty(totalFaults!=0);
             report.setDate(getDateCalendar(reportData.subList(4,10)));
 
             //add report to report list

@@ -36,7 +36,10 @@ import com.mackwell.nlight.util.GetCmdEnum;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 public class ReportActivity extends BaseActivity implements ReportFragment.OnListItemClickedListener {
@@ -45,10 +48,17 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     private static final String TAG_RECEIVE = "ReportActivity_Receive";
 
     private String ip;
+    private String location;
     private List<Integer> reportRawData;
     private List<Report> reportList;
     private Handler mHandler;
     private ReportFragment fragment;
+
+    //properties for pdf print
+
+    private int pageHeight;
+    private int pageWidth;
+    public int totalpages;
 
 
     @Override
@@ -81,16 +91,23 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         setContentView(R.layout.activity_report);
 
         ip = getIntent().getStringExtra("ip");
+        location = getIntent().getStringExtra("location");
         isDemo = getIntent().getBooleanExtra("demo",true);
         reportRawData = new ArrayList<Integer>();
         reportList = new ArrayList<Report>();
 
+        //init reportList in demo mode
+        if(isDemo) reportList = initReportList();
+
         fragment = ReportFragment.newInstance("arg1","arg2");
+
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.report_container,fragment);
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.commit();
+
+
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -103,10 +120,13 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     @Override
     protected void onStart() {
         super.onStart();
-        if(connection == null){
+        if(connection == null && isConnected && !isDemo){
             connection = new TCPConnection(this,ip);
 
         }
+
+        if(isDemo) fragment.updateList(reportList);
+
     }
 
     @Override
@@ -190,13 +210,47 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
     }
 
+
+    private List<Report> initReportList(){
+
+        List<Report> list = new ArrayList<Report>();
+        Report report = new Report(1, Calendar.getInstance(),true);
+
+        List<List<Integer>> list2 = new ArrayList<List<Integer>>();
+        List<Integer> list3 =  Arrays.asList(new Integer[] {1,130,255,255,255,255});
+        list2.add(list3);
+        report.setFaultyDeviceList(list2);
+
+
+        list.add(report);
+
+        report = new Report(1, Calendar.getInstance(),true);
+
+        list2 = new ArrayList<List<Integer>>();
+        list3 =  Arrays.asList(new Integer[] {2,128,255,255,255,255});
+        list2.add(list3);
+        report.setFaultyDeviceList(list2);
+
+
+        list.add(report);
+
+
+
+        return list;
+    }
+
     public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
 
         Context context;
+
+        private String outputName;
+
         private int pageHeight;
         private int pageWidth;
         public PdfDocument myPdfDocument;
         public int totalpages = 1;
+
+
 
         public MyPrintDocumentAdapter(Context context) {
             this.context = context;
@@ -210,16 +264,26 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
             myPdfDocument = new PrintedPdfDocument(context, newAttributes);
 
+            outputName = getResources().getString(R.string.app_name) + ".pdf";
+
             pageHeight = newAttributes.getMediaSize().getHeightMils()/1000 * 72;
+            ReportActivity.this.pageHeight = pageHeight;
+
             pageWidth = newAttributes.getMediaSize().getWidthMils()/1000 * 72;
+            ReportActivity.this.pageWidth = pageWidth;
 
             if (cancellationSignal.isCanceled()) {
                 layoutResultCallback.onLayoutCancelled();
                 return;
             }
 
+            //calculate total page number
+            totalpages = ((reportList.size() * 40) / (pageHeight-200)) + 1;
+            ReportActivity.this.totalpages = totalpages;
+
+
             if (totalpages > 0) {
-                PrintDocumentInfo.Builder builder = new PrintDocumentInfo.Builder("print_output.pdf")
+                PrintDocumentInfo.Builder builder = new PrintDocumentInfo.Builder(outputName)
                         .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
                         .setPageCount(totalpages);
 
@@ -284,9 +348,12 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
     private void drawPage(PdfDocument.Page page, int pagenumber)
     {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
         Canvas canvas = page.getCanvas();
 
-        pagenumber ++ ;
+
 
         int titleBaseLine = 72;
         int leftMargin = 54;
@@ -303,42 +370,31 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
         canvas.drawText("Report type: Panel status report", leftMargin,titleBaseLine + 50,paint);
 
-        canvas.drawText("Panel location: Test Unit", leftMargin,titleBaseLine + 80,paint);
+        canvas.drawText("Panel location: " + location, leftMargin,titleBaseLine + 80,paint);
+
+
 
         canvas.drawText("Date/Time", leftMargin,titleBaseLine + 150,paint);
-        canvas.drawText("Fault(s) found", leftMargin + 200,titleBaseLine + 150,paint);
-        canvas.drawText("Status", leftMargin + 400,titleBaseLine  + 150,paint);
-        canvas.drawLine(leftMargin, titleBaseLine  + 160,leftMargin+500,titleBaseLine+160,paint);
+        canvas.drawText("Fault(s) found", leftMargin + 150,titleBaseLine + 150,paint);
+        canvas.drawText("Status", leftMargin + 300,titleBaseLine  + 150,paint);
+        canvas.drawLine(leftMargin, titleBaseLine  + 160,leftMargin+450,titleBaseLine+160,paint);
 
-        canvas.drawText("01 Aug 2014 00:00:22", leftMargin,titleBaseLine + 180,paint);
-        canvas.drawText("2", leftMargin + 250,titleBaseLine + 180,paint);
-        canvas.drawText("Fault(s) found", leftMargin + 400,titleBaseLine  + 180,paint);
-        canvas.drawLine(leftMargin, titleBaseLine  + 190,leftMargin+500,titleBaseLine+190,paint);
+        int remain = reportList.size() - pagenumber*18;
+        int n = remain > 18? (pagenumber+1) * 18: reportList.size();
 
-        canvas.drawText("27 Jul 2014 13:47:22", leftMargin,titleBaseLine + 210,paint);
-        canvas.drawText("2", leftMargin + 250,titleBaseLine + 210,paint);
-        canvas.drawText("Fault(s) found", leftMargin + 400,titleBaseLine  + 210,paint);
-        canvas.drawLine(leftMargin, titleBaseLine  + 220,leftMargin+500,titleBaseLine+220,paint);
+        Report report;
+        for(int i=(pagenumber * 18),j=0; i<n ; i++,j++) {
+            report = reportList.get(i);
+            canvas.drawText(dateFormat.format(report.getDate().getTime()), leftMargin, titleBaseLine + 180 + j*30, paint);
+            canvas.drawText(Integer.toString(report.getFaults()), leftMargin + 200, titleBaseLine + 180 + j*30, paint);
+            canvas.drawText(report.isFaulty() ? "Fault(s) found" : "OK", leftMargin + 330, titleBaseLine + 180 + j*30, paint);
+            canvas.drawLine(leftMargin, titleBaseLine + 190 + j*30, leftMargin + 450, titleBaseLine + 190 + j*30, paint);
+        }
 
-        canvas.drawText("27 Jul 2014 13:47:22", leftMargin,titleBaseLine + 240,paint);
-        canvas.drawText("2", leftMargin + 250,titleBaseLine + 240,paint);
-        canvas.drawText("Fault(s) found", leftMargin + 400,titleBaseLine  + 240,paint);
-        canvas.drawLine(leftMargin, titleBaseLine  + 250,leftMargin+500,titleBaseLine+250,paint);
+        pagenumber ++ ;
 
-        canvas.drawText("02 Jul 2014 10:02:22", leftMargin,titleBaseLine + 270,paint);
-        canvas.drawText("1", leftMargin + 250,titleBaseLine + 270,paint);
-        canvas.drawText("Fault(s) found", leftMargin + 400,titleBaseLine  + 270,paint);
-        canvas.drawLine(leftMargin, titleBaseLine  + 280,leftMargin+500,titleBaseLine+280,paint);
 
-        canvas.drawText("01 Jul 2014 00:00:22", leftMargin,titleBaseLine + 300,paint);
-        canvas.drawText("1", leftMargin + 250,titleBaseLine + 300,paint);
-        canvas.drawText("Fault(s) found", leftMargin + 400,titleBaseLine  + 300,paint);
-        canvas.drawLine(leftMargin, titleBaseLine  + 310,leftMargin+500,titleBaseLine+310,paint);
 
-        canvas.drawText("26 Jun 2014 17:17:22", leftMargin,titleBaseLine + 330,paint);
-        canvas.drawText("0", leftMargin + 250,titleBaseLine + 330,paint);
-        canvas.drawText("OK", leftMargin + 400,titleBaseLine  + 330,paint);
-        canvas.drawLine(leftMargin, titleBaseLine  + 340,leftMargin+500,titleBaseLine+340,paint);
 
         /*if (pagenumber % 2 == 0) {
             paint.setColor(Color.RED);

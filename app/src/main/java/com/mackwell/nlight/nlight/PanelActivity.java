@@ -411,6 +411,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
                 if (currentDisplayingPanel != null) {
                     Intent intent = new Intent(this, ReportActivity.class);
                     intent.putExtra("ip",currentDisplayingPanel.getIp());
+                    intent.putExtra("location",currentDisplayingPanel.getPanelLocation());
                     intent.putExtra("demo",isDemo);
                     startActivity(intent);
                 } else {

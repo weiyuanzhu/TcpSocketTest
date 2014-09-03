@@ -159,7 +159,7 @@ public class ReportFragment extends Fragment {
                 map = new HashMap<String, String>();
                 map.put("date", format1.format(report.getDate().getTime()));
                 map.put("faults", Integer.toString(report.getFaults()));
-                map.put("status", report.isFaulty() ? "OK" : "Fault(s) found");
+                map.put("status", report.isFaulty() ? "Fault(s) found" : "OK");
                 dataList.add(map);
 
             }
