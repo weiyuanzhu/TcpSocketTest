@@ -6,7 +6,7 @@
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/action_ft"
-         android:icon="@drawable/ft_gray"
+         android:icon="@drawable/ft"
        />
      
      <item

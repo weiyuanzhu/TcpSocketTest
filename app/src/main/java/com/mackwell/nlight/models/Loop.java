@@ -79,7 +79,7 @@ public class Loop  implements Parcelable{
 			deviceList.add(d);
 			/*if(d.getFailureStatus()!=0) 
 			{
-				setStatus(1);
+				setFaulty(1);
 				
 			}*/
 			System.out.println(d.toString());

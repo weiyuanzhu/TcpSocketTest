@@ -1,6 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" 
+    android:layout_height="fill_parent"
     android:baselineAligned="false"
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
@@ -11,43 +12,8 @@
         android:tag="deviceListFragment"
         android:id="@+id/device_list_fragment"
         android:layout_width="0dip"
-        android:layout_height="match_parent" 
-        android:layout_weight="1"/>
-    
-    <FrameLayout
-        android:id="@+id/device_detail_container"
-        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="2"
-        >
-
-        
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-        <ImageView
-            android:id="@+id/deviceInfo_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:contentDescription="@string/title_activity_panel_info"
-            android:src="@drawable/mackwell_logo" />
-
-        <TextView
-            android:id="@+id/device_faultyNo_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/deviceInfo_image"
-            android:layout_centerHorizontal="true"
-            android:gravity="center_vertical"
-            android:text="Faulty device no: "
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        </RelativeLayout>
-
-    </FrameLayout>
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_device_list" />
 
 </LinearLayout>

@@ -39,7 +39,7 @@ public class BaseActivity extends Activity implements CallBack{
     public static boolean refreshDisplay = true;
 
 	@SuppressWarnings("unused")
-	private TCPConnection connection;
+	protected TCPConnection connection;
 
     //Android app shared preference object
     protected SharedPreferences sharedPreferences = null;
@@ -77,6 +77,18 @@ public class BaseActivity extends Activity implements CallBack{
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if(connection!=null){
+            connection.closeConnection();
+            connection = null;
+        }
+
+
     }
 
     @Override

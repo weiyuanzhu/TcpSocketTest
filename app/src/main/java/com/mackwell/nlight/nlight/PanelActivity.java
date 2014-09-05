@@ -7,10 +7,13 @@ import java.util.List;
 import java.util.Map;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -41,7 +44,13 @@ import com.mackwell.nlight.util.SetCmdEnum;
  *
  */
 public class PanelActivity extends BaseActivity implements OnPanelListItemClickedCallBack, TCPConnection.CallBack, PopupMenu.OnMenuItemClickListener, NoticeDialogListener{
-	
+
+    private static final String TAG = "PanelActivity";
+
+    private static final int REQUEST_PANEL = 1;
+
+    private boolean splitScreen = false;
+
 	private List<Panel> panelList = null;
 	private Map<String,Panel> panelMap = null;
 	private Map<String,TCPConnection> ip_connection_map = null;
@@ -164,7 +173,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 					if (input.equals(currentDisplayingPanel.getPasscode()))
 					{
 
-						panelInfoFragmentTransation(currentPanelPosition);
+						panelInfoFragmentTransaction(currentPanelPosition);
 						currentDisplayingPanel.setEngineerMode(true);
 					}
 					else{
@@ -204,29 +213,33 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		
 		System.out.println(location + " " +  ip + "positon: " + index);
-		
-		currentDisplayingPanel = panelMap.get(ip);
-		
-		previousPanelPosition = currentPanelPosition==-1? -1 : currentPanelPosition;
-		currentPanelPosition = index;
-		
-		if(currentDisplayingPanel.isEngineerMode()){
-			panelInfoFragmentTransation(index);
-		}else{
-			updatePanelInfoFragment();
-			
-		}
-		
-		int faults = currentDisplayingPanel.getFaultDeviceNo();
-		if(faults>0){
-			faultTextView.setText(getResources().getString(R.string.text_panelstatus_fault) + faults );
-		}
-		else{
-			faultTextView.setText(R.string.text_panelstatus_ok);
-		}
-		
-		
-		//test for pass code dialog
+
+        // In split screen mode, show the detail view in this activity by
+        // adding or replacing the detail fragment using a
+        // fragment transaction.
+
+        if(splitScreen) {
+            currentDisplayingPanel = panelMap.get(ip);
+
+            previousPanelPosition = currentPanelPosition == -1 ? -1 : currentPanelPosition;
+            currentPanelPosition = index;
+
+            if (currentDisplayingPanel.isEngineerMode()) {
+                panelInfoFragmentTransaction(index);
+            } else {
+                updatePanelInfoFragment();
+
+            }
+
+            int faults = currentDisplayingPanel.getFaultDeviceNo();
+            if (faults > 0) {
+                faultTextView.setText(getResources().getString(R.string.text_panelstatus_fault) + faults);
+            } else {
+                faultTextView.setText(R.string.text_panelstatus_ok);
+            }
+
+
+            //test for pass code dialog
 		/*if(isDemo && !passcodeEntered.equals(currentDisplayingPanel.getPasscode())){
 			InputDialogFragment dialog = new InputDialogFragment();
 			
@@ -239,8 +252,18 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			
 			
 		}*/
-		
-		updateImage();
+
+            updateImage();
+        }
+        else{
+            //navigate to panelInfoActivity;
+            currentDisplayingPanel = panelMap.get(ip);
+
+            Intent intent = new Intent(this,PanelInfoActivity.class);
+            intent.putExtra("panel",currentDisplayingPanel);
+            startActivity(intent);
+
+        }
 		
 	}
 	
@@ -251,108 +274,95 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	
 	//activity life circle
 
-	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_panel);
-		
-		
-
-		
-	
-		//update connection flags
-		checkConnectivity();
-
-		//get panelList from intent
-		Intent intent = getIntent();
-		panelList = intent.getParcelableArrayListExtra("panelList");
-		isDemo = intent.getBooleanExtra(LoadingScreenActivity.DEMO_MODE, true);
-		
-		//check panelList
-		if(panelList==null){
-					//create demo panels if no panel list is passed in
-			createDummyPanels();
-						
-		}
-				
-		//initial panel related fields
-		initialFields();
-		
-		// save panel name to shared preference
-		savePanelToPreference();
-		
-		
-		//set panel fragments
-		
-		panelInfoImage = (ImageView) findViewById(R.id.panelInfo_image);
-		panelContact = (TextView)findViewById( R.id.panelInfo_contact_textView);
-		contact_engineer = (Button) findViewById(R.id.panel_contatc_engineer_btn);
-		engineer_mode = (Button) findViewById(R.id.panel_engineer_mode_btn);
-		faultTextView = (TextView) findViewById(R.id.panel_faults_textView);
-		
-		
-		
-		
-		panelListFragment = (PanelListFragment) getFragmentManager().findFragmentById(R.id.fragment_panel_list); 
-				
-		//pass isDemo and isConnected to panelListFragment
-		panelListFragment.setDemo(isDemo);
-		panelListFragment.setConnected(isConnected);
-		
-		//set home bar back navigation to display
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-
-
-
-
-
-
-
-
-
-
-
-
-        //set title with demo
-		
-		getActionBar().setTitle(isDemo? R.string.title_activity_panel_demo: R.string.title_activity_panel_live);
-		
-		getActionBar().setSubtitle(R.string.subtitle_activity_panel);
-		
-		
-		
-		System.out.println("DeomoMode--------> " + isDemo);
-		
-		
-		
-		
-		System.out.println("All panel get: " + panelList.size());
-		
-		
-		//if panelList exist, init FragmentList and pass panelList to PanelListFragment
-		panelListFragment.setPanelList(panelList);
-		
-		
-
-		
-	}
-
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.panel, menu);
 		return true;
 	}
-	
+
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_panel);
+
+
+        // The detail container view will be present only in the
+        // large-screen landscape layouts (res/values-w720dp).
+        // If this view is present, then the
+        // activity should be in split screen mode.
+
+        if(findViewById(R.id.panel_detail_container)!=null)
+        {
+            //flag true for split screen
+            splitScreen = true;
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
+
+            //set panel fragments
+            panelInfoImage = (ImageView) findViewById(R.id.panelInfo_image);
+            panelContact = (TextView)findViewById( R.id.panelInfo_contact_textView);
+            contact_engineer = (Button) findViewById(R.id.panel_contatc_engineer_btn);
+            engineer_mode = (Button) findViewById(R.id.panel_engineer_mode_btn);
+            faultTextView = (TextView) findViewById(R.id.panel_faults_textView);
+
+        }
+
+
+
+        //update connection flags
+        checkConnectivity();
+
+        //get panelList from intent
+        Intent intent = getIntent();
+        panelList = intent.getParcelableArrayListExtra("panelList");
+        isDemo = intent.getBooleanExtra(LoadingScreenActivity.DEMO_MODE, true);
+
+        //check panelList
+        if(panelList==null){
+            //create demo panels if no panel list is passed in
+            createDummyPanels();
+
+        }
+
+        //initial panel related fields
+        initialFields();
+
+        // save panel name to shared preference
+        savePanelToPreference();
+
+        //set home bar back navigation to display
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        panelListFragment = (PanelListFragment) getFragmentManager().findFragmentById(R.id.fragment_panel_list);
+
+        //pass isDemo and isConnected to panelListFragment
+        panelListFragment.setDemo(isDemo);
+        panelListFragment.setConnected(isConnected);
+
+
+        //set title with demo
+
+        getActionBar().setTitle(isDemo? R.string.title_activity_panel_demo: R.string.title_activity_panel_live);
+
+        getActionBar().setSubtitle(R.string.subtitle_activity_panel);
+
+        System.out.println("DeomoMode--------> " + isDemo);
+
+        System.out.println("All panel get: " + panelList.size());
+
+
+        //if panelList exist, init FragmentList and pass panelList to PanelListFragment
+        panelListFragment.setPanelList(panelList);
+    }
+
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    // Handle item selection
 	    switch (item.getItemId()) {
 	        case R.id.action_about:
-	        	
 	        	Toast.makeText(this, getAppVersion(), Toast.LENGTH_SHORT).show();
-	        	
 	            return true;
 	        case R.id.action_settings:
 	            Intent intent = new Intent(this,SettingsActivity.class);
@@ -362,13 +372,15 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	        	Toast.makeText(this, R.string.toast_refresh_panelStatus, Toast.LENGTH_LONG).show();
 	        	panelListFragment.refreshStatus(isDemo, isConnected);
 	        	return true;
-	    
 	        case R.id.action_show_devices:
-	        	View menuItemView = findViewById(R.id.action_show_devices);
-	        	showDropDownMenu(menuItemView);
-	        	return true;
+                if (currentDisplayingPanel != null) {
+                    View menuItemView = findViewById(R.id.action_show_devices);
+                    showDropDownMenu(menuItemView);
+                } else {
+                    Toast.makeText(this,getResources().getString(R.string.toast_select_panel),Toast.LENGTH_SHORT).show();
+                }
+                return true;
             case android.R.id.home:
-
                 intent = NavUtils.getParentActivityIntent(this);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 NavUtils.navigateUpTo(this, intent);
@@ -387,17 +399,31 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		{
 			case R.id.action_show_loops:
 				System.out.println("Show Loops");
-				if(currentDisplayingPanel != null && currentDisplayingPanel.isEngineerMode()){
-					showDevices(currentDisplayingPanel);
-				}
+                if (currentDisplayingPanel != null && currentDisplayingPanel.isEngineerMode()) {
+                    showDevices(currentDisplayingPanel);
+                } else {
+                    Toast.makeText(this,getResources().getString(R.string.toast_enter_engineer_mode),Toast.LENGTH_SHORT).show();
+                }
+
 				return true;
-			/*case R.id.action_show_faulty_devices:
-				System.out.println("Show Faulty Devices");
-				if(currentDisplayingPanel != null){
-					panelWithFaulyDevices = Panel.getPanelWithFaulty(currentDisplayingPanel);
-					showDevices(panelWithFaulyDevices);
-				}
-				return true;*/
+			case R.id.action_show_report:
+				Log.i(TAG,"Show report");
+                if (currentDisplayingPanel != null) {
+                    Intent intent = new Intent(this, ReportActivity.class);
+                    intent.putExtra("ip",currentDisplayingPanel.getIp());
+                    intent.putExtra("location",currentDisplayingPanel.getPanelLocation());
+                    intent.putExtra("demo",isDemo);
+                    startActivity(intent);
+                } else {
+                    ReportFragment fragment = ReportFragment.newInstance("arg1","arg2");
+
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.panel_detail_container,fragment);
+                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                    fragmentTransaction.commit();
+                }
+
+				return true;
         	
 			default:
 	            return false;
@@ -405,12 +431,35 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		}
 	}
 
-	@Override
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Panel panel = intent.getParcelableExtra("panel");
+        String ip = intent.getStringExtra("ip");
+
+        currentDisplayingPanel = panel;
+        panelMap.put(ip, panel);
+    }
+
+    @Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		
-		System.out.println("-----------PanelActivity onActivityResult------------");
-		super.onActivityResult(requestCode, resultCode, data);
+
+        super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("-----------PanelActivity onActivityResult------------");
+
+        //result from device activity
+        if (requestCode==REQUEST_PANEL && resultCode == Activity.RESULT_OK) {
+            Panel panel = data.getParcelableExtra("panel");
+            String ip = data.getStringExtra("ip");
+
+
+            currentDisplayingPanel = panel;
+            panelMap.put(ip, panel);
+
+        }
 	}
+
 
     @Override
     protected void onResume() {
@@ -422,13 +471,15 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         Uri uri = Uri.parse(imageLocation);
 
 
-
-        if(!imageLocation.equals("default image"))  {
+//      when split screen and no panel selected and result has a valid file path
+        if(!imageLocation.equals("default image") && splitScreen && currentPanelPosition==-1)  {
             panelInfoImage.setImageURI(uri);
         }
 
 
     }
+
+
 
     @Override
 	protected void onStop() {
@@ -441,10 +492,11 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 				if(connection!=null){
 					connection.setListening(false);
 					connection.closeConnection();
-					connection = null;
-				}
+                }
 			}
 		}
+
+
 		super.onStop();
 	}
 
@@ -632,8 +684,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			intent.putExtra("loop1",panel.getLoop1());
 			intent.putExtra("loop2",panel.getLoop2());
 			intent.putExtra(LoadingScreenActivity.DEMO_MODE, isDemo);
-			startActivity(intent);
-			
+			startActivityForResult(intent,REQUEST_PANEL);
+//			startActivity(intent);
 		}
 		
 	}
@@ -649,6 +701,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 				SharedPreferences.Editor editor = sp.edit();
 				editor.putString(panel.getIp(), panel.getPanelLocation());
 				editor.commit();
+
 			}
 			
 		};
@@ -686,7 +739,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 	}
 	
-	private void panelInfoFragmentTransation(int index){
+	private void panelInfoFragmentTransaction(int index){
 		panelInfoImage.setVisibility(View.INVISIBLE);
 		panelContact.setVisibility(View.INVISIBLE);
 		faultTextView.setVisibility(View.INVISIBLE);
@@ -706,9 +759,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			
 			fragmentList.set(index, panelFragment);
 		}
-		
-		
-		
+
 		
 		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 		
@@ -719,7 +770,6 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		contact_engineer.setVisibility(View.INVISIBLE);
 		engineer_mode.setVisibility(View.INVISIBLE);
-
 
 	}
 	
@@ -745,8 +795,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			
 			contact_engineer.setVisibility(View.VISIBLE);
 			engineer_mode.setVisibility(View.VISIBLE);
-		
-		
+
 	}
 	
 	
@@ -763,12 +812,10 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			default: break;
 		}
 		
-		
 	}
 	
 	public void contactEngineerBtn(View view){
-		
-		
+
 		if(currentDisplayingPanel!=null && !currentDisplayingPanel.isEngineerMode()){
 			panelInfoImage.setVisibility(panelInfoImage.isShown()? 4:0);
 			faultTextView.setVisibility(faultTextView.isShown()? 4:0);
@@ -783,20 +830,14 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	 * @param view
 	 */
 	public void engineerModeBtn(View view){
-		
-		
+
 		if(currentDisplayingPanel!=null && !currentDisplayingPanel.isEngineerMode()){
 			InputDialogFragment dialog = new InputDialogFragment();
 		
 			//dialog.setHint("Enter passcode");
 			dialog.setType(InputDialogFragment.ENTER_PASSCODE);
 			dialog.show(getFragmentManager(), "inputDialog");
-			
-			
-		} 
-		
-		
-		
+		}
 	}
 	
 	/**
@@ -806,10 +847,10 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	private String getContactDetails(){
 		StringBuilder sb = new StringBuilder();
 		sb.append(getResources().getString(R.string.text_contat_engineer) + "\n");
-		sb.append(getResources().getString(R.string.text_control_panel_location) + currentDisplayingPanel.getPanelLocation() + "\n");
-		sb.append(getResources().getString(R.string.text_contact_name) + currentDisplayingPanel.getContact()+ "\n");
-		sb.append(getResources().getString(R.string.text_contact_tel) + currentDisplayingPanel.getTel() + "\n");
-		sb.append(getResources().getString(R.string.text_contact_mobile) + currentDisplayingPanel.getMobile());
+		sb.append(getResources().getString(R.string.text_control_panel_location)+ "        " + currentDisplayingPanel.getPanelLocation() + "\n");
+		sb.append(getResources().getString(R.string.text_contact_name) + "                      " + currentDisplayingPanel.getContact()+ "\n");
+		sb.append(getResources().getString(R.string.text_contact_tel) + "                               " + currentDisplayingPanel.getTel() + "\n");
+		sb.append(getResources().getString(R.string.text_contact_mobile) + "                                   " + currentDisplayingPanel.getMobile());
 		
 		return sb.toString();
 	}

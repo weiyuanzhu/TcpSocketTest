@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.mackwell.nlight"
-        minSdkVersion 13
+        minSdkVersion 19
         targetSdkVersion 19
     }
 
@@ -20,4 +20,5 @@ android {
 
 dependencies {
     compile 'com.android.support:support-v4:20.0.0'
+    compile 'com.android.support:appcompat-v7:20.0.0'
 }

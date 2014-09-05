@@ -3,7 +3,7 @@
 
 	<string name="app_version">
 	Version: 
-	<xliff:g id="promotion_code">beta 0.7.2</xliff:g>
+	<xliff:g id="promotion_code">beta 0.8.0</xliff:g>
 	</string>
 	
 	<string name="action_settings">Paramètres</string> 
@@ -23,7 +23,7 @@
 	<string name="overall">GetOverallStatus</string> 
 	<string name="title_activity_loading_screen">N-Light</string> 
 	<string name="location">Location</string> 
-	<string name="status">status</string> 
+	<string name="faulty">faulty</string>
 	<string name="title_activity_panel_info">PanelInfo</string> 
 	<string name="title_activity_device_list">DeviceList</string> 
 	<string name="title_activity_device_info">DeviceInfoActivity</string> 
@@ -193,7 +193,9 @@
     <string name="pref_subTitle_customIcon">"Emplacement de l'image: " <xliff:g>%1$s</xliff:g> </string>
     <string name="pref_icon_default">image par défaut</string>
 
-	
-	
-	
+    <string name="toast_select_panel">"S'il vous plaît sélectionner un panneau"</string>
+    <string name="toast_enter_engineer_mode">"S'il vous plaît entrer en mode ingénieur"</string>
+    <string name="action_show_report">"Voir rapport du groupe spécial</string>
+
+
 </resources>

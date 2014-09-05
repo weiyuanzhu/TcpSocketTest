@@ -1,7 +1,5 @@
 package com.mackwell.nlight.nlight;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,18 +7,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
-import android.view.ActionMode;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -47,7 +44,8 @@ import com.mackwell.nlight.util.ToggleCmdEnum;
 
 public class DeviceActivity extends BaseActivity implements OnDevicdListFragmentListener,TCPConnection.CallBack, 
 															NoticeDialogListener, SearchView.OnQueryTextListener,PopupMenu.OnMenuItemClickListener{
-	
+	private static final String TAG= "DeviceActivity";
+
 	//Comparators
 	public static final Comparator<Device> SORT_BY_FAULTY = new Comparator<Device>(){
 		@Override
@@ -92,7 +90,8 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	
 	//Fields and Properties
 	
-	
+	private boolean splitScreen = false;
+
 	private boolean autoRefresh = false;
 	private boolean autoRefreshAllDevices = false;
 	private boolean autoRefreshSelectedDevice = false;
@@ -109,10 +108,8 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	
 	private ImageView imageView = null;
 	private TextView messageTextView = null;
-	
-	private TCPConnection connection = null;
-	
-	private int currentDeviceAddress = 0;
+
+	private int currentDevicAddress = 0;
 	private int currentGroupPosition = 0;
 	
 	
@@ -204,7 +201,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		//update both device fragment and device list display
 		deviceInfoFragment.updateLocation();
-		deviceListFragment.updateLocation(currentGroupPosition,currentDeviceAddress, input);
+		deviceListFragment.updateLocation(currentGroupPosition, currentDevicAddress, input);
 		
 		//send command to panel if not in demo mode
 		
@@ -212,7 +209,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 			List<Integer> buffer = new ArrayList<Integer>();
 		
 		
-			buffer.add(currentDeviceAddress);		
+			buffer.add(currentDevicAddress);
 			buffer.addAll(DataParser.convertString(input));
 			System.out.println(buffer);
 			List<char[] > commandList = SetCmdEnum.SET_DEVICE_NAME.set(buffer);
@@ -234,33 +231,39 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	@Override
 	public void onDeviceItemClicked(int groupPosition, int childPosition) {
 		
-		currentDeviceAddress = childPosition;
+		currentDevicAddress = childPosition;
 		currentGroupPosition = groupPosition;
 		
-		System.out.println("current device:-------------->" + currentDeviceAddress);
-		
-		imageView.setVisibility(View.INVISIBLE);
-		messageTextView.setVisibility(View.INVISIBLE);
-		
+		System.out.println("current device:-------------->" + currentDevicAddress);
 		System.out.println("groupPositon: " + groupPosition + " childPosition: " + childPosition);
 		
 		if(groupPosition==0)
 		{
 			currentSelectedDevice = panel.getLoop1().getDevice(childPosition);
-			deviceInfoFragment = DeviceInfoFragment.newInstance(currentSelectedDevice, isAutoRefreshAllDevices());
+			if(splitScreen) deviceInfoFragment = DeviceInfoFragment.newInstance(currentSelectedDevice, isAutoRefreshAllDevices());
 		}
 		else {
 			currentSelectedDevice = panel.getLoop2().getDevice(childPosition);
-			deviceInfoFragment = DeviceInfoFragment.newInstance(currentSelectedDevice,isAutoRefreshAllDevices());
+			if(splitScreen) deviceInfoFragment = DeviceInfoFragment.newInstance(currentSelectedDevice,isAutoRefreshAllDevices());
 		}
-		
-		
-		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-		
-		fragmentTransaction.replace(R.id.device_detail_container, deviceInfoFragment,"device_detail_fragment");
-		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-		fragmentTransaction.commit();
-		
+
+//      if in splitScreen Mode, then set fragment transaction
+        if (splitScreen) {
+            imageView.setVisibility(View.INVISIBLE);
+            messageTextView.setVisibility(View.INVISIBLE);
+
+            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+
+            fragmentTransaction.replace(R.id.device_detail_container, deviceInfoFragment,"device_detail_fragment");
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.commit();
+        }
+        else{
+            Intent intent = new Intent(this,DeviceInfoActivity.class);
+            intent.putExtra("device",currentSelectedDevice);
+            startActivity(intent);
+        }
+
 	}
 	
 	/* (non-Javadoc)when device list entering multi-selection mode
@@ -304,25 +307,50 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_device);
-		
+
+        Log.i(TAG,"onCreate()");
+
+        Intent intent = getIntent();
+
+        isDemo = intent.getBooleanExtra(LoadingScreenActivity.DEMO_MODE, true);
+
+        System.out.println("Demo: "+ isDemo);
+
+        //get panel from intent
+        this.panel = intent.getParcelableExtra("panel");
+
+        //check if current screen layout needs a split screen
+        if (findViewById(R.id.device_detail_container)!=null)
+        {
+            //flag split screen boolean
+            splitScreen = true;
+
+            //set screen orientation
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
+
+            this.imageView = (ImageView) findViewById(R.id.deviceInfo_image);
+            this.messageTextView = (TextView) findViewById(R.id.deviceInfo_faultyNo_text);
+
+            messageTextView.setText(getResources().getString(R.string.text_panel_faulty_message, panel.getFaultDeviceNo()));
+
+
+            if(panel.getOverAllStatus()!=0)
+            {
+                imageView.setImageResource(R.drawable.redcross);
+            }
+            else imageView.setImageResource(R.drawable.greentick);
+        }
+
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		mHandler = new Handler();
-		
+
+        //check connection
 		checkConnectivity();
-		Intent intent = getIntent();
+        System.out.println("Connection: " + isConnected);
 
-
-		isDemo = intent.getBooleanExtra(LoadingScreenActivity.DEMO_MODE, true);
-		System.out.println("Connecton: " + isConnected);
-		System.out.println("Demo: "+ isDemo);
 		
-		//get panel from intent
-		
-		
-		this.panel = intent.getParcelableExtra("panel");
-		
-		//set action bar
+		//set action bar navigate back
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		//set title with mode
@@ -331,18 +359,10 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		getActionBar().setTitle(title);
 		getActionBar().setSubtitle(R.string.subtitle_activity_device);
 		
-		if(!isDemo) this.connection = new TCPConnection(this,panel.getIp());
+		if(isConnected && !isDemo) connection = new TCPConnection(this,panel.getIp());
 		
-		this.imageView = (ImageView) findViewById(R.id.deviceInfo_image);
-		this.messageTextView = (TextView) findViewById(R.id.device_faultyNo_text);
-		messageTextView.setText(getResources().getString(R.string.text_panel_faulty_message, panel.getFaultDeviceNo()));
-		
-		
-		if(panel.getOverAllStatus()!=0)
-		{
-			imageView.setImageResource(R.drawable.redcross);		
-		}
-		else imageView.setImageResource(R.drawable.greentick);
+
+
 		
 		deviceListFragment = (DeviceListFragment) getFragmentManager().findFragmentById(R.id.device_list_fragment);
 		deviceListFragment.setLoop1(panel.getLoop1());
@@ -352,7 +372,13 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		//start auto refresh
 		mHandler.post(auroRefreshAllDevices);
 		mHandler.postDelayed(autoRefreshCurrentDevice,TimeUnit.SECONDS.toMillis(1));
-		
+
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        if(deviceInfoFragment != null && splitScreen){
+            fragmentTransaction.remove(deviceInfoFragment);
+            fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+            fragmentTransaction.commit();
+        }
 	}
 	
 	
@@ -396,8 +422,12 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	    switch (item.getItemId()) {
 	    	case android.R.id.home:
 	    		Intent intent = NavUtils.getParentActivityIntent(this);
-	    		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	    		NavUtils.navigateUpTo(this, intent);
+                intent.putExtra("ip",panel.getIp());
+                intent.putExtra("panel",panel);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//	    		NavUtils.navigateUpTo(this, intent);
+                setResult(Activity.RESULT_OK,intent);
+                finish();
 	    		return true;
             case R.id.device_select_all_faulty:
                 deviceListFragment.startActionMode(item.getItemId());
@@ -474,11 +504,35 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
     @Override
     protected void onResume() {
         super.onResume();
+        Log.i("DeviceActivity","onResume()");
+        if(deviceInfoFragment !=null){
+            messageTextView.setVisibility(View.INVISIBLE);
+            imageView.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt("GroupPosition",currentGroupPosition);
+        outState.putInt("DevicePosition", currentDevicAddress);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onStop() {
+
+
+
+        super.onStop();
 
     }
 
     @Override
 	protected void onDestroy() {
+
+        currentSelectedDevice = null;
+
 		if(connection!=null){
 			connection.closeConnection();
 			connection = null;
@@ -585,45 +639,44 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		//set currentSelectedDevcict to null to prevent fragment error 
 //		(getResources() can not be called when fragment is not attached)
 		currentSelectedDevice = null;
-		
-		//remove DeviceInfo Fragment
-		if(deviceInfoFragment != null){
-			fragmentTransaction.remove(deviceInfoFragment);
-			fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-			fragmentTransaction.commit();
-		}
-		
-		imageView.setVisibility(View.VISIBLE);
-		messageTextView.setVisibility(View.VISIBLE);
-		
-		
-		//reset image according to loop faulty status
-		switch(groupPosition)
-		{
-			case 0: 
-				messageTextView.setText(getResources().getString(R.string.text_loop_faulty_message,"Loop1",panel.getLoop1().getFaultyDevicesNo()));
-				if(panel.getLoop1().getFaultyDevicesNo()!=0)
-				{
-					imageView.setImageResource(R.drawable.redcross);		
-				}
-				else imageView.setImageResource(R.drawable.greentick);
-				break;
-			case 1: 
-				
-				messageTextView.setText(getResources().getString(R.string.text_loop_faulty_message,"Loop2",panel.getLoop2().getFaultyDevicesNo()));
-				if(panel.getLoop2().getFaultyDevicesNo()!=0)
-					
-				{
-					imageView.setImageResource(R.drawable.redcross);		
-				}
-				else imageView.setImageResource(R.drawable.greentick);
-				break;
-				
-			default: 
-				break;
-		
-		
-		}
+
+        if(splitScreen) {
+
+            //remove DeviceInfo Fragment
+            if (deviceInfoFragment != null) {
+                fragmentTransaction.remove(deviceInfoFragment);
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                fragmentTransaction.commit();
+            }
+
+            imageView.setVisibility(View.VISIBLE);
+            messageTextView.setVisibility(View.VISIBLE);
+
+
+            //reset image according to loop faulty status
+            switch (groupPosition) {
+                case 0:
+                    messageTextView.setText(getResources().getString(R.string.text_loop_faulty_message, "Loop1", panel.getLoop1().getFaultyDevicesNo()));
+                    if (panel.getLoop1().getFaultyDevicesNo() != 0) {
+                        imageView.setImageResource(R.drawable.redcross);
+                    } else imageView.setImageResource(R.drawable.greentick);
+                    break;
+                case 1:
+
+                    messageTextView.setText(getResources().getString(R.string.text_loop_faulty_message, "Loop2", panel.getLoop2().getFaultyDevicesNo()));
+                    if (panel.getLoop2().getFaultyDevicesNo() != 0)
+
+                    {
+                        imageView.setImageResource(R.drawable.redcross);
+                    } else imageView.setImageResource(R.drawable.greentick);
+                    break;
+
+                default:
+                    break;
+
+
+            }
+        }
 		
 	}
 	
@@ -758,7 +811,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		@Override
 		public void run() {
 			
-			if(currentSelectedDevice != null){
+			if(currentSelectedDevice != null && splitScreen){
 				deviceInfoFragment.updateDevice(currentSelectedDevice, isAutoRefresh());
 			}
 			

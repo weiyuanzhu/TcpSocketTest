@@ -10,6 +10,7 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ public class PanelInfoFragment extends Fragment implements TCPConnection.CallBac
 
 	private static final String ARG_IP = "ip";
 	private static final String ARG_LOCATION = "location";
+    private static final String TAG = "PanelInfoFragment";
 
 
 	private String ip;
@@ -179,10 +181,10 @@ public class PanelInfoFragment extends Fragment implements TCPConnection.CallBac
 	@SuppressLint("HandlerLeak")
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
-		
-		System.out.println("---------onViewCreated-----------");
-		
-		locationTextView = (TextView) getActivity().findViewById(R.id.panel_location);
+
+        Log.i(TAG,"onViewCreated");
+
+        locationTextView = (TextView) getActivity().findViewById(R.id.panel_location);
 
 		locationTextView.setText(location + " (" + panel.getFaultDeviceNo() + ")");
 		locationTextView.setLongClickable(true);

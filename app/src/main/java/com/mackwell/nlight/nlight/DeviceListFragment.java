@@ -67,6 +67,9 @@ public class DeviceListFragment extends Fragment {
 	private MyActionModeCallback mActionMode;
 	private List<Loop> listDataHeader;
     private Map<Loop, List<Device>> listDataChild;
+
+    private int currentGroupPosition = -1;
+    private int currentChildPosition = -1;
     
 
 	
@@ -300,7 +303,7 @@ public class DeviceListFragment extends Fragment {
 
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
+	public void onActivityCreated(final Bundle savedInstanceState) {
 		
 		deviceListView = (ExpandableListView) getActivity().findViewById(R.id.expandableListView_deviceList);
 		
@@ -422,7 +425,8 @@ public class DeviceListFragment extends Fragment {
             		
             	}*/
             	
-            	
+            	currentGroupPosition = groupPosition;
+                currentChildPosition = childPosition;
             	
             	mAdapter.selectItem(groupPosition, childPosition);
             	
@@ -436,7 +440,8 @@ public class DeviceListFragment extends Fragment {
                 
                 
                 mAdapter.notifyDataSetChanged();
-				
+
+
 				
                 return true;
             }
@@ -495,14 +500,37 @@ public class DeviceListFragment extends Fragment {
 			}
 		});
 		*/
-		
-		super.onActivityCreated(savedInstanceState);
-	}
-	
-	
-	
 
-	@Override 
+
+//      get saved status and select device
+        if (savedInstanceState!=null) {
+            int groupPosition = savedInstanceState.getInt("GroupPosition");
+            int childPosition = savedInstanceState.getInt("ChildPosition");
+            if (groupPosition!=-1 && childPosition!=-1) {
+                currentGroupPosition = groupPosition;
+                currentChildPosition = childPosition;
+                if (childPosition==0) {
+                    mListener.onGroupExpandOrCollapse(groupPosition);
+                }
+                else{
+                    mListener.onDeviceItemClicked(groupPosition,childPosition);
+                }
+                mAdapter.selectItem(groupPosition,childPosition);
+            }
+        }
+
+
+        super.onActivityCreated(savedInstanceState);
+	}
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("GroupPosition",currentGroupPosition);
+        outState.putInt("ChildPosition",currentChildPosition);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
 	public void onDetach() {
 		super.onDetach();
 		mListener = null;

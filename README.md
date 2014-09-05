@@ -1,10 +1,32 @@
 PATCH NOTES
 ================
 
-v 0.7.0
+v0.8.0
 ===================
 
-## Still in development
+###Updates:
+- 1 Custom branding feature(custom logo)
+- 2 BaseActivity, onResume(), load activity action bar
+- 3 Update device action mode icons
+- 4 Add items to device setting menu to be consistent with action mode
+- 5 Add scroll bar for deviceInfoList and re-arrange layout
+- 6 "userLandscape" instead of "landscape" so app can rotate now.
+- 7 Add onSaveInstanceState, save current selected group and device location
+       and in onCreate, re-select this device if savedInstanceStats is not null
+- 8 Synchronize panel object between PanelActivity and DeviceActivity(use startActivityForResult)
+- 9 Basic implementation of multi-screen support, (only Panel and Device Activity)
+- 10 Tell user if no panel is selected (PanelActivity), when click on show information
+- 11 Fetch and display panel report
+- 12 Print and save report to PDF
+
+###Fix:
+- 1 device multi-selection bug: when check SparseBooleanArray, using wrong size
+- 2 clear panelList when loading screen onResume()
+- 3 PanelActivity onActivityResult, having different request code and Result_Cancelled
+
+
+v 0.7.0
+===================
 
 ###Updates:
 - 1 Sort by faults is default for device list (also dummy devices have been added to demoMode)
@@ -16,6 +38,7 @@ v 0.7.0
 - 7 Set inputType for different InputDialog type and hints
 - 8 Implemented password validation when user access panels
 - 9 Subtitle for panel/device action bar
+- 10 Device list multi selection
 
 ###Fix:
 - 1 Check if isDemo and if connection is null when change device name
@@ -26,7 +49,7 @@ v 0.6.0
 ================
 
 ###Updates:
-- 1 Device status is now coloured (Red for faults)
+- 1 Device faulty is now coloured (Red for faults)
 - 2 Icon for FT
 - 3 Add pop-up menu for "Show loops"
 - 4 Added "SearchView" Icon
@@ -41,7 +64,7 @@ v 0.6.0
 
 
 ###Fix:
-- 1 Device failure status error, caused by a snippet of test code
+- 1 Device failure faulty error, caused by a snippet of test code
 - 2 NullPointAccess when accessing connectionList when PanelListFragmetn onPause()
 - 3 Changed logic in DeviceinfoFragment for update device information to prevent crash for updating device information
 
@@ -56,7 +79,7 @@ v 0.5.0
 - 1 UDP Connection for searching panels in the building
 - 2 Implemented a Preference settings for users to choose options
 - 3 When liveMode clicked, a dialog with list of panels will pop up for choose
-- 4 User can choose to cash panel location next time when they search panels
+- 4 User can choose to cache panel location next time when they search panels
 - 5 Improved project branches(Master, Develop and Feature branches)
 
 
@@ -70,7 +93,7 @@ v 0.4.6.1
 
 ###Update:
 
-Device refresh status will now refresh device list icon too
+Device refresh faulty will now refresh device list icon too
 
 
 
@@ -98,7 +121,7 @@ v 0.4.3
 
 - 1 (MH 2)Long click on device will now release current action mode and start a new one;
 - 2  add refresh button for device action bar
-- 3 perform functionalities will refresh device status now.
+- 3 perform functionalities will refresh device faulty now.
 - 4 deviceInfoFragment and device, add DT last time and lamp operation time;
 - 5 DeviceInfoFragment, device address display for loop2 now displays 0-63 instead of 128-191
 
@@ -242,6 +265,6 @@ v0.1
 ##2014-01-17
 
 - Basic socket connection has been setup.
-- Can get overall status from panel.
+- Can get overall faulty from panel.
 
 
