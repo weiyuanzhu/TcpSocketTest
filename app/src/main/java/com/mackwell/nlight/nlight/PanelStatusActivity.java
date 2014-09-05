@@ -56,7 +56,7 @@ public class PanelStatusActivity extends BaseActivity {
 		setContentView(R.layout.activity_panel_status);
 		
 		statusTextView = (TextView) findViewById(R.id.textView1);
-		locationTextView = (TextView) findViewById(R.id.textView2);
+		locationTextView = (TextView) findViewById(R.id.report_faults_textView);
 		imageView = (ImageView) findViewById(R.id.imageView1);
 		load = (ProgressBar) findViewById(R.id.progressBar1);
 		

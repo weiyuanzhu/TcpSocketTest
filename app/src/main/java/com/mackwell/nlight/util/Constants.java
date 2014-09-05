@@ -21,46 +21,46 @@ public class Constants {
 	public static final int UART_NEW_LINE_L = 0x0A;
 	
 	public static final Integer HOST_ID = 0x02;
-	
+
 	public static final int MASTER_GET = 0xA0;
-	private static final int GET_INIT = 0x21;
-	private static final int GET_REPORT_EMPTY = 0x22; 
-	private static final int GET_FACTORY_RESET = 0x23;
-	private static final int GET_FLASH_RESET = 0x24;
-	private static final int GET_REPORT = 0x25;
-	private static final int GET_LIST = 0x26;
-	private static final int UPDATE_LIST = 0x27;
-	private static final int GET_DATE_TIME = 0x29;
-	private static final int GET_SCHEDULE_TEST_STATUS = 0x30;
-	private static final int GET_SCHEDULE_DATA = 0x31;
+    public static final int GET_INIT = 0x21;
+	public static final int GET_REPORT_EMPTY = 0x22;
+	public static final int GET_FACTORY_RESET = 0x23;
+    public static final int GET_FLASH_RESET = 0x24;
+    public static final int GET_REPORT = 0x25;
+    public static final int GET_LIST = 0x26;
+    public static final int UPDATE_LIST = 0x27;
+    public static final int GET_DATE_TIME = 0x29;
+    public static final int GET_SCHEDULE_TEST_STATUS = 0x30;
+    public static final int GET_SCHEDULE_DATA = 0x31;
 	
 	public static final int MASTER_TOGGLE = 0xA1;
-	private static final int REMOVE_DEVICE = 0x67;
-	private static final int REMOVE_LOOP = 0x68;
-	private static final int COMMISSION_LOOP = 0x69;
-	private static final int RETEST_GROUP = 0x6C;
-	private static final int EEPROM_CORRUPT_FLAG = 0x6E;
+    public static final int REMOVE_DEVICE = 0x67;
+    public static final int REMOVE_LOOP = 0x68;
+    public static final int COMMISSION_LOOP = 0x69;
+    public static final int RETEST_GROUP = 0x6C;
+    public static final int EEPROM_CORRUPT_FLAG = 0x6E;
 	
 	public static final int MASTER_SET = 0xA2;
-	private static final int SET_GROUP = 0x80;
-	private static final int SET_GROUP_NAME = 0x81;
-	private static final int SET_DEVICE_NAME = 0x82;
-	private static final int SET_PANEL_NAME = 0x84;
-	private static final int SET_RTC = 0x85;
-	private static final int SET_CONTACT_NAME = 0x86;
-	private static final int SET_CONTACT_NUMBER = 0x87;
-	private static final int SET_CONTACT_MOBILE = 0x88;
-	private static final int SET_PASSCODE = 0x89;
-	private static final int SET_LOGGING_FLAG = 0x8A;
-	
-	private static final int SET_DFU_UPDATING = 0x8F;
-	private static final int SET_DFU_RESULT = 0x90;
-	private static final int SET_I2C_UPLOAD = 0x91;
-	
-	private static final int USB_IN_CONTROL = 0xAC;
-	private static final int FINISH = 0xAD;
-	private static final int INITFINISH = 0xAE;
-	private static final int ERROR = 0xAF;
+    public static final int SET_GROUP = 0x80;
+    public static final int SET_GROUP_NAME = 0x81;
+    public static final int SET_DEVICE_NAME = 0x82;
+    public static final int SET_PANEL_NAME = 0x84;
+    public static final int SET_RTC = 0x85;
+    public static final int SET_CONTACT_NAME = 0x86;
+    public static final int SET_CONTACT_NUMBER = 0x87;
+    public static final int SET_CONTACT_MOBILE = 0x88;
+    public static final int SET_PASSCODE = 0x89;
+    public static final int SET_LOGGING_FLAG = 0x8A;
+
+    public static final int SET_DFU_UPDATING = 0x8F;
+    public static final int SET_DFU_RESULT = 0x90;
+    public static final int SET_I2C_UPLOAD = 0x91;
+
+    public static final int USB_IN_CONTROL = 0xAC;
+    public static final int FINISH = 0xAD;
+    public static final int INITFINISH = 0xAE;
+    public static final int ERROR = 0xAF;
 	
 	/* Report title */
 	private static final int REPORT_START_H = 0x55;

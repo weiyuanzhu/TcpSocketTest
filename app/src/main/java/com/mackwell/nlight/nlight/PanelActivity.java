@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -43,6 +44,8 @@ import com.mackwell.nlight.util.SetCmdEnum;
  *
  */
 public class PanelActivity extends BaseActivity implements OnPanelListItemClickedCallBack, TCPConnection.CallBack, PopupMenu.OnMenuItemClickListener, NoticeDialogListener{
+
+    private static final String TAG = "PanelActivity";
 
     private static final int REQUEST_PANEL = 1;
 
@@ -403,13 +406,24 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
                 }
 
 				return true;
-			/*case R.id.action_show_faulty_devices:
-				System.out.println("Show Faulty Devices");
-				if(currentDisplayingPanel != null){
-					panelWithFaulyDevices = Panel.getPanelWithFaulty(currentDisplayingPanel);
-					showDevices(panelWithFaulyDevices);
-				}
-				return true;*/
+			case R.id.action_show_report:
+				Log.i(TAG,"Show report");
+                if (currentDisplayingPanel != null) {
+                    Intent intent = new Intent(this, ReportActivity.class);
+                    intent.putExtra("ip",currentDisplayingPanel.getIp());
+                    intent.putExtra("location",currentDisplayingPanel.getPanelLocation());
+                    intent.putExtra("demo",isDemo);
+                    startActivity(intent);
+                } else {
+                    ReportFragment fragment = ReportFragment.newInstance("arg1","arg2");
+
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.panel_detail_container,fragment);
+                    fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                    fragmentTransaction.commit();
+                }
+
+				return true;
         	
 			default:
 	            return false;
@@ -438,6 +452,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         if (requestCode==REQUEST_PANEL && resultCode == Activity.RESULT_OK) {
             Panel panel = data.getParcelableExtra("panel");
             String ip = data.getStringExtra("ip");
+
 
             currentDisplayingPanel = panel;
             panelMap.put(ip, panel);
@@ -477,8 +492,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 				if(connection!=null){
 					connection.setListening(false);
 					connection.closeConnection();
-					connection = null;
-				}
+                }
 			}
 		}
 
@@ -833,10 +847,10 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	private String getContactDetails(){
 		StringBuilder sb = new StringBuilder();
 		sb.append(getResources().getString(R.string.text_contat_engineer) + "\n");
-		sb.append(getResources().getString(R.string.text_control_panel_location) + currentDisplayingPanel.getPanelLocation() + "\n");
-		sb.append(getResources().getString(R.string.text_contact_name) + currentDisplayingPanel.getContact()+ "\n");
-		sb.append(getResources().getString(R.string.text_contact_tel) + currentDisplayingPanel.getTel() + "\n");
-		sb.append(getResources().getString(R.string.text_contact_mobile) + currentDisplayingPanel.getMobile());
+		sb.append(getResources().getString(R.string.text_control_panel_location)+ "        " + currentDisplayingPanel.getPanelLocation() + "\n");
+		sb.append(getResources().getString(R.string.text_contact_name) + "                      " + currentDisplayingPanel.getContact()+ "\n");
+		sb.append(getResources().getString(R.string.text_contact_tel) + "                               " + currentDisplayingPanel.getTel() + "\n");
+		sb.append(getResources().getString(R.string.text_contact_mobile) + "                                   " + currentDisplayingPanel.getMobile());
 		
 		return sb.toString();
 	}

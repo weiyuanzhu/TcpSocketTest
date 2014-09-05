@@ -241,7 +241,7 @@ public class TCPConnection {
 
 		@Override
 		public void run() {
-			int data = 0;
+			int data;
 			
 			// TimeUnit.SECONDS.sleep(3); get all panel data test
 			try{
