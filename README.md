@@ -5,6 +5,7 @@ v0.8.0
 ===================
 
 ###Updates:
+- 0 Globalization(Multi-language)
 - 1 Custom branding feature(custom logo)
 - 2 BaseActivity, onResume(), load activity action bar
 - 3 Update device action mode icons
@@ -18,6 +19,7 @@ v0.8.0
 - 10 Tell user if no panel is selected (PanelActivity), when click on show information
 - 11 Fetch and display panel report
 - 12 Print and save report to PDF
+
 
 ###Fix:
 - 1 device multi-selection bug: when check SparseBooleanArray, using wrong size
