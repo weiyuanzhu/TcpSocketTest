@@ -65,6 +65,9 @@ public class SettingsFragment extends PreferenceFragment {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+            finally {
+                customIconPref.setSummary(getResources().getString(R.string.pref_subTitle_customIcon, getResources().getString(R.string.text_image_not_found)));
+            }
         }else{
             String defaultImage = getResources().getString(R.string.pref_icon_default);
             customIconPref.setSummary(getResources().getString(R.string.pref_subTitle_customIcon, defaultImage));

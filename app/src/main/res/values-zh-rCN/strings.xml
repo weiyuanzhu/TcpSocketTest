@@ -5,7 +5,6 @@
     <string name="app_version">
         	版本: <xliff:g id="promotion_code">beta 0.8.0</xliff:g>
     </string>
-    
     <string name="action_settings">设置</string>
     <string name="action_about">关于</string>
     <string name="action_search">搜索</string>
@@ -16,20 +15,18 @@
     <string name="action_sort_by_alphabet">字母顺序</string>
     <string name="action_sort_by_unnamed">未命名</string>
     <string name="action_sort_device_by">设备排序</string>
-    
     <string name="action_refresh_status">RefreshPanelStatus</string>
     <string name="hello_world">世界你好!</string>
-    
     <string name="overall">GetOverallStatus</string>
     <string name="location">位置</string>
     <string name="faulty">状态</string>
-    
     <string name="title_activity_panel_list">N-Light</string>
     <string name="title_activity_loading_screen">N-Light</string>
     <string name="title_activity_panel_info">PanelInfo</string>
     <string name="title_activity_device_list">DeviceList</string>
     <string name="title_activity_device_info">DeviceInfoActivity</string>
     <string name="title_activity_main">N-Light Connect</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_panel_live">N-Light Connect (实时)</string>
     <string name="title_activity_panel_demo">N-Light Connect (演示)</string>
     <string name="title_activity_device">DeviceActivity</string>
@@ -44,16 +41,13 @@
     <string name="btn_demo">演示模式</string>
     <string name="btn_search">搜索</string>
     <string name="btn_enter">确认</string>
-    
     <string name="title_dialog_panellist">Panel列表</string>
     <string name="title_dialog_nopanelfound">未发现附近的Panel，请尝试重新搜索</string>
     <string name="btn_connect">连接</string>
     <string name="btn_cancel">取消</string>
     <string name="btn_searchagain">重新搜索</string>
-    
     <string name="subtitle_activity_panel">Panel列表</string>
     <string name="subtitle_activity_device">设备列表</string>
-    
     <string name="text_panelstatus_ok">系统正常</string>
     <string name="text_panelstatus_fault">设备异常：  </string>
     <string name="text_contat_engineer">联系工程师: </string>
@@ -61,7 +55,6 @@
     <string name="text_contact_name">工程师姓名: </string>
 	<string name="text_contact_tel">电话: </string>
 	<string name="text_contact_mobile">手机: </string>
-	
 	<string name="title_dialog_input_setPanelName">设置Panel位置</string>
 	<string name="title_dialog_input_setDeviceName">设置设备位置</string>
 	<string name="title_dialog_input_setContactName">设置联系人</string>
@@ -70,7 +63,6 @@
 	<string name="title_dialog_input_enterPasscode">输入Panel密码</string>
 	<string name="title_dialog_input_setPasscode">设置Panel密码</string>
 	<string name="title_dialog_input_enterInformation">输入信息</string>
-	
 	<string name="hint_dialog_input_setPanelName">Panel位置</string>
 	<string name="hint_dialog_input_setDeviceName">设备位置</string>
 	<string name="hint_dialog_input_setContactName">联系人姓名</string>
@@ -79,7 +71,6 @@
 	<string name="hint_dialog_input_enterPasscode">4 位密码</string>
 	<string name="hint_dialog_input_setPasscode">4 位密码</string>
 	<string name="hint_dialog_input_enterInformation">信息</string>
-    
 	<string name="text_fragment_panelInfo_ipAddress">IP 地址</string>
 	<string name="text_fragment_panelInfo_serialNumber">序列号</string>
 	<string name="text_fragment_panelInfo_gtin">GTIN</string>
@@ -89,10 +80,8 @@
 	<string name="text_fragment_panelInfo_firmware">固件版本</string>
 	<string name="text_fragment_panelInfo_memoryUsage">内存使用</string>
 	<string name="text_fragment_panelInfo_passcode">密码</string>
-
 	<string name="text_live"> （实时）</string>
     <string name="text_demo"> （演示）</string>
-    
     <string name="text_fragment_deviceInfo_deviceName">设备名称</string>
     <string name="text_fragment_deviceInfo_address">地址</string>
     <string name="text_fragment_deviceInfo_serialNumber">序列号</string>
@@ -110,7 +99,6 @@
     <string name="text_deviceCommunicationOk">正常</string>
     <string name="text_autoRefresh">自动刷新: <xliff:g id="autorefresh_toggle">%1$s</xliff:g></string>
     <string name="text_lastRefresh"> " 设备上一次刷新": <xliff:g id="lastRefresh_time">%1$s</xliff:g></string>
-	
 	<string name="text_settings_panelData">PANEL数据</string>
 	<string name="text_settings_syncPref">同步选项</string>
 	<string name="text_savePanelLocation">保存Panel位置信息</string>
@@ -123,24 +111,20 @@
 	<string name="text_autoRefreshAll_summary">自动同步Panel及设备信息</string>
 	<string name="text_autoRefreshSelectedDevice_summary">每5秒</string>
 	<string name="text_autoRefreshAllDevices_summary">每60秒</string>
-	
 	<string name="text_loading_panel">"下载Panel信息.. (" <xliff:g id="panelToLoad">%1$d</xliff:g> ")"</string>
 	<string name="text_analyzing_data">"解析数据..""</string>
 	<string name="text_finish_loading">"下载完成.."</string>
 	<string name="text_connect_error">"无法连接到 " <xliff:g id="error_ip">%1$s</xliff:g> ", 请检查网络连接."</string>
 	<string name="text_prepPanelData">"准备数据"</string>
-	
 	<string name="device_selected_description">选择: <xliff:g id="device_selected_counter">%1$d</xliff:g></string>
     <string name="device_selected_number">0</string>
     <string name="action_select_loop1">选择 Loop1 设备</string>
     <string name="action_deselect_loop1">反选 Loop1 设备</string>
     <string name="action_select_loop2">选择 Loop2 设备</string>
     <string name="action_deselect_loop2">反选 Loop2 设备</string>
-	
     <string name="text_multi_selection_mode">设备多选模式</string>
     <string name="text_loop_faulty_message"><xliff:g id="faulty_device_no">%1$s</xliff:g> 故障设备数目: <xliff:g id="faulty_device_no">%2$d</xliff:g></string>
     <string name="text_panel_faulty_message">Panel 总故障设备数: <xliff:g id="faulty_panel_no">%1$d</xliff:g></string>
-    
     <string name="emergencyMode_REST_MODE">休眠模式,</string>
     <string name="emergencyMode_NORMAL_MODE">正常模式,</string>
     <string name="emergencyMode_EMERGENCY_MODE">应急模式,</string>
@@ -149,7 +133,6 @@
     <string name="emergencyMode_DURATION_TEST_IN_PROGRESS">DT 进行中,</string>
     <string name="emergencyMode_HARDWIRED_INHIBIT">硬件休眠,</string>
     <string name="emergencyMode_HARDWIRED_SWITCH_ON">硬件开关打开,</string>
-    
     <string name="failureStatus_CIRCUIT_FAILURE">电路故障, </string>
     <string name="failureStatus_BATTERY_DURATION_FAILURE">电池持续问题, </string>
     <string name="failureStatus_LAMP_FAILURE">灯泡故障, </string>
@@ -159,7 +142,6 @@
     <string name="failureStatus_FUNCTION_TEST_FAILURE">FT 失败, </string>
     <string name="failureStatus_DURATION_TEST_FAILURE">DT 失败, </string>
     <string name="failureStatus_ALL_OK">正常,</string>
-    
     <string name="emergencyStatus_INHIBIT_MODE">休眠模式,</string>
     <string name="emergencyStatus_FUNCTION_TEST_DONE">FT 完成,</string>
     <string name="emergencyStatus_DURATION_TEST_DONE">DT 完成,</string>
@@ -169,7 +151,6 @@
     <string name="emergencyStatus_IDENTIFICATION_ACTIVE">搜索激活,</string>
     <string name="emergencyStatus_PHYSICALLY_SELECTED">物理选择,</string>
   	<string name="emergencyStatus_NORMAL">-,</string>
-  	
   	<string name="toast_refresh_panelStatus">"刷新设备状态"</string>
 	<string name="toast_expand_loop"><xliff:g id="expand_loop">%1$s</xliff:g> " 展开"</string>
 	<string name="toast_ft_inProgress">FT进行中</string>
@@ -178,7 +159,6 @@
 	<string name="toast_id_inProgress">设备搜索进行中</string>    
 	<string name="toast_refresh_device">刷新设备状态</string>    
 	<string name="toast_stop_identify">停止设备搜索</string>
-
 	<string name="action_stop_id">停止搜索</string>
 	<string name="action_select_allFaulty">选择异常设备</string>
 	<string name="action_deselect_allDevice">取消选择</string>
@@ -188,15 +168,16 @@
 	<string name="action_st">ST</string>
 	<string name="action_id">ID</string>
 	<string name="action_refresh">刷新</string>
-
     <string name="pref_category_custom">自定义图片</string>
     <string name="pref_title_customIcon">从媒体库选择App图片</string>
     <string name="pref_subTitle_customIcon">文件位置: <xliff:g>%1$s</xliff:g> </string>
     <string name="pref_icon_default">默认图片</string>
-
     <string name="toast_select_panel">请选择一个Panel</string>
     <string name="toast_enter_engineer_mode">请进入工程模式</string>
     <string name="action_show_report" >显示Panel报告</string>
+    <string name="title_activity_report">Panel报告</string>
+    <string name="title_activity_report_faults">报告错误页面</string>
+    <string name="text_image_not_found">文件未找到或损坏</string>
 
 
 </resources>
