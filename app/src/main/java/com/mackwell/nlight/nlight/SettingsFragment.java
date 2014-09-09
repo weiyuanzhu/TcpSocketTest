@@ -13,7 +13,7 @@ import android.preference.*;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragment implements  SharedPreferences.OnSharedPreferenceChangeListener{
 
     public static final int RESULT_LOAD_IMAGE = 0; //request code
     private Preference customIconPref;
@@ -50,30 +50,27 @@ public class SettingsFragment extends PreferenceFragment {
     public void onResume() {
         super.onResume();
 
+        //register listener
+        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+
+
+        //set app icon
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
         String imageLocation = sharedPref.getString("pref_app_icons","default image");
         Uri uri = Uri.parse(imageLocation);
 
 
 //      update preference icon and subtitle
-        if(!imageLocation.equals("default image")) {
-            try {
-                InputStream stream = getActivity().getContentResolver().openInputStream(uri);
-                Drawable d = Drawable.createFromStream(stream, "test");
-                customIconPref.setIcon(d);
-                customIconPref.setSummary(getResources().getString(R.string.pref_subTitle_customIcon, imageLocation));
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                customIconPref.setSummary(getResources().getString(R.string.pref_subTitle_customIcon, getResources().getString(R.string.text_image_not_found)));
-            }
-
-        }else{
-            String defaultImage = getResources().getString(R.string.pref_icon_default);
-            customIconPref.setSummary(getResources().getString(R.string.pref_subTitle_customIcon, defaultImage));
-
-        }
+        updateAppImage();
 
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
     /**
@@ -98,5 +95,48 @@ public class SettingsFragment extends PreferenceFragment {
         }
 
 
+    }
+
+    //listener, implements SharedPreference.onSharedPreferenceChanged
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("pref_icon_checkbox")) {
+            updateAppImage();
+        }
+    }
+
+    private void updateAppImage(){
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String imageLocation = sharedPref.getString("pref_app_icons","default image");
+        CheckBoxPreference test = (CheckBoxPreference) findPreference("pref_icon_checkbox");
+        boolean customIcon = sharedPref.getBoolean("pref_icon_checkbox",false);
+        Uri uri = Uri.parse(imageLocation);
+
+
+
+        if(customIcon && !imageLocation.equals("default image"))
+        {
+            test.setSummary(getResources().getString(R.string.pref_summary_customIcon_checked));
+            try {
+                InputStream stream = getActivity().getContentResolver().openInputStream(uri);
+                Drawable appImage = Drawable.createFromStream(stream, "test");
+                if (getActivity().getActionBar() != null) {
+                    getActivity().getActionBar().setIcon(appImage);
+                    customIconPref.setIcon(appImage);
+                    customIconPref.setSummary(getResources().getString(R.string.pref_subTitle_customIcon, imageLocation));
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        } else {
+            test.setSummary(getResources().getString(R.string.pref_summary_customIcon_unchecked));
+
+            getActivity().getActionBar().setIcon(R.drawable.mackwell_logo);
+            String defaultImage = getResources().getString(R.string.pref_icon_default);
+            customIconPref.setSummary(getResources().getString(R.string.pref_subTitle_customIcon, defaultImage));
+            customIconPref.setIcon(getResources().getDrawable(R.drawable.mackwell_logo));
+
+        }
     }
 }

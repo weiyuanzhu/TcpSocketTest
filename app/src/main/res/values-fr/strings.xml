@@ -168,9 +168,9 @@
 	<string name="action_st">ST</string>
 	<string name="action_id">ID</string>
 	<string name="action_refresh">Actualiser</string>
-    <string name="pref_category_custom">CUSTOM APP PHOTOS</string>
-    <string name="pref_title_customIcon">"Choisissez app l'image de la galerie multimédia"</string>
-    <string name="pref_subTitle_customIcon">"Emplacement de l'image: " <xliff:g>%1$s</xliff:g> </string>
+    <string name="pref_category_custom">"CUSTOM L'IMAGE DE MARQUE"</string>
+    <string name="pref_title_customIcon">"App l'image"</string>
+    <string name="pref_subTitle_customIcon">"Image actuelle: " <xliff:g>%1$s</xliff:g> </string>
     <string name="pref_icon_default">image par défaut</string>
     <string name="toast_select_panel">"S'il vous plaît sélectionner un panneau"</string>
     <string name="toast_enter_engineer_mode">"S'il vous plaît entrer en mode ingénieur"</string>
@@ -178,6 +178,9 @@
     <string name="title_activity_report">"Rapport d'activité"</string>
     <string name="title_activity_report_faults">"Rapport défauts activité"</string>
     <string name="text_image_not_found">"Fichier image introuvable ou endommagé"</string>
+    <string name="pref_title_customIcon_checkbox">"Icône personnalisée pour l'App"</string>
+    <string name="pref_summary_customIcon_unchecked">"Icône de l'image est définie par défaut."</string>
+    <string name="pref_summary_customIcon_checked">"S'il vous plaît choisir une image de la galerie de médias."</string>
 
 
 </resources>

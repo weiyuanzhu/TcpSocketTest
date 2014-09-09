@@ -2,17 +2,10 @@ package com.mackwell.nlight.nlight;
 
 import com.mackwell.nlight.R;
 
-import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Activity;
-import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 public class SettingsActivity extends BaseActivity {
 	
