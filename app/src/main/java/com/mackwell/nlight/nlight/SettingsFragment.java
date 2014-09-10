@@ -53,14 +53,6 @@ public class SettingsFragment extends PreferenceFragment implements  SharedPrefe
         //register listener
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
 
-
-        //set app icon
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-        String imageLocation = sharedPref.getString("pref_app_icons","default image");
-        Uri uri = Uri.parse(imageLocation);
-
-
 //      update preference icon and subtitle
         updateAppImage();
 

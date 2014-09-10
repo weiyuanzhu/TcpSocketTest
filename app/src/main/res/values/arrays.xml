@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<resources>
+<resources
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingTranslation">
     <array name = "panelList">
         <item>192.168.1.21</item>
         <item>192.168.1.17</item>
