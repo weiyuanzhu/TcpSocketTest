@@ -69,17 +69,20 @@
     <PreferenceCategory
         android:title="@string/pref_category_custom"
         android:key="pref_custom_display">
+        <CheckBoxPreference
+            android:key="pref_icon_checkbox"
+            android:title="@string/pref_title_customIcon_checkbox"
+            android:defaultValue="false">
+
+        </CheckBoxPreference>
         <Preference
             android:key="pref_app_icons"
             android:title="@string/pref_title_customIcon"
             android:summary="@string/pref_subTitle_customIcon"
             android:icon="@drawable/mackwell_logo"
             android:defaultValue="test222"
-
+            android:dependency="pref_icon_checkbox"
             >
-
-
-
         </Preference>
 
     </PreferenceCategory>

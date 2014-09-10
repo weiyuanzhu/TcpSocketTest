@@ -63,19 +63,28 @@ public class BaseActivity extends Activity implements CallBack{
 
 //      update activity action bar icon, when actionbar exist
         String imageLocation = sharedPreferences.getString("pref_app_icons","default image");
+        boolean customIcon = sharedPreferences.getBoolean("pref_icon_checkbox",false);
         Uri uri = Uri.parse(imageLocation);
 
 
 
-        if(!imageLocation.equals("default image")) try {
-            InputStream stream = getContentResolver().openInputStream(uri);
-            appImage = Drawable.createFromStream(stream, "test");
-            if (getActionBar()!=null) {
-                getActionBar().setIcon(appImage);
-            }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        if(customIcon && !imageLocation.equals("default image")) {
+            try {
+                InputStream stream = getContentResolver().openInputStream(uri);
+                appImage = Drawable.createFromStream(stream, "test");
+                if (getActionBar() != null) {
+                    getActionBar().setIcon(appImage);
+                }
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            if (getActionBar()!=null) {
+                getActionBar().setIcon(R.drawable.mackwell_logo);
+            }
         }
     }
 

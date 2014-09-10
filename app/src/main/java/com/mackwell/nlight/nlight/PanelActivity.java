@@ -468,12 +468,16 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
 //      set panelInfoImage's icon address
         String imageLocation = sharedPreferences.getString("pref_app_icons","default image");
+        boolean customIcon = sharedPreferences.getBoolean("pref_icon_checkbox",false);
         Uri uri = Uri.parse(imageLocation);
 
 
 //      when split screen and no panel selected and result has a valid file path
-        if(!imageLocation.equals("default image") && splitScreen && currentPanelPosition==-1)  {
+        if(customIcon && !imageLocation.equals("default image") && splitScreen && currentPanelPosition==-1)  {
             panelInfoImage.setImageURI(uri);
+        }
+        else{
+            panelInfoImage.setImageResource(R.drawable.mackwell_logo);
         }
 
 
