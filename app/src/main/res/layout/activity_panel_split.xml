@@ -8,7 +8,7 @@
     android:showDividers="middle">
 
     <fragment
-        android:name="com.mackwell.nlight.nlight.PanelListFragment"
+        android:name="com.mackwell.nlight_beta.activity.PanelListFragment"
         android:tag="panelListFragment"
         android:id="@+id/fragment_panel_list"
         android:layout_width="0dp"

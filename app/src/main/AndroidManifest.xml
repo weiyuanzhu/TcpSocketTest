@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mackwell.nlight"
+    package="com.mackwell.nlight_beta"
     android:versionCode="2"
     android:versionName="@string/app_version" >
 
@@ -30,15 +30,15 @@
             android:value="nlight_android.nlight.DeviceActivity" />
 
         <activity
-            android:name=".nlight.PanelStatusActivity"
+            android:name="com.mackwell.nlight_beta.activity.PanelStatusActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".nlight.PanelListActivity"
+            android:name="com.mackwell.nlight_beta.activity.PanelListActivity"
             android:label="@string/title_activity_panel_list" >
         </activity>
         <activity
-            android:name=".nlight.LoadingScreenActivity"
+            android:name="com.mackwell.nlight_beta.activity.LoadingScreenActivity"
             android:label="@string/title_activity_loading_screen"
             android:screenOrientation="userLandscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
@@ -50,26 +50,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".nlight.PanelInfoActivity"
+            android:name="com.mackwell.nlight_beta.activity.PanelInfoActivity"
             android:label="@string/title_activity_panel_info" >
         </activity>
         <activity
-            android:name=".nlight.DeviceListActivity"
+            android:name="com.mackwell.nlight_beta.activity.DeviceListActivity"
             android:label="@string/title_activity_device_list" >
         </activity>
         <activity
-            android:name=".nlight.DeviceInfoActivity"
+            android:name="com.mackwell.nlight_beta.activity.DeviceInfoActivity"
             android:label="@string/title_activity_device_info" >
         </activity>
         <activity
-            android:name=".nlight.PanelActivity"
+            android:name="com.mackwell.nlight_beta.activity.PanelActivity"
             android:label="@string/app_name"
-            android:parentActivityName=".nlight.LoadingScreenActivity" >
+            android:parentActivityName="com.mackwell.nlight_beta.activity.LoadingScreenActivity" >
         </activity>
         <activity
-            android:name=".nlight.DeviceActivity"
+            android:name="com.mackwell.nlight_beta.activity.DeviceActivity"
             android:label="@string/title_activity_device"
-            android:parentActivityName=".nlight.PanelActivity" >
+            android:parentActivityName="com.mackwell.nlight_beta.activity.PanelActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
@@ -79,24 +79,24 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
-            android:name=".nlight.BaseActivity"
+            android:name="com.mackwell.nlight_beta.activity.BaseActivity"
             android:label="@string/title_activity_base" >
         </activity>
         <activity
-            android:name=".nlight.SettingsActivity"
+            android:name="com.mackwell.nlight_beta.activity.SettingsActivity"
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
-            android:name=".test.TestActivity"
+            android:name="com.mackwell.nlight_beta.test.TestActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name=".nlight.ReportActivity"
+            android:name="com.mackwell.nlight_beta.activity.ReportActivity"
             android:label="@string/title_activity_report"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
-            android:name=".nlight.ReportFaultsActivity"
+            android:name="com.mackwell.nlight_beta.activity.ReportFaultsActivity"
             android:label="@string/title_activity_report_faults"
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
