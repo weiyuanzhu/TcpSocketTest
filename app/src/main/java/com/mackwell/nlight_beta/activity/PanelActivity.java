@@ -472,8 +472,13 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
 
 //      when split screen and no panel selected and result has a valid file path
-        if(customIcon && !imageLocation.equals("default image") && splitScreen && currentPanelPosition==-1)  {
+        if (currentPanelPosition !=-1) {
+             //do nothing
+        }else if(customIcon && !imageLocation.equals("default image") && splitScreen && currentPanelPosition==-1)  {
             panelInfoImage.setImageURI(uri);
+
+
+
         }
         else{
             panelInfoImage.setImageResource(R.drawable.mackwell_logo);
