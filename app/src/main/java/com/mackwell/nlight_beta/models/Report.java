@@ -14,7 +14,10 @@ public class Report implements Serializable{
      * Fields and properties
      */
 
+    public static final int FAULTS_PER_PAGE = 22;
+
     private int faults;
+    private int faultPages;
     private Calendar date;
     private boolean faulty = true;
     private List<List<Integer>> faultyDeviceList;
@@ -22,14 +25,17 @@ public class Report implements Serializable{
     private List<List<Integer>> Loop2GroupStatus;
 
 
-
-
-
     /**
      * Getters and Setters
 
      *
      */
+
+    public int getFaultPages() {
+        return faultPages = (faults == 0) ? 0: faults/FAULTS_PER_PAGE+1;
+    }
+
+
 
     public List<List<Integer>> getLoop2GroupStatus() {
         return Loop2GroupStatus;
@@ -97,6 +103,7 @@ public class Report implements Serializable{
         this.faults = faults;
         this.date = date;
         this.faulty = faulty;
+
     }
 
 

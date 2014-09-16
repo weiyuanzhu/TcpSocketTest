@@ -204,9 +204,10 @@ public class DeviceInfoFragment extends ListFragment {
 		//device address
 		map = new HashMap<String,Object>();
 					
-		//put correct address for device, -128 if it is on loop2
-		int address = device.getAddress() < 127 ? device.getAddress(): device.getAddress()-128; 
-		
+		//put correct address for device, address & 0b0011111 (63)
+//		int address = device.getAddress() < 127 ? device.getAddress(): device.getAddress()-128;
+		int address = device.getAddress() & 63;
+
 		map.put("description", R.string.text_fragment_deviceInfo_address);
 		map.put("value", device==null? "n/a" : address);
 		

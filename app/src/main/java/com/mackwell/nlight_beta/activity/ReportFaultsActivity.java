@@ -9,6 +9,7 @@ import android.widget.SimpleAdapter;
 import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.messageType.FailureStatus;
 import com.mackwell.nlight_beta.messageType.FailureStatusFlag;
+import com.mackwell.nlight_beta.models.Device;
 import com.mackwell.nlight_beta.models.Report;
 
 import java.text.SimpleDateFormat;
@@ -98,11 +99,12 @@ public class ReportFaultsActivity extends BaseActivity {
                 long serialNumber = list.get(2) + 256 * list.get(3) + 65536 * list.get(4) + 16777216L * list.get(5);
 
 
-                map.put("loop", (address & 0x80)==0? "Loop1" : "Loop2" );
-                map.put("device", Integer.toString(address>=192? (address-192) : (address-64)));
+                map.put("loop", (address & 0x80)==0? "01" : "02" );
+                map.put("device", Integer.toString(address & 63));
                 map.put("serial", Long.toString(serialNumber));
                 map.put("location", "-");
-                map.put("description", getFailureStatusText(fs));
+                map.put("description", Device.getFailureStatusText(fs));
+
                 dataList.add(map);
 
             }

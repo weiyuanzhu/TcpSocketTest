@@ -589,4 +589,36 @@ public class Device  implements Parcelable{
 		 return null;
 	}*/
 
+    public static String getFailureStatusText(int failureStatus) {
+        StringBuilder sb = new StringBuilder();
+
+        if (failureStatus ==0) {
+            return "Device lost";
+        }
+
+        EnumSet<FailureStatus> fsSet = new FailureStatusFlag().getFlagStatus(failureStatus);
+
+
+        if (fsSet.size()==0)
+        {
+            sb.append("All OK");
+        }
+        else{
+            for(FailureStatus fs : fsSet)
+            {
+                sb.append(fs.getDescription()+" , ");
+            }
+            System.out.println(sb);
+
+            //trim last ","
+            sb.deleteCharAt(sb.length()-2);
+
+        }
+
+
+        return sb.toString();
+
+    }
+
+
 }

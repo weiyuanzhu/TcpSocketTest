@@ -36,7 +36,7 @@
         android:onClick="liveMode"
         android:layout_alignTop="@+id/loadscreen_live_imageBtn"
         android:layout_toLeftOf="@+id/loadscreen_live_imageBtn"
-        android:visibility="gone"
+        android:visibility="visible"
         android:text="@string/btn_live"/>
 
     <ImageView

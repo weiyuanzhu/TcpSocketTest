@@ -143,7 +143,7 @@ public class ReportFragment extends Fragment {
         ArrayList<Map<String,String>> dataList = new ArrayList<Map<String, String>>();
         HashMap<String,String> map;
 
-        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
         map = new HashMap<String, String>();
