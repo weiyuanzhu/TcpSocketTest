@@ -92,12 +92,22 @@ public class BaseActivity extends Activity implements CallBack{
     protected void onStop() {
         super.onStop();
 
+        /*if(connection!=null){
+            connection.closeConnection();
+            connection = null;
+        }*/
+
+
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         if(connection!=null){
             connection.closeConnection();
             connection = null;
         }
-
-
     }
 
     @Override

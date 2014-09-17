@@ -156,14 +156,11 @@ public class DeviceInfoFragment extends ListFragment {
 		//setup listener for item long click
 		getListView().setOnItemLongClickListener(longClickListener);
 
-		dataList = getData(device);
-		
-		mAdapter = new DeviceInfoListAdapter(getActivity(), dataList, R.layout.device_info_row, 
-				new String[] {"description","value"}, new int[] {R.id.deviceDescription,R.id.deviceValue}, device);
-		
-		setListAdapter(mAdapter);
-		
-		updateDevice(device,isAutoRefresh);
+//		dataList = getData(device);
+        updateDevice(device,isAutoRefresh);
+
+
+
 
 	}
 
@@ -307,12 +304,16 @@ public class DeviceInfoFragment extends ListFragment {
 		Resources res = getResources();
 		if(device.isCommunicationStatus()){
 			for(int emStringId : stringId){
+                //ignore Battery fully charged text
 				if(emStringId != R.string.emergencyStatus_BATTERY_FULLY_CHARGED){
 					String s = res.getString(emStringId);
 					sb.append(s);
 				}
 			}
-			sb.deleteCharAt(sb.length()-1);
+            //remove last "," ,if there no text in the string builder, simply append a "-"
+			if(sb.length()>0){
+                sb.deleteCharAt(sb.length()-1);
+            } else sb.append("-");
 			
 			
 		}else{
@@ -365,8 +366,12 @@ public class DeviceInfoFragment extends ListFragment {
 	 * @param device
 	 */
 	public void updateDevice(Device device, boolean autoRefresh) {
-		
-		
+
+
+        if(dataList==null) {
+            dataList = new ArrayList<Map<String,Object>>();
+        }
+        dataList.clear();
 		
 		//update refresh data stamp
 		
@@ -385,9 +390,15 @@ public class DeviceInfoFragment extends ListFragment {
 		updateStampTextView.setText(auto + time);
 		
 		//update deviceInfo ListView
-		dataList.clear();
+
 		dataList = getData(device);
-			
+
+        if(mAdapter == null) {
+            mAdapter = new DeviceInfoListAdapter(getActivity(), dataList, R.layout.device_info_row,
+                    new String[]{"description", "value"}, new int[]{R.id.deviceDescription, R.id.deviceValue}, device);
+            setListAdapter(mAdapter);
+        }
+
 		mAdapter.notifyDataSetChanged();
 		
 	}

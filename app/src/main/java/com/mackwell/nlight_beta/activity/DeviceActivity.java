@@ -743,7 +743,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 				refreshsSingleDevice(currentSelectedDevice.getAddress());
 			}
 			else{
-				mHandler.post(updateDeviceInfoFragmentUI);
+//				mHandler.post(updateDeviceInfoFragmentUI);
 			}
 			mHandler.postDelayed(this, TimeUnit.SECONDS.toMillis(Constants.SELECTED_DEVICE_AUTO_REFRESH_FREQUENCY));
 			
