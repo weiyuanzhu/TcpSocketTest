@@ -38,7 +38,9 @@ public class BaseActivity extends Activity implements CallBack{
     // Whether the display should be refreshed.
     public static boolean refreshDisplay = true;
 
-	@SuppressWarnings("unused")
+    //a flag to check if activity is in the foreground or visible to the user
+    protected boolean isActivityActive = false;
+
 	protected TCPConnection connection;
 
     //Android app shared preference object
@@ -60,6 +62,10 @@ public class BaseActivity extends Activity implements CallBack{
     @Override
     protected void onResume() {
         super.onResume();
+
+        //set flag to active
+        isActivityActive = true;
+
 
 //      update activity action bar icon, when actionbar exist
         String imageLocation = sharedPreferences.getString("pref_app_icons","default image");
@@ -91,6 +97,8 @@ public class BaseActivity extends Activity implements CallBack{
     @Override
     protected void onStop() {
         super.onStop();
+        //set flag de-active
+        isActivityActive = false;
 
         /*if(connection!=null){
             connection.closeConnection();

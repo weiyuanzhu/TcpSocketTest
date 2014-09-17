@@ -462,7 +462,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	
 	/**
 	 * when drop down(popup) menu item clicked 
-	 * @param popup menu item
+	 * @param arg0 menu item
 	 * @return true for handled, false for default
 	 */
 	@Override
@@ -509,7 +509,13 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
             messageTextView.setVisibility(View.INVISIBLE);
             imageView.setVisibility(View.INVISIBLE);
         }
+        //re-connect if app is switched to background
+        if(connection== null)
+        {
+            if(isConnected && !isDemo) connection = new TCPConnection(this,panel.getIp());
+        }
 
+        isActivityActive = true;
     }
 
     @Override
@@ -715,7 +721,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 
 		@Override
 		public void run() {
-			if(!isDemo && connection!=null){
+			if(!isDemo && connection!=null ){
 				List<char[] > commandList = GetCmdEnum.UPDATE_LIST.get();
 			
 				System.out.println(connection.isListening());
@@ -738,7 +744,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 			//System.out.println("---------------auto refresh current selected device----------------");
 			//System.out.println("AutoRresh: " + isAutoRefreshSelectedDevice());
 			
-			if( isAutoRefresh() && currentSelectedDevice!=null && isAutoRefreshSelectedDevice())
+			if( isActivityActive && isAutoRefresh() && currentSelectedDevice!=null && isAutoRefreshSelectedDevice())
 			{
 				refreshsSingleDevice(currentSelectedDevice.getAddress());
 			}
@@ -760,7 +766,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 			//System.out.println("AutoRresh: " + isAutoRefreshAllDevices());
 			
 			
-			if( isAutoRefresh() && isAutoRefreshAllDevices()){
+			if( isActivityActive && isAutoRefresh() && isAutoRefreshAllDevices()){
 				refreshAllDevices();
 			}
 			//setup refresh frequency

@@ -147,7 +147,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 					fragmentList.get(currentPanelPosition).updatePanelInfo(currentDisplayingPanel);
 					break;
 			case InputDialogFragment.SET_PANEL_CONTACT: 
-				commandList = SetCmdEnum.SET_CONTACT_NAME.set(buffer);
+				    commandList = SetCmdEnum.SET_CONTACT_NAME.set(buffer);
 					currentDisplayingPanel.setContact(input);
 					fragmentList.get(currentPanelPosition).updatePanelInfo(currentDisplayingPanel);
 					break;
@@ -477,12 +477,13 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         }else if(customIcon && !imageLocation.equals("default image") && splitScreen && currentPanelPosition==-1)  {
             panelInfoImage.setImageURI(uri);
 
-
-
         }
         else{
             panelInfoImage.setImageResource(R.drawable.mackwell_logo);
         }
+
+
+
 
 
     }
