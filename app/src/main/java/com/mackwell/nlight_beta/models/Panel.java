@@ -41,6 +41,7 @@ public class Panel  implements Parcelable {
 	private Long serialNumber;
 	private BigInteger gtin;
 	private int[] gtinArray;
+    private byte[] macAddress;
 	
 	private int deviceNumber;
 	
