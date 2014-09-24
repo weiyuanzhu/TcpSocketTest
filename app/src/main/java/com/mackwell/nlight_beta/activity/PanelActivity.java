@@ -99,7 +99,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		{
 			//connection.closeConnection();
 			//parse(ip);
-			
+			//todo
 		}
 		rxBuffer.clear();
 	}
@@ -332,7 +332,9 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         savePanelToPreference();
 
         //set home bar back navigation to display
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getActionBar()!=null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
 
         panelListFragment = (PanelListFragment) getFragmentManager().findFragmentById(R.id.fragment_panel_list);
@@ -515,7 +517,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		if(panelMap!=null && ip_connection_map!=null){
 			for(String key : panelMap.keySet())
 			{
-				
+
 				TCPConnection connection = ip_connection_map.get(key);
 				if(connection!=null){
 					connection.setListening(false);
@@ -710,13 +712,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 				SharedPreferences.Editor editor = sp.edit();
 				editor.putString(panel.getIp(), panel.getPanelLocation());
 				editor.commit();
-
 			}
-			
-		};
-		
-		
-		
+		}
 	}
 	
 	public void showDropDownMenu(View view)
@@ -826,9 +823,9 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	public void contactEngineerBtn(View view){
 
 		if(currentDisplayingPanel!=null && !currentDisplayingPanel.isEngineerMode()){
-			panelInfoImage.setVisibility(panelInfoImage.isShown()? 4:0);
-			faultTextView.setVisibility(faultTextView.isShown()? 4:0);
-			panelContact.setVisibility(panelInfoImage.isShown()? 4:0);
+			panelInfoImage.setVisibility(panelInfoImage.isShown()? View.INVISIBLE:View.VISIBLE);
+			faultTextView.setVisibility(faultTextView.isShown()? View.INVISIBLE:View.VISIBLE);
+			panelContact.setVisibility(panelInfoImage.isShown()? View.INVISIBLE:View.VISIBLE);
 			panelContact.setText(getContactDetails());
 		}
 		
@@ -836,7 +833,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
 	/**
 	 * When engineerModeBtn clicked
-	 * @param view
+	 * @param view button
 	 */
 	public void engineerModeBtn(View view){
 

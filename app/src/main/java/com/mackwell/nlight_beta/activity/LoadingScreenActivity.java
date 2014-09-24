@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -37,8 +38,9 @@ import com.mackwell.nlight_beta.util.DataParser;
 
 public class LoadingScreenActivity extends BaseActivity implements PanelConnection.CallBack,ListDialogFragment.ListDialogListener, UDPCallback{
 	
-	public static final String DEMO_MODE = "Demo Mode";
-	
+	private static final String TAG = "LoadingScreen";
+    public static final String DEMO_MODE = "Demo Mode";
+
 	//ipListAll = new String[] {"192.168.1.17","192.168.1.20","192.168.1.21","192.168.1.23","192.168.1.24"};
 	private ArrayList<String> ipListAll = null;
 	private ArrayList<String> ipListSelected = null;
@@ -62,7 +64,6 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	private Map<String,List<Integer>> rxBufferMap = null;
 	
 	private UDPConnection udpConnection = null;
-	private PanelConnection panelConnection = null;
 	List<Map<String, Object>> dataList = null; // datalist for panel list dialog
 	
 	private static int delay = 1000;
@@ -108,9 +109,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 			parse(ip);
 			
 		}
@@ -139,14 +140,19 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		}
 		return 1;
 	}
+
+    /*
+     * implement ListDialogFragment's ListDialogFragment's ListDialogListener interface
+     * @see nlight_android.activity.ListDialogFragment.ListDialogListener#searchAgain();
+     */
 	@Override
-		public void searchAgain() {
+    public void searchAgain() {
 		
 		searchUDP();			
 	}
 	 
 	/* (non-Javadoc) implementing ListDialogFragment's ListDialogListener interface
-	 * @see nlight_android.nlight.ListDialogFragment.ListDialogListener#connectPanels(java.util.List)
+	 * @see nlight_android.activity.ListDialogFragment.ListDialogListener#connectPanels(java.util.List)
 	 */
 	@Override
 	public void connectToPanels(List<Integer> selected) {
@@ -193,6 +199,8 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		//check if loading is already in process and panel selected not equal to 0
 		if(!isLoading && ipListSelected.size()!=0){
+
+
 			progressText.setText(getResources().getString(R.string.text_loading_panel,panelToLoad));
 			
 			progressText.setVisibility(View.VISIBLE);
@@ -203,9 +211,8 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			List<char[]> commandList = CommandFactory.getPanelInfo();
 			
 			for(String ip: ipListSelected){
-				
-				PanelConnection conn = (PanelConnection) ip_connection_map.get(ip);
-				conn.fetchData(commandList);
+
+                ip_connection_map.get(ip).fetchData(commandList);
 			}
 			
 			
@@ -244,9 +251,8 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		if(savePanelLocation)
 		{
-			String panelLocation = sp.getString(ip, "");
-			
-			return panelLocation;
+			//return cached panel location
+			return sp.getString(ip, "");
 		}
 		
 		return "";
@@ -345,7 +351,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		super.onStop();
 		
 		//close UDP connection
-		if(udpConnection!=null)
+		/*if(udpConnection!=null)
 		{
 			udpConnection.setListen(false);
 			udpConnection.closeConnection();
@@ -355,39 +361,39 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		for(String key : ip_connection_map.keySet())
 		{
 			
-			PanelConnection connection = ip_connection_map.get(key);
-			connection.closeConnection();
-			connection = null;
-		}
+			ip_connection_map.get(key).closeConnection();
+            ip_connection_map.get(key) = null;
+		}*/
 		
 	}
 
 	@Override
 	protected void onResume() {
 		
-		System.out.println("--------Loading screen onResume()-----------");
-		// TODO Auto-generated method stub
+		Log.d(TAG,"onResume");
 		super.onResume();
-		
-		//reset panelToLoad and clear panelList to prevent unexpected error
-		panelToLoad = 0;
-        panelList.clear();
-		 		
-		
-		//reset progress bar and progress
-		progress = 0;
-		
-		progressBar.setVisibility(View.INVISIBLE);
-		
-		//re-enable buttons
-		demoBtn.setEnabled(true);
-		liveBtn.setEnabled(true);
-		
-		//hide bars
-		progressText.setVisibility(View.INVISIBLE);
-		//progressBar.setVisibility(View.INVISIBLE);
-		
-	}
+
+        //reset panel elements if no panel is being loading
+        if (!isLoading) {
+            //reset panelToLoad and clear panelList to prevent unexpected error
+            panelToLoad = 0;
+            panelList.clear();
+
+            //reset progress bar and progress
+            progress = 0;
+
+            progressBar.setVisibility(View.INVISIBLE);
+
+            //re-enable buttons
+            demoBtn.setEnabled(true);
+            liveBtn.setEnabled(true);
+
+            //hide bars
+            progressText.setVisibility(View.INVISIBLE);
+            //progressBar.setVisibility(View.INVISIBLE);
+        }
+
+    }
 
 
 	@Override
@@ -405,10 +411,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		//close TCP connections
 		for(String key : ip_connection_map.keySet())
 		{
-			
-			PanelConnection connection = ip_connection_map.get(key);
-			connection.closeConnection();
-			connection = null;
+//			PanelConnection connection = ip_connection_map.get(key);
+            ip_connection_map.get(key).closeConnection();
+//			connection = null;
 		}
 		
 	}
@@ -420,10 +425,8 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		getMenuInflater().inflate(R.menu.loading_screen, menu);
 		return true;
 	}
-	
 
-	//pass all panel objects to next activity when loading and parsing is finished
-	
+	//pass all panel objects to next activity when loading and parsing are finished
 	Runnable loadFinished = new Runnable()
 	{
 
@@ -431,9 +434,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		public void run() {
 			
 			isLoading = false;
-			
-			
-			
+
 			//create intent
 			Intent intent = new Intent(LoadingScreenActivity.this, PanelActivity.class);
 			
@@ -441,28 +442,22 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			intent.putParcelableArrayListExtra("panelList", (ArrayList<? extends Parcelable>) panelList);
 			intent.putExtra(DEMO_MODE, isDemo);
 			startActivity(intent);
-			
-			
-			
+
 			//clear ipSelected list 
 			ipListSelected.clear();
-			
-			
+
 			//finish this activity to prevent back navi
 			//finish();
-			
 		}
-		
-		
 	};
-	
+
+    /*
+		 * Initial fields
+		 *
+		 */
 	public void initializeFields()
 	{
-		
-		/*
-		 * Initial collections 
-		 * 
-		 */
+
 		ipListAll = new ArrayList<String>();
 		ipListSelected = new ArrayList<String>();
 		
@@ -642,7 +637,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	
 	/**
 	 * This is when search button clicked on loading screen
-	 * @param view
+	 * @param view button
 	 */
 	public void searchPanelsBtn(View view)
 	{
@@ -689,17 +684,13 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			
 			for(String ip : ipListAll)
 			{
-				StringBuilder sb = new StringBuilder(ip);
-				sb.append(" ");
-				String ip_ = sb.toString();
-				
+				String ip_ = new String(ip);
+				ip_ += " ";
+
 				System.out.println(ip_);
-				editor.putBoolean(ip_, ipListSelected.contains(ip)? true: false);
+				editor.putBoolean(ip_, ipListSelected.contains(ip));
 				editor.commit();
-			
-				
 			}
-		
 		}
 		
 		// clear selected IP list 
