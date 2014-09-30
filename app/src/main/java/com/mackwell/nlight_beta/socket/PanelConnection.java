@@ -146,12 +146,17 @@ public class PanelConnection {
 					// init socket and in/out stream
 					
 					isListening = true;
-					
-					if(socket == null ||  !socket.isConnected() || socket.isClosed())
+
+                    //re-create if socket not exist or has been closed
+					if(socket == null || socket.isClosed())
 					{
 //						socket = new Socket(ip,port);
                         socket = new Socket();
+
+                        //set socket read() timeout
 						socket.setSoTimeout(500);
+
+                        //connect socket to server with a 3secs timeout
                         socket.connect(new InetSocketAddress(ip,port),3000);
 						//socket.setReceiveBufferSize(20000);
 
@@ -160,15 +165,10 @@ public class PanelConnection {
 
 					}
 
-//                    TimeUnit.SECONDS.sleep(1);
+                    // send command to panel if socket is connected to server and not closed
+                    if(socket.isConnected() && !socket.isClosed()) {
+                        //TCPConnection.printSocketInformation(socket);
 
-                    if(socket.isConnected()) {
-
-
-                        TCPConnection.printSocketInformation(socket);
-
-
-                        // send command to panel
                         out.print(command);
                         out.flush();
                     }
@@ -194,7 +194,7 @@ public class PanelConnection {
 					int data = 0;
 					
 					//TimeUnit.SECONDS.sleep(3);
-					while(isListening && !socket.isClosed())
+					while(isListening && !socket.isClosed() && socket.isConnected())
 					{	
 						//checks if a package is complete
 						//and call callback
