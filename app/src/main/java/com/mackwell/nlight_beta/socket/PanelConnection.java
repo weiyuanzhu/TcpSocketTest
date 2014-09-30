@@ -11,7 +11,9 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -107,7 +109,7 @@ public class PanelConnection {
 	{
 		isListening = false;
 		try {
-			if(socket != null)  
+			if(socket != null && socket.isConnected())
 			{		
 				out.close();
 				in.close();
@@ -139,28 +141,38 @@ public class PanelConnection {
 			
 			for(int i=0; i<commandList.size(); i++){
 				
-				char[] command = (char[]) commandList.get(i);
+				char[] command = commandList.get(i);
 			
 				try {
 					// init socket and in/out stream
 					
 					isListening = true;
 					
-					if(socket == null ||  socket.isClosed())
+					if(socket == null ||  !socket.isConnected() || socket.isClosed())
 					{
-						socket = new Socket(ip,port);	
+//						socket = new Socket(ip,port);
+                        socket = new Socket();
 						socket.setSoTimeout(500);
-						socket.setReceiveBufferSize(20000);
-						out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(),"ISO8859_1")),false);
-						in = socket.getInputStream();
-						
-						System.out.println("\nConnected to: " + socket.getInetAddress() + ": "+  socket.getPort());
-					}
-					
+                        socket.connect(new InetSocketAddress(ip,port),3000);
+						//socket.setReceiveBufferSize(20000);
 
-					// send command to panel
-					out.print(command);
-					out.flush();
+                        out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "ISO8859_1")), false);
+                        in = socket.getInputStream();
+
+					}
+
+//                    TimeUnit.SECONDS.sleep(1);
+
+                    if(socket.isConnected()) {
+
+
+                        TCPConnection.printSocketInformation(socket);
+
+
+                        // send command to panel
+                        out.print(command);
+                        out.flush();
+                    }
 	
 					/*
 					 *   Receive bytes from panel and put in rxBuffer arrayList
@@ -237,13 +249,16 @@ public class PanelConnection {
 				
 					
 			
-				}
-				catch(Exception ex)
+				} catch(SocketTimeoutException e)
+                {
+                    e.printStackTrace();
+                    mCallBack.get().error(ip);
+
+                } catch(Exception ex)
 				{
 					ex.printStackTrace();
 					mCallBack.get().error(ip);
-				}
-				finally
+				} finally
 				{		
 					
 					
@@ -263,6 +278,7 @@ public class PanelConnection {
 
 						}
 					}
+
 				}		
 		
 			}

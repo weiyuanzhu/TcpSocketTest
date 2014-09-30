@@ -588,7 +588,10 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		super.error(ip);
 		
 		System.out.println("Error: " + ip);
-		ip_connection_map.get(ip).closeConnection();
+		if(ip_connection_map.get(ip)!=null) {
+            ip_connection_map.get(ip).closeConnection();
+            ip_connection_map.get(ip).setListening(false);
+        }
 		
 		Message msg = mHandler.obtainMessage();
 		msg.arg1 = ERROR;
@@ -703,6 +706,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	 */
 	private void savePanelSelectionToIpLIstSelected(List<Integer> selected)
 	{
+        ipListSelected.clear();
 		for(Integer i: selected)
 		{
 			String item = ipListAll.get(i);
