@@ -171,7 +171,7 @@ public class BaseActivity extends Activity implements CallBack{
 	}
 
 	@Override
-	public void error(String ip) {
+	public void onError(String ip) {
 		// TODO Auto-generated method stub
 		
 	}

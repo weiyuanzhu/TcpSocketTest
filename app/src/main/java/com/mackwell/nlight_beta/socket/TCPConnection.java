@@ -26,7 +26,7 @@ public class TCPConnection {
 		public interface CallBack 
 		{
 			public void receive(List<Integer> rx,String ip);
-			public void error(String ip);
+			public void onError(String ip);
 		}
 	
 	private ExecutorService txExec;
@@ -213,7 +213,7 @@ public class TCPConnection {
 				catch(Exception ex)
 				{
 					ex.printStackTrace();
-					mCallBack.get().error(ip);
+					mCallBack.get().onError(ip);
 				}
 				finally
 				{		

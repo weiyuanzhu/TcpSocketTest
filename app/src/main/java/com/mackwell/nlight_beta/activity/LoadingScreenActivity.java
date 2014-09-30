@@ -308,6 +308,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 						progressText.setText(getResources().getString(R.string.text_connect_error,ipAdd));
 						progressBar.setVisibility(View.INVISIBLE);
 						liveBtn.setEnabled(true);
+                        demoBtn.setEnabled(true);
 						break;
 					default: 
 						
@@ -375,7 +376,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 
         //reset panel elements if no panel is being loading
         if (!isLoading) {
-            //reset panelToLoad and clear panelList to prevent unexpected error
+            //reset panelToLoad and clear panelList to prevent unexpected onError
             panelToLoad = 0;
             panelList.clear();
 
@@ -582,10 +583,12 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 
 
 	@Override
-	public void error(String ip) {
+	public void onError(String ip) {
 	
 		// TODO Auto-generated method stub
-		super.error(ip);
+		super.onError(ip);
+
+        isLoading = false;
 		
 		System.out.println("Error: " + ip);
 		if(ip_connection_map.get(ip)!=null) {
@@ -598,7 +601,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		msg.obj = ip;
 		mHandler.sendMessage(msg);
 		
-		ipListAll.remove(ip);
+//		ipListAll.remove(ip);
 		panelToLoad	= ipListAll.size();	
 	}
 	

@@ -28,7 +28,7 @@ public class PanelConnection {
 		public interface CallBack 
 		{
 			public void receive(List<Integer> rx,String ip);
-			public void error(String ip);
+			public void onError(String ip);
 		}
 	
 
@@ -44,15 +44,14 @@ public class PanelConnection {
 	private int port;
 	private String ip;
 	
-	private boolean isListening; // a flag for keep/stop the socket listening 
+	private boolean isListening; // a flag for keep/stop the socket listening
+
+
 	
 	public synchronized boolean  isListening() {
 		return isListening;
 	}
 
-
-	
-	
 	//set this.isClosed
 	public synchronized void setListening(boolean isListening)
 	{
@@ -252,12 +251,12 @@ public class PanelConnection {
 				} catch(SocketTimeoutException e)
                 {
                     e.printStackTrace();
-                    mCallBack.get().error(ip);
+                    mCallBack.get().onError(ip);
 
                 } catch(Exception ex)
 				{
 					ex.printStackTrace();
-					mCallBack.get().error(ip);
+					mCallBack.get().onError(ip);
 				} finally
 				{		
 					

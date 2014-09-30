@@ -642,7 +642,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		System.out.println("GroupOpen/Close Test " + groupPosition);
 		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 		
-		//set currentSelectedDevcict to null to prevent fragment error 
+		//set currentSelectedDevcict to null to prevent fragment onError
 //		(getResources() can not be called when fragment is not attached)
 		currentSelectedDevice = null;
 

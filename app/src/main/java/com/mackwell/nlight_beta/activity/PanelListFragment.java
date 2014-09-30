@@ -343,7 +343,7 @@ public class PanelListFragment extends ListFragment implements TCPConnection.Cal
 	}
 
 	@Override
-	public void error(String ip) {
+	public void onError(String ip) {
 		System.out.println("=============PanelListFragment Connection ERROR================");
 		
 	}
