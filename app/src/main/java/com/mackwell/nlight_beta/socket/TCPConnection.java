@@ -7,6 +7,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -18,6 +20,9 @@ import com.mackwell.nlight_beta.util.Constants;
 
 
 public class TCPConnection {
+
+    public static final int READ_TIMEOUT = 5000;
+    public static final int CONNECTION_TIMEOUT = 3000;
 	
 	
 	
@@ -49,9 +54,6 @@ public class TCPConnection {
 		return isListening;
 	}
 
-
-	
-	
 	//set this.isClosed
 	public synchronized void setListening(boolean isListening)
 	{
@@ -68,13 +70,26 @@ public class TCPConnection {
 
 	
 	private Socket socket;
-	private PrintWriter out;
-	private InputStream in; 
-	
 
-	
-	
-	//Constructor , requires a delegation(callback) object for callback
+
+    public synchronized Socket getSocket() {
+        return socket;
+    }
+
+    private PrintWriter out;
+	private InputStream in;
+
+    private Thread rxThread;
+
+    public synchronized Thread getRxThread() {
+        return rxThread;
+    }
+
+    public void setRxThread(Thread rxThread) {
+        this.rxThread = rxThread;
+    }
+
+    //Constructor , requires a delegation(callback) object for callback
 	public TCPConnection(CallBack callBack, String ip)
 	{
 		this.ip = ip;
@@ -88,7 +103,7 @@ public class TCPConnection {
 		txExec = Executors.newSingleThreadExecutor();
 		
 		//create a separate thread for rx only, this thread will block
-		Thread rxThread = new Thread(rx);
+		setRxThread(new Thread(rx));
 		rxThread.start();
 	}
 
@@ -142,11 +157,15 @@ public class TCPConnection {
 		public void run() {
 			panelInfoPackageNo = 0;
 			System.out.println(Thread.currentThread().toString() + "Tx thread starts");
+
+            setListening(true);
 			
 			//char[] getPackageTest = new char[] {2, 165, 64, 15, 96, 0,0x5A,0xA5,0x0D,0x0A};
 			//char[] getConfig = new char[] {0x02,0xA0,0x21,0x68,0x18,0x5A,0xA5,0x0D,0x0A};
-			
-			for(int i=0; i<commandList.size(); i++){
+
+
+
+            for(int i=0; i<commandList.size(); i++){
 				
 				char[] command = (char[]) commandList.get(i);
 			
@@ -158,18 +177,25 @@ public class TCPConnection {
 					if(socket == null ||  socket.isClosed())
 					{
 						socket = new Socket(ip,port);	
-						socket.setSoTimeout(500);
+						socket.setSoTimeout(READ_TIMEOUT);
 						socket.setReceiveBufferSize(20000);
 						out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(),"ISO8859_1")),false);
 						in = socket.getInputStream();
 						
 						System.out.println("\nConnected to: " + socket.getInetAddress() + ": "+  socket.getPort());
 					}
-					
+
+                    if (getRxThread()==null) {
+                        setRxThread(new Thread(rx));
+                        rxThread.start();
+
+                    }
 
 					// send command to panel
 					out.print(command);
 					out.flush();
+
+
 					
 					Thread.yield();
 					//TimeUnit.SECONDS.sleep(1);
@@ -250,9 +276,9 @@ public class TCPConnection {
 				{
 					socket = new Socket(ip,port);	
 					
-					setListening(true);
+//					setListening(true);
 					
-					socket.setSoTimeout(500);
+					socket.setSoTimeout(READ_TIMEOUT);
 					socket.setReceiveBufferSize(20000);
 					out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(),"ISO8859_1")),false);
 					in = socket.getInputStream();
@@ -260,7 +286,7 @@ public class TCPConnection {
 					System.out.println("\nConnected to: " + socket.getInetAddress() + ": "+  socket.getPort());
 				}
 				
-				while(isListening() && !socket.isClosed())
+				while(!socket.isClosed())
 				{	
 					//checks if a package is complete
 					//and call callback
@@ -288,10 +314,14 @@ public class TCPConnection {
 					}*/
 					
 					//reading data from stream
-					if(in.available()>0)
+					if(isListening() && !socket.isClosed())
 					{
 						data = in.read();
-						rxBuffer.add(data);
+                        if (data==-1) {
+                            throw new SocketTimeoutException();
+
+                        }
+                        rxBuffer.add(data);
 						
 						if(!rxBuffer.isEmpty() && (data == Constants.UART_NEW_LINE_L) && 
 		        				rxBuffer.get(rxBuffer.size() - 2).equals(Constants.UART_NEW_LINE_H) &&
@@ -333,9 +363,18 @@ public class TCPConnection {
 				
 				}
 			}
+            catch(SocketTimeoutException timeout)
+            {
+                timeout.printStackTrace();
+                setListening(false);
+                rxThread = null;
+
+            }
 			catch(IOException e){
 				e.printStackTrace();
 			}
+
+
 			finally{
 				System.out.println("Finally, RX: closing thread");
 					
@@ -397,7 +436,16 @@ public class TCPConnection {
         }
     }
 
-
+    public void setTimeOut(int timeout)
+    {
+        try {
+            if (socket!=null) {
+                getSocket().setSoTimeout(timeout);
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+    }
 
 	
 	

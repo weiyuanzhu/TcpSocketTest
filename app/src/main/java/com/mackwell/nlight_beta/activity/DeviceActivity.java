@@ -179,7 +179,10 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 			
 			//connection.setListening(true);
 			mHandler.post(updateDeviceListFragment);
-		}
+		} else if(rx.get(1)==173)
+        {
+            if(!multiSelectionMode) connection.setListening(false);
+        }
 		
 	}
 	
@@ -273,6 +276,11 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	@Override
 	public void onMultiSelectionMode(boolean multiSelect) {
 		multiSelectionMode = multiSelect;
+
+        //set connection read timeout to 0 if it is in multiSelection mode
+        //to prevent receive package lost
+        //set it to 5 seconds after quite multiSelection mode
+        connection.setTimeOut(multiSelect ? 0 : 5000);
 
 		currentSelectedDevice = null;
 		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
