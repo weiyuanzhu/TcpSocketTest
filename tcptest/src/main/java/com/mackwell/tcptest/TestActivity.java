@@ -1,10 +1,6 @@
-package com.mackwell.nlight_beta.test;
+package com.mackwell.tcptest;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,18 +9,17 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.mackwell.nlight_beta.R;
-import com.mackwell.nlight_beta.activity.BaseActivity;
-import com.mackwell.nlight_beta.activity.SeekBarDialogFragment;
-import com.mackwell.nlight_beta.activity.SettingsActivity;
-import com.mackwell.nlight_beta.activity.InputDialogFragment.NoticeDialogListener;
-import com.mackwell.nlight_beta.socket.TCPConnection;
-import com.mackwell.nlight_beta.util.GetCmdEnum;
 
-public class TestActivity extends BaseActivity implements TCPConnection.CallBack,NoticeDialogListener{
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+public class TestActivity extends Activity implements TCPConnection.CallBack{
 
 	TCPConnection tcpConnection;
-	final String ip = "192.168.1.22";
+	final String ip = "192.168.1.17";
 	private ArrayList<Integer> rxData = null;
 	
 	@Override
@@ -36,12 +31,17 @@ public class TestActivity extends BaseActivity implements TCPConnection.CallBack
 		//tcpConnection.setListening(false);
 		//refreshTest();
 	}
-	
-	@Override
-	public void cancel() {
-		// TODO Auto-generated method stub
-		
-	}
+
+    @Override
+    public void onError(String ip) {
+
+    }
+
+//    @Override
+//	public void cancel() {
+//		// TODO Auto-generated method stub
+//
+//	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,14 +69,16 @@ public class TestActivity extends BaseActivity implements TCPConnection.CallBack
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.show_devices, menu);
+//		getMenuInflater().inflate(R.menu.show_devices, menu);
 		return true;
 	}
 
 	
 	
-	public void tcpTest(View v)
+	public void tcpTest(View view)
 	{
+        rxData.clear();
+        tcpConnection.fetchData(GetCmdEnum.GET_INIT.get());
 		/*List<Integer> buffer = new ArrayList<Integer>();
 		buffer.add(00);		
 		buffer.addAll(DataParser.convertString("test123"));
@@ -84,10 +86,7 @@ public class TestActivity extends BaseActivity implements TCPConnection.CallBack
 		List<char[] > commandList = SetCmdEnum.SET_DEVICE_NAME.set(buffer);
 		
 		commandList = ToggleCmdEnum.REFRESH.toggle(0);
-		
-		
-		
-		
+
 		System.out.println("---------------" + Thread.currentThread().toString());
 		
 		
@@ -96,7 +95,7 @@ public class TestActivity extends BaseActivity implements TCPConnection.CallBack
 			exec.execute(refreshTest);
 			
 		}*/
-			refreshTest();
+//			refreshTest();
 	}
 		
 	private void refreshTest(){
@@ -119,13 +118,12 @@ public class TestActivity extends BaseActivity implements TCPConnection.CallBack
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// TODO Auto-generated method stu
-		
+
 		switch (item.getItemId()) {
        
         case R.id.action_settings:
-        	Intent settingIntent = new Intent(this, SettingsActivity.class);
-        	startActivity(settingIntent);
+//        	Intent settingIntent = new Intent(this, SettingsActivity.class);
+//        	startActivity(settingIntent);
         	
             return true;
        
@@ -139,27 +137,27 @@ public class TestActivity extends BaseActivity implements TCPConnection.CallBack
 
 	public void messagTest(View v)
 	{
-		System.out.println(isConnected);
-		checkConnectivity();
+//		System.out.println(isConnected);
+//		checkConnectivity();
 		
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 		Boolean test = sharedPref.getBoolean("testPref", false);
 		System.out.println("testPref--->" + test);
-
-		SeekBarDialogFragment dialog = new SeekBarDialogFragment();
-		dialog.show(getFragmentManager(), "SetLocation");
+//
+//		SeekBarDialogFragment dialog = new SeekBarDialogFragment();
+//		dialog.show(getFragmentManager(), "SetLocation");
 		
 	}
 
 	
 
 
-
-	@Override
-	public void setInformation(String input,int type) {
-		System.out.println("callback ------> " + input);
-		
-	}
+//
+//	@Override
+//	public void setInformation(String input,int type) {
+//		System.out.println("callback ------> " + input);
+//
+//	}
 
 
 	private void preference()

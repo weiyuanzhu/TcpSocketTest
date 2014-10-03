@@ -167,6 +167,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		if(rx.get(1)==160 && rx.get(2)==39){
 			
 			int address = rx.get(3);
+
 			
 			panel.updateDeviceByAddress(address, rx);
 			/*if(currentSelectedDevice!=null){

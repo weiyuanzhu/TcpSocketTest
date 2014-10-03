@@ -1,8 +1,3 @@
-
-
-
-
-
 package com.mackwell.nlight_beta.socket;
 
 import java.io.BufferedWriter;
@@ -23,6 +18,10 @@ import com.mackwell.nlight_beta.util.Constants;
 
 
 public class PanelConnection {
+
+    public static final int CONNECTION_TIMEOUT = 3000; // 3 seconds
+    public static final int READ_TIMEOUT = 5000;    // 5 seconds
+
 	
 	//interface for callback
 		public interface CallBack 
@@ -145,7 +144,7 @@ public class PanelConnection {
 				try {
 					// init socket and in/out stream
 					
-					isListening = true;
+					setListening(true);
 
                     //re-create if socket not exist or has been closed
 					if(socket == null || socket.isClosed())
@@ -154,10 +153,12 @@ public class PanelConnection {
                         socket = new Socket();
 
                         //set socket read() timeout
-						socket.setSoTimeout(500);
+						socket.setSoTimeout(READ_TIMEOUT);
+
+                        socket.setKeepAlive(true);
 
                         //connect socket to server with a 3secs timeout
-                        socket.connect(new InetSocketAddress(ip,port),3000);
+                        socket.connect(new InetSocketAddress(ip,port),CONNECTION_TIMEOUT);
 						//socket.setReceiveBufferSize(20000);
 
                         out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "ISO8859_1")), false);
@@ -194,7 +195,7 @@ public class PanelConnection {
 					int data = 0;
 					
 					//TimeUnit.SECONDS.sleep(3);
-					while(isListening && !socket.isClosed() && socket.isConnected())
+					while(isListening() && !socket.isClosed() && socket.isConnected())
 					{	
 						//checks if a package is complete
 						//and call callback
@@ -220,7 +221,8 @@ public class PanelConnection {
 						}
 						
 						//reading data from stream
-						if(in.available()>0)
+//						if(in.available()>0)
+                        if(isListening() && !socket.isClosed())
 						{
 							data = in.read();
 							rxBuffer.add(data);

@@ -165,6 +165,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		savePanelSelectionToIpLIstSelected(selected);
 		
 		progressBar.setMax(16*ipListSelected.size());
+        progress = 0;
 		
 		
 		System.out.println(ipListSelected);
@@ -183,28 +184,22 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			rxBufferMap.put(ip, new ArrayList<Integer>());
 			
 		}
-		//on panel thread
+		//on main ui thread
 		//show progress bar and text
 		
 		//set isDemo flag
 		isDemo = false;
 		panelToLoad = ipListSelected.size();
-		
-		
-		//Message msg = mHandler.obtainMessage();
-		//msg.arg1 = LOADING;
-		//mHandler.sendMessage(msg);
 
-		
-		
-		//check if loading is already in process and panel selected not equal to 0
+		//check if loading is not already in process and panel selected not equal to 0
 		if(!isLoading && ipListSelected.size()!=0){
 
+           progressText.setText(getResources().getString(R.string.text_loading_panel,panelToLoad));
 
-			progressText.setText(getResources().getString(R.string.text_loading_panel,panelToLoad));
-			
+            //reset progress bar and status text
 			progressText.setVisibility(View.VISIBLE);
 			progressBar.setVisibility(View.VISIBLE);
+            progressBar.setProgress(progress);
 			
 			
 			System.out.println("------------liveMode clicked");
@@ -602,7 +597,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		mHandler.sendMessage(msg);
 		
 //		ipListAll.remove(ip);
-		panelToLoad	= ipListAll.size();	
+		panelToLoad	--;
 	}
 	
 	
