@@ -185,9 +185,15 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
         }
 		
 	}
-	
-	
-	@Override
+
+    @Override
+    public void onError(String ip, Exception e) {
+        if (e instanceof TCPConnection.PanelResetException) {
+            mHandler.post(panelResetError);
+        }
+    }
+
+    @Override
 	public void cancel() {
 		// TODO Auto-generated method stub
 		
@@ -280,7 +286,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
         //set connection read timeout to 0 if it is in multiSelection mode
         //to prevent receive package lost
         //set it to 5 seconds after quite multiSelection mode
-        connection.setTimeOut(multiSelect ? 0 : 5000);
+        //connection.setTimeOut(multiSelect ? 0 : 5000);
 
 		currentSelectedDevice = null;
 		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
@@ -846,6 +852,14 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		}
 		
 	};
+
+    Runnable panelResetError = new Runnable() {
+        @Override
+        public void run() {
+            Toast.makeText(DeviceActivity.this,"Panel has been reset please check connection",Toast.LENGTH_LONG).show();
+
+        }
+    };
 	
 	
 	

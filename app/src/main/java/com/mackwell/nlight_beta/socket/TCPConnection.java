@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
@@ -21,7 +22,7 @@ import com.mackwell.nlight_beta.util.Constants;
 
 public class TCPConnection {
 
-    public static final int READ_TIMEOUT = 5000;
+    public static final int READ_TIMEOUT = 0;
     public static final int CONNECTION_TIMEOUT = 3000;
 	
 	
@@ -31,7 +32,7 @@ public class TCPConnection {
 		public interface CallBack 
 		{
 			public void receive(List<Integer> rx,String ip);
-			public void onError(String ip);
+			public void onError(String ip, Exception e);
 		}
 	
 	private ExecutorService txExec;
@@ -236,10 +237,10 @@ public class TCPConnection {
 				
 			
 				
-				catch(Exception ex)
+				catch(Exception e)
 				{
-					ex.printStackTrace();
-					mCallBack.get().onError(ip);
+					e.printStackTrace();
+					mCallBack.get().onError(ip,e);
 				}
 				finally
 				{		
@@ -274,10 +275,10 @@ public class TCPConnection {
 				
 				if(socket == null ||  socket.isClosed())
 				{
-					socket = new Socket(ip,port);	
+					socket = new Socket();
 					
 //					setListening(true);
-					
+					socket.connect(new InetSocketAddress(ip,port),CONNECTION_TIMEOUT);
 					socket.setSoTimeout(READ_TIMEOUT);
 					socket.setReceiveBufferSize(20000);
 					out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(),"ISO8859_1")),false);
@@ -318,7 +319,7 @@ public class TCPConnection {
 					{
 						data = in.read();
                         if (data==-1) {
-                            throw new SocketTimeoutException();
+                            throw new PanelResetException();
 
                         }
                         rxBuffer.add(data);
@@ -363,9 +364,10 @@ public class TCPConnection {
 				
 				}
 			}
-            catch(SocketTimeoutException timeout)
+            catch(PanelResetException e)
             {
-                timeout.printStackTrace();
+                e.printStackTrace();
+                mCallBack.get().onError(ip,e);
                 setListening(false);
                 rxThread = null;
 
@@ -447,7 +449,13 @@ public class TCPConnection {
         }
     }
 
-	
+	public class PanelResetException extends SocketException{
+
+        public PanelResetException(){
+            super("Panel has been reset. Check connection.");
+        }
+
+    }
 	
 
 }

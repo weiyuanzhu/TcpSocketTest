@@ -578,10 +578,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 
 
 	@Override
-	public void onError(String ip) {
+	public void onError(String ip,Exception e) {
 	
 		// TODO Auto-generated method stub
-		super.onError(ip);
 
         isLoading = false;
 		

@@ -103,6 +103,12 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		}
 		rxBuffer.clear();
 	}
+
+
+    @Override
+    public void onError(String ip, Exception e){
+
+    }
 	
 	
 	/* (non-Javadoc)

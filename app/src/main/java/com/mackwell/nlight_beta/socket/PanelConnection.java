@@ -27,7 +27,7 @@ public class PanelConnection {
 		public interface CallBack 
 		{
 			public void receive(List<Integer> rx,String ip);
-			public void onError(String ip);
+			public void onError(String ip, Exception e);
 		}
 	
 
@@ -253,12 +253,12 @@ public class PanelConnection {
 				} catch(SocketTimeoutException e)
                 {
                     e.printStackTrace();
-                    mCallBack.get().onError(ip);
+                    mCallBack.get().onError(ip,e);
 
                 } catch(Exception ex)
 				{
 					ex.printStackTrace();
-					mCallBack.get().onError(ip);
+					mCallBack.get().onError(ip,ex);
 				} finally
 				{		
 					

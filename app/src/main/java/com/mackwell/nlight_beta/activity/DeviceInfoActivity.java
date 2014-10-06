@@ -88,7 +88,7 @@ public class DeviceInfoActivity extends Activity implements TCPConnection.CallBa
 	}
 
 	@Override
-	public void onError(String ip) {
+	public void onError(String ip,Exception e) {
 		// TODO Auto-generated method stub
 		
 	}

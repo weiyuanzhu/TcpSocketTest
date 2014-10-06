@@ -166,14 +166,12 @@ public class BaseActivity extends Activity implements CallBack{
 
 	@Override
 	public void receive(List<Integer> rx, String ip) {
-		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
-	public void onError(String ip) {
-		// TODO Auto-generated method stub
-		
+	public void onError(String ip,Exception e) {
+
 	}
 
 	

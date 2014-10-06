@@ -496,7 +496,7 @@ public class PanelInfoFragment extends Fragment implements TCPConnection.CallBac
 	}
 
 	@Override
-	public void onError(String ip) {
+	public void onError(String ip,Exception e) {
 		// TODO Auto-generated method stub
 		
 	}
