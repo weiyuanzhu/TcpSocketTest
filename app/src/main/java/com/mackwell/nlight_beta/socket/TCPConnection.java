@@ -277,7 +277,7 @@ public class TCPConnection {
 				{
 					socket = new Socket();
 					
-//					setListening(true);
+					setListening(true);
 					socket.connect(new InetSocketAddress(ip,port),CONNECTION_TIMEOUT);
 					socket.setSoTimeout(READ_TIMEOUT);
 					socket.setReceiveBufferSize(20000);

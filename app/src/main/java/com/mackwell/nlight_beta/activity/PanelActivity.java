@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Handler;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -48,6 +49,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
     private static final int REQUEST_PANEL = 1;
 
+    private android.os.Handler mHandler;
     private boolean splitScreen = false;
 
 	private List<Panel> panelList = null;
@@ -83,6 +85,14 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	
 	//private int currentSelected;
 
+    Runnable panelResetError = new Runnable() {
+        @Override
+        public void run() {
+            Toast.makeText(PanelActivity.this,"Panel has been reset please check connection",Toast.LENGTH_LONG).show();
+
+        }
+    };
+
 	
 	
 	/* (non-Javadoc)callback for connection
@@ -101,19 +111,23 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			//parse(ip);
 			//todo
 		}
+
 		rxBuffer.clear();
 	}
 
 
     @Override
-    public void onError(String ip, Exception e){
+    public void onError(String ip, Exception e) {
+        if (e instanceof TCPConnection.PanelResetException) {
+            mHandler.post(panelResetError);
+        }
 
     }
-	
-	
-	/* (non-Javadoc)
-	 * @see nlight_android.nlight.InputDialogFragment.NoticeDialogListener#cancel()
-	 */
+
+
+    /* (non-Javadoc)
+     * @see nlight_android.nlight.InputDialogFragment.NoticeDialogListener#cancel()
+     */
 	@Override
 	public void cancel() {
 		
@@ -292,6 +306,9 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_panel);
+
+        mHandler = new android.os.Handler();
+
 
 
         // The detail container view will be present only in the
