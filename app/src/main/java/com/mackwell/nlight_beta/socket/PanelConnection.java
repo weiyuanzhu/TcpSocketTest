@@ -33,6 +33,7 @@ public class PanelConnection {
 
 	private int panelInfoPackageNo;
 	private boolean rxCompleted;
+    private boolean error;
 	
 	
 	
@@ -77,6 +78,7 @@ public class PanelConnection {
 		this.ip = ip;
 		this.isListening = false;
 		this.rxCompleted = false;
+        this.error = false;
 		this.rxBuffer = new ArrayList<Integer>();
 		this.port = 500;
 		this.mCallBack = new WeakReference<CallBack>(callBack);
@@ -258,35 +260,60 @@ public class PanelConnection {
 				} catch(SocketTimeoutException e)
                 {
                     e.printStackTrace();
+                    error = true;
+                    setListening(false);
                     mCallBack.get().onError(ip,e);
 
                 } catch (TCPConnection.PanelResetException e1){
                     e1.printStackTrace();
+                    error = true;
+                    setListening(false);
                     mCallBack.get().onError(ip,e1);
                 }
 
                 catch(Exception ex)
 				{
 					ex.printStackTrace();
+                    error = true;
+                    setListening(false);
 					mCallBack.get().onError(ip,ex);
 				} finally{
 
-					if(panelInfoPackageNo == commandList.size()){
-						System.out.println("Finally: closing socket");
-						rxCompleted = true;
-						try {
-							if(socket != null && !socket.isClosed())  
-							{		
-								out.close();
-								in.close();
-								socket.close();			
-							}
-							
-						} catch (IOException ex) {
-							ex.printStackTrace();
+                    //close socket if all packages are received
+                    if(panelInfoPackageNo == commandList.size()){
+                        System.out.println("Finally: closing socket");
+                        rxCompleted = true;
+                        try {
+                            if(socket != null && !socket.isClosed())
+                            {
+                                out.close();
+                                in.close();
+                                socket.close();
+                            }
 
-						}
-					}
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+
+                        }
+                    }
+                    else if(error) {
+
+                        //break out the command list for loop if there is connection exception
+                        try {
+                            if(socket != null && socket.isConnected() && !socket.isClosed())
+                            {
+                                out.close();
+                                in.close();
+                                socket.close();
+                            }
+
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+
+                        }
+                        break;
+                    }
+
 
 				}		
 		
