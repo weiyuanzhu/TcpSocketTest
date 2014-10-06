@@ -449,7 +449,7 @@ public class TCPConnection {
         }
     }
 
-	public class PanelResetException extends SocketException{
+	public static class PanelResetException extends SocketException{
 
         public PanelResetException(){
             super("Panel has been reset. Check connection.");

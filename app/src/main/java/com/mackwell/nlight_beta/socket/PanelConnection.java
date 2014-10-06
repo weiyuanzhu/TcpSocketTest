@@ -225,6 +225,11 @@ public class PanelConnection {
                         if(isListening() && !socket.isClosed())
 						{
 							data = in.read();
+                            if (data==-1) {
+                                throw new TCPConnection.PanelResetException();
+
+                            }
+
 							rxBuffer.add(data);
 		
 						}
@@ -255,14 +260,17 @@ public class PanelConnection {
                     e.printStackTrace();
                     mCallBack.get().onError(ip,e);
 
-                } catch(Exception ex)
+                } catch (TCPConnection.PanelResetException e1){
+                    e1.printStackTrace();
+                    mCallBack.get().onError(ip,e1);
+                }
+
+                catch(Exception ex)
 				{
 					ex.printStackTrace();
 					mCallBack.get().onError(ip,ex);
-				} finally
-				{		
-					
-					
+				} finally{
+
 					if(panelInfoPackageNo == commandList.size()){
 						System.out.println("Finally: closing socket");
 						rxCompleted = true;
