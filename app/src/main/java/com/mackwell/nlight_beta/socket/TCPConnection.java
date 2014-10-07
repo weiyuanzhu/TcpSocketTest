@@ -23,7 +23,7 @@ import com.mackwell.nlight_beta.util.Constants;
 public class TCPConnection {
 
     public static final int READ_TIMEOUT = 0;
-    public static final int CONNECTION_TIMEOUT = 3000;
+    public static final int CONNECTION_TIMEOUT = 2000;
 	
 	
 	
@@ -244,7 +244,6 @@ public class TCPConnection {
 					try {
 						TimeUnit.MILLISECONDS.sleep(Constants.GAP_BETWEEN_COMMANDS);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					System.out.println("Tx: complete (finally)");
@@ -370,8 +369,14 @@ public class TCPConnection {
                 rxThread = null;
 
             }
-			catch(IOException e){
-				e.printStackTrace();
+            catch(SocketTimeoutException e1){
+                e1.printStackTrace();
+                mCallBack.get().onError(ip,e1);
+                setListening(false);
+                rxThread = null;
+            }
+			catch(IOException e2){
+				e2.printStackTrace();
 			}
 
 
