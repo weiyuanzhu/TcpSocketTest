@@ -40,6 +40,7 @@ public class ListDialogFragment extends DialogFragment {
 		
 	} 
 	private ListView listView;
+    private Map<String,Boolean> ipEnableMap;
 	private List<Map<String,Object>> dataList;
 	private String[] ips; 												//An array contains panels' IP
 	private ListDialogListener mListener; 								//A callback listener for dialog when button clicked
@@ -70,32 +71,40 @@ public class ListDialogFragment extends DialogFragment {
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			
+
 			LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			
+
 			View rowView = inflater.inflate(resource, parent, false);
-			
+
 			TextView ip = (TextView) rowView.findViewById(to[0]);
 			CheckedTextView location = (CheckedTextView) rowView.findViewById(to[1]);
-			
+
 			String ipText = (String) dataList.get(position).get(from[0]);
 			ip.setText(ipText);
-			
+
 			String locationText = (String) dataList.get(position).get(from[1]);
 			location.setText(locationText);
 
-			
-			
-			
+
+
+
 			if(check(ipText))
 			{
 				location.setChecked(true);
 //                location.setEnabled(false);
 
 				listView.setItemChecked(position, true);
-//                listView.setEnabled(false);
 			}
-			
+
+            //disable or enable check box for ip
+            if(!ipEnableMap.get(ipText))
+            {
+                location.setChecked(false);
+                location.setEnabled(false);
+                listView.setEnabled(false);
+                listView.setItemChecked(position, false);
+            }
+
 			/*if(position==0)
 			{
 				location.setTextColor(Color.GREEN);
@@ -279,6 +288,11 @@ public class ListDialogFragment extends DialogFragment {
 		this.dataList = dataList;
 	}
 
+    public Map<String, Boolean> getIpEnableMap() {
+        return ipEnableMap;
+    }
 
-
+    public void setIpEnableMap(Map<String, Boolean> ipEnableMap) {
+        this.ipEnableMap = ipEnableMap;
+    }
 }

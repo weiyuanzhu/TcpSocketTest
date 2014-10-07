@@ -43,6 +43,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 
 	//ipListAll = new String[] {"192.168.1.17","192.168.1.20","192.168.1.21","192.168.1.23","192.168.1.24"};
 	private ArrayList<String> ipListAll = null;
+    private Map<String,Boolean> ipEnableMap = null;
 	private ArrayList<String> ipListSelected = null;
 	
 	private static final int LOADING = 0;
@@ -125,6 +126,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 
         isLoading = false;
 
+        //set ip checkbox disable
+        ipEnableMap.put(ip,false);
+
         System.out.println("Error: " + ip);
         if(ip_connection_map.get(ip)!=null) {
             ip_connection_map.get(ip).closeConnection();
@@ -149,6 +153,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		if(!ipListAll.contains(ip))
 		{
 			ipListAll.add(ip);
+            ipEnableMap.put(ip,true);
 			
 			//put ip and location into a map and add to dataList for dialog listview;
 			Map<String, Object> map = new HashMap<String,Object>();
@@ -167,7 +172,10 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
      */
 	@Override
     public void searchAgain() {
-		
+
+        //reset all items in ipEnableMap to true
+        if(ipEnableMap!=null) ipEnableMap.clear();
+
 		searchUDP();			
 	}
 	 
@@ -475,6 +483,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	{
 
 		ipListAll = new ArrayList<String>();
+        ipEnableMap = new HashMap<String, Boolean>();
 		ipListSelected = new ArrayList<String>();
 		
 		
@@ -620,7 +629,6 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		
 		//create a new ListDialogFragment and set its String[] ips to be udp search result
-		
 		ListDialogFragment panelListDialog = new ListDialogFragment();
 				
 		//get a String[] from ipSet and pass to dialog window
@@ -628,7 +636,8 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		ipListAll.toArray(ipArray);
 		panelListDialog.setIps(ipArray);
 		panelListDialog.setDataList(dataList);
-				
+		panelListDialog.setIpEnableMap(ipEnableMap);
+
 		//test.setIps(null); //null test
 		panelListDialog.show(getFragmentManager(), "panelListDialog"); //popup dialog
 				
