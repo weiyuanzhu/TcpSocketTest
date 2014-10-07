@@ -19,7 +19,7 @@ import com.mackwell.nlight_beta.util.Constants;
 
 public class PanelConnection {
 
-    public static final int CONNECTION_TIMEOUT = 3000; // 3 seconds
+    public static final int CONNECTION_TIMEOUT = 5000; // 3 seconds
     public static final int READ_TIMEOUT = 5000;    // 5 seconds
 
 	

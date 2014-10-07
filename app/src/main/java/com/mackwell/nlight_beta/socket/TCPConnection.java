@@ -23,7 +23,7 @@ import com.mackwell.nlight_beta.util.Constants;
 public class TCPConnection {
 
     public static final int READ_TIMEOUT = 0;
-    public static final int CONNECTION_TIMEOUT = 2000;
+    public static final int CONNECTION_TIMEOUT = 5000;
 	
 	
 	
@@ -134,8 +134,8 @@ public class TCPConnection {
 		try {
 			if(socket != null)  
 			{		
-				out.close();
-				in.close();
+				if(out!=null) out.close();
+				if(in!=null) in.close();
 				socket.close();			
 			}
 			
@@ -386,11 +386,10 @@ public class TCPConnection {
 				try {
 					if(socket != null && !socket.isClosed())  
 					{		
-						out.close();
-						in.close();
+						if(out!=null) out.close();
+						if(in!=null) in.close();
 						socket.close();			
 					}
-						
 				} catch (IOException ex) {
 					ex.printStackTrace();
 				}
