@@ -120,6 +120,26 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 	}
 
+    @Override
+    public void onError(String ip,Exception e) {
+
+        isLoading = false;
+
+        System.out.println("Error: " + ip);
+        if(ip_connection_map.get(ip)!=null) {
+            ip_connection_map.get(ip).closeConnection();
+            ip_connection_map.get(ip).setListening(false);
+        }
+
+        Message msg = mHandler.obtainMessage();
+        msg.arg1 = ERROR;
+        msg.obj = ip;
+        mHandler.sendMessage(msg);
+
+//		ipListAll.remove(ip);
+        panelToLoad	--;
+    }
+
 	/* (non-Javadoc) implementing UDPcallback
 	 * @see nlight_android.socket.UDPConnection.UDPCallback#addIp(java.lang.String)
 	 */
@@ -160,7 +180,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		//connecting to panels, and close UDP socket
 		udpConnection.setListen(false);
 		
-		//save checkBox status
+		//save check status
 		
 		savePanelSelectionToIpLIstSelected(selected);
 		
@@ -577,27 +597,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	}
 
 
-	@Override
-	public void onError(String ip,Exception e) {
-	
-		// TODO Auto-generated method stub
 
-        isLoading = false;
-		
-		System.out.println("Error: " + ip);
-		if(ip_connection_map.get(ip)!=null) {
-            ip_connection_map.get(ip).closeConnection();
-            ip_connection_map.get(ip).setListening(false);
-        }
-		
-		Message msg = mHandler.obtainMessage();
-		msg.arg1 = ERROR;
-		msg.obj = ip;
-		mHandler.sendMessage(msg);
-		
-//		ipListAll.remove(ip);
-		panelToLoad	--;
-	}
 	
 	
 	

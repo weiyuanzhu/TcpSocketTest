@@ -43,7 +43,7 @@ public class ListDialogFragment extends DialogFragment {
 	private List<Map<String,Object>> dataList;
 	private String[] ips; 												//An array contains panels' IP
 	private ListDialogListener mListener; 								//A callback listener for dialog when button clicked
-	private List<Integer> mSelectedItems = new ArrayList<Integer>(); 	//a list contains item selected
+	private List<Integer> mSelectedItems = new ArrayList<Integer>();        	//a list contains item selected
 
 	public ListDialogFragment() {
 		// Required empty public constructor
@@ -83,14 +83,17 @@ public class ListDialogFragment extends DialogFragment {
 			
 			String locationText = (String) dataList.get(position).get(from[1]);
 			location.setText(locationText);
+
 			
 			
 			
-			if(checkBox(ipText))
+			if(check(ipText))
 			{
 				location.setChecked(true);
-			
+//                location.setEnabled(false);
+
 				listView.setItemChecked(position, true);
+//                listView.setEnabled(false);
 			}
 			
 			/*if(position==0)
@@ -107,7 +110,7 @@ public class ListDialogFragment extends DialogFragment {
 		
 	}
 	
-	boolean checkBox(String ip)
+	boolean check(String ip)
 	{
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		boolean save_checked = sp.getBoolean(SettingsActivity.SAVE_CHECKED, false);
@@ -116,10 +119,11 @@ public class ListDialogFragment extends DialogFragment {
 		sb.append(" ");
 		String ip_ = sb.toString();
 		boolean check = sp.getBoolean(ip_, false);
-		if(save_checked && check )
-			return true;
-		else return false;
-		
+		/*if(save_checked && check ) {
+            return true;
+        }
+		else return false;*/
+		return (save_checked && check);
 	}
 
 	@Override
@@ -162,6 +166,8 @@ public class ListDialogFragment extends DialogFragment {
 	    
 	    // Set the dialog title
 	    builder.setTitle(ips == null? R.string.title_dialog_nopanelfound : R.string.title_dialog_panellist);
+//      builder.setMessage("Some panel(s) are busy and not reachable");
+
 	    
 	    
 	    

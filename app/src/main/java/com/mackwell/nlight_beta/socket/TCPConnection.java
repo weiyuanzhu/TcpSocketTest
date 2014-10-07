@@ -171,10 +171,8 @@ public class TCPConnection {
 				char[] command = (char[]) commandList.get(i);
 			
 				try {
+
 					// init socket and in/out stream
-					
-					
-					
 					if(socket == null ||  socket.isClosed())
 					{
 						socket = new Socket(ip,port);	
@@ -186,6 +184,7 @@ public class TCPConnection {
 						System.out.println("\nConnected to: " + socket.getInetAddress() + ": "+  socket.getPort());
 					}
 
+                    //check if rx listening thread is alive
                     if (getRxThread()==null) {
                         setRxThread(new Thread(rx));
                         rxThread.start();
@@ -196,8 +195,6 @@ public class TCPConnection {
 					out.print(command);
 					out.flush();
 
-
-					
 					Thread.yield();
 					//TimeUnit.SECONDS.sleep(1);
 					
@@ -317,11 +314,13 @@ public class TCPConnection {
 					//reading data from stream
 					if(isListening() && !socket.isClosed())
 					{
-						data = in.read();
+						//read input stream
+                        data = in.read();
                         if (data==-1) {
                             throw new PanelResetException();
-
                         }
+
+                        //add byte to rxBuffer
                         rxBuffer.add(data);
 						
 						if(!rxBuffer.isEmpty() && (data == Constants.UART_NEW_LINE_L) && 
@@ -356,7 +355,6 @@ public class TCPConnection {
 							//System.out.println("Rx thread keep listening");
 							//System.out.println("rx thread is Listening");
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}	
@@ -390,7 +388,6 @@ public class TCPConnection {
 						
 				} catch (IOException ex) {
 					ex.printStackTrace();
-
 				}
 				
 				
