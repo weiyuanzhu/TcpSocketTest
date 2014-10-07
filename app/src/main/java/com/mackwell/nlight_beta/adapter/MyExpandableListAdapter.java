@@ -133,11 +133,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 			
 			int address = -1;
 			for(int i=1; i<checkedList.get(0).size();i++){
-        		if(checkedList.get(0).get(i)){
+        		if(checkedList.get(0).valueAt(i)){
         			
         			
         			//put address in to selectedDeviceAddressList if it is selected(true)
-        			int childPosition = i - 1;
+        			int childPosition = checkedList.get(0).keyAt(i) - 1;
         		
         			address = listDataChild.get(listDataHeader.get(0)).get(childPosition).getAddress();
         			selectedDeviceAddressList.add(address);

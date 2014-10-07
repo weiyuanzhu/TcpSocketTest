@@ -179,10 +179,10 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 			
 			//connection.setListening(true);
 			mHandler.post(updateDeviceListFragment);
-		} else if(rx.get(1)==173)
+		} /*else if(rx.get(1)==173)
         {
             if(!multiSelectionMode) connection.setListening(false);
-        }
+        }*/
 		
 	}
 
