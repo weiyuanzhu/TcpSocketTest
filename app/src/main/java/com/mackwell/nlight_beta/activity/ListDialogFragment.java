@@ -101,8 +101,9 @@ public class ListDialogFragment extends DialogFragment {
             {
                 location.setChecked(false);
                 location.setEnabled(false);
-                listView.setEnabled(false);
-                listView.setItemChecked(position, false);
+                ip.setEnabled(false);
+                rowView.setClickable(false);
+                rowView.setEnabled(false);
             }
 
 			/*if(position==0)
@@ -147,15 +148,18 @@ public class ListDialogFragment extends DialogFragment {
 		listView.setOnItemClickListener(new OnItemClickListener(){
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View view, int arg2,
-					long arg3) {
+			public void onItemClick(AdapterView<?> arg0, View view, int position,
+					long id) {
 				CheckedTextView checkedTextView = (CheckedTextView) view.findViewById(R.id.location_checkedtextview);
-				
-				if(checkedTextView.isChecked())
+
+                String ip = ips[position];
+
+                //check ipEnableMap as well as check box status
+				if(checkedTextView.isChecked() || !ipEnableMap.get(ip))
 					checkedTextView.setChecked(false);
-				else 
-					checkedTextView.setChecked(true);
-				
+				else {
+                    checkedTextView.setChecked(true);
+                }
 			}
 
 	
