@@ -179,6 +179,7 @@
     <string name="pref_title_customIcon_checkbox">自定义APP图片</string>
     <string name="pref_summary_customIcon_unchecked">设置为默认图片</string>
     <string name="pref_summary_customIcon_checked">请从媒体库中选取文件</string>
+    <string name="dialogmessage_panel_busy">无法连接到一些Panel</string>
 
 
 </resources>

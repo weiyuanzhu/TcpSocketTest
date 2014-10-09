@@ -96,14 +96,12 @@ public class ListDialogFragment extends DialogFragment {
 				listView.setItemChecked(position, true);
 			}
 
-            //disable or enable check box for ip
+            //disable and un-check location check box and ip text
             if(!ipEnableMap.get(ipText))
             {
                 location.setChecked(false);
                 location.setEnabled(false);
                 ip.setEnabled(false);
-                rowView.setClickable(false);
-                rowView.setEnabled(false);
             }
 
 			/*if(position==0)
@@ -155,19 +153,13 @@ public class ListDialogFragment extends DialogFragment {
                 String ip = ips[position];
 
                 //check ipEnableMap as well as check box status
+                //if this panel has an error then it cannot be checked
 				if(checkedTextView.isChecked() || !ipEnableMap.get(ip))
 					checkedTextView.setChecked(false);
 				else {
                     checkedTextView.setChecked(true);
                 }
 			}
-
-	
-			
-			
-			
-			
-			
 		});
 		
 
@@ -179,7 +171,17 @@ public class ListDialogFragment extends DialogFragment {
 	    
 	    // Set the dialog title
 	    builder.setTitle(ips == null? R.string.title_dialog_nopanelfound : R.string.title_dialog_panellist);
-//      builder.setMessage("Some panel(s) are busy and not reachable");
+
+
+        //set dialog message panel is busy
+        boolean grayOut = false;
+        for(Boolean value: ipEnableMap.values())
+        {
+            if(!value) grayOut = true;
+        }
+        if(grayOut) {
+            builder.setMessage(R.string.dialogmessage_panel_busy);
+        }
 
 	    
 	    

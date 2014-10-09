@@ -179,5 +179,6 @@
     <string name="pref_title_customIcon_checkbox">Custom icon for the App</string>
     <string name="pref_summary_customIcon_unchecked">Icon is set to default image.</string>
     <string name="pref_summary_customIcon_checked">Please choose an image from media gallery.</string>
+    <string name="dialogmessage_panel_busy">Some panel(s) is busy and cannot be connected</string>
 
 </resources>
