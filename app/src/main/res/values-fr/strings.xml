@@ -180,6 +180,7 @@
     <string name="pref_summary_customIcon_unchecked">"Icône de l'image est définie par défaut."</string>
     <string name="pref_summary_customIcon_checked">"S'il vous plaît choisir une image de la galerie de médias."</string>
     <string name="dialogmessage_panel_busy">Certains panneau (s ) est occupé et ne peut pas être connecté</string>
+    <string name="toast_panel_reset">"Groupe spécial a été remis à zéro , s'il vous plaît vérifier la connexion"</string>
 
 
 </resources>

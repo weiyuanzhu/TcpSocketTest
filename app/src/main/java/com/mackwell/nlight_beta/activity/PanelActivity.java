@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Handler;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -79,22 +78,16 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	
 	
 	private boolean engineerMode = false;
-	
-	
+
+
 	private String passcodeEntered = "initial";
-	
+
 	//private int currentSelected;
 
-    Runnable panelResetError = new Runnable() {
-        @Override
-        public void run() {
-            Toast.makeText(PanelActivity.this,"Panel has been reset please check connection",Toast.LENGTH_LONG).show();
 
-        }
-    };
 
-	
-	
+
+
 	/* (non-Javadoc)callback for connection
 	 * @see nlight_android.nlight.BaseActivity#receive(java.util.List, java.lang.String)
 	 */
@@ -231,7 +224,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		
 		
-		System.out.println(location + " " +  ip + "positon: " + index);
+		System.out.println(location + " " +  ip + "position: " + index);
 
         // In split screen mode, show the detail view in this activity by
         // adding or replacing the detail fragment using a
@@ -373,7 +366,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
         getActionBar().setSubtitle(R.string.subtitle_activity_panel);
 
-        System.out.println("DeomoMode--------> " + isDemo);
+        System.out.println("DeomMode--------> " + isDemo);
 
         System.out.println("All panel get: " + panelList.size());
 
@@ -414,7 +407,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	    }
 	}
 
-	/* (non-Javadoc) callback for pupupMenu items
+	/* (non-Javadoc) callback for popupMenu items
 	 * @see android.widget.PopupMenu.OnMenuItemClickListener#onMenuItemClick(android.view.MenuItem)
 	 */
 	@Override
@@ -488,7 +481,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i("PanalActivity","onResume");
+        Log.i("PanelActivity","onResume");
 
 //      set panelInfoImage's icon address
         String imageLocation = sharedPreferences.getString("pref_app_icons","default image");
@@ -545,7 +538,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 				if(connection!=null){
 					connection.setListening(false);
 					connection.closeConnection();
-					connection = null;
+//					connection = null;
 				}
 			}
 		}
@@ -584,31 +577,29 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	
 
 	
-	public void initialFields()
+	void initialFields()
 	{	
 		panelMap = new HashMap<String,Panel>();
 		fragmentList = new ArrayList<PanelInfoFragment>(panelList.size());
 		ip_connection_map = new HashMap<String,TCPConnection>();
 		rxBufferMap = new HashMap<String,List<Integer>>();
-		
-		
-		for(int i=0; i<panelList.size();i++)
-		{
-			String ip = panelList.get(i).getIp();
-			panelMap.put(ip, panelList.get(i));	
-			PanelInfoFragment panelFragment = PanelInfoFragment.newInstance(panelList.get(i).getIp(), panelList.get(i).getPanelLocation(),panelList.get(i));
-			fragmentList.add(panelFragment);
-			
-			
-			//create connection for panels if is not in demo mode
-			if(!isDemo)
-			{
-				ip_connection_map.put(ip, new TCPConnection(this, ip));
-				rxBufferMap.put(ip, new ArrayList<Integer>());
-				
-			}
-			
-		}
+
+
+        for (Panel aPanel : panelList) {
+            String ip = aPanel.getIp();
+            panelMap.put(ip, aPanel);
+            PanelInfoFragment panelFragment = PanelInfoFragment.newInstance(aPanel.getIp(), aPanel.getPanelLocation(), aPanel);
+            fragmentList.add(panelFragment);
+
+
+            //create connection for panels if is not in demo mode
+            if (!isDemo) {
+                ip_connection_map.put(ip, new TCPConnection(this, ip));
+                rxBufferMap.put(ip, new ArrayList<Integer>());
+
+            }
+
+        }
 			
 			
 	}
@@ -734,12 +725,12 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			{
 				SharedPreferences.Editor editor = sp.edit();
 				editor.putString(panel.getIp(), panel.getPanelLocation());
-				editor.commit();
+				editor.apply();
 			}
 		}
 	}
 	
-	public void showDropDownMenu(View view)
+	void showDropDownMenu(View view)
 	{
 		System.out.println("Panel Drop Down Menu");
 		PopupMenu popup = new PopupMenu(this, view);
@@ -793,7 +784,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 		
 		fragmentTransaction.replace(R.id.panel_detail_container, fragmentList.get(index),"tagTest");
-		//fragmentTransaction.addToBackStack(null);  add fragment to backstack
+		//fragmentTransaction.addToBackStack(null);  add fragment to back stack
 		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		fragmentTransaction.commit();
 		
@@ -803,7 +794,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	}
 	
 	/**
-	 * Remove PanelInfoFagment and reset Mackwell logo 
+	 * Remove PanelInfoFragment and reset Mackwell logo
 	 */
 	private void updatePanelInfoFragment(){
 		
@@ -870,7 +861,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	}
 	
 	/**
-	 * Using a StringBuilder to build a string for contact textview
+	 * Using a StringBuilder to build a string for contact text view
 	 * @return contact details string
 	 */
 	private String getContactDetails(){
@@ -883,6 +874,19 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		return sb.toString();
 	}
+
+   final Runnable panelResetError = new Runnable() {
+        @Override
+        public void run() {
+            Toast.makeText(PanelActivity.this,R.string.toast_panel_reset, Toast.LENGTH_LONG).show();
+
+            //force navigate back to loading screen
+            /*Intent intent = new Intent(DeviceActivity.this,LoadingScreenActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            */
+        }
+    };
 	
 		
 }

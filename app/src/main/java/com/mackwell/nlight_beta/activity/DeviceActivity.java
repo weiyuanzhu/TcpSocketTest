@@ -856,8 +856,14 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
     Runnable panelResetError = new Runnable() {
         @Override
         public void run() {
-            Toast.makeText(DeviceActivity.this,"Panel has been reset please check connection",Toast.LENGTH_LONG).show();
+            //display error message
+            Toast.makeText(DeviceActivity.this,R.string.toast_panel_reset,Toast.LENGTH_LONG).show();
 
+            //force navigate back to loading screen
+            /*Intent intent = new Intent(DeviceActivity.this,LoadingScreenActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            */
         }
     };
 	
