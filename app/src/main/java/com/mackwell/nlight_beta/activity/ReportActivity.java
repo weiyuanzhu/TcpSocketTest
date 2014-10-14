@@ -1,5 +1,6 @@
 package com.mackwell.nlight_beta.activity;
 
+import android.annotation.TargetApi;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.pdf.PdfDocument;
+import android.os.Build;
 import android.os.CancellationSignal;
 import android.os.Handler;
 import android.os.ParcelFileDescriptor;
@@ -27,6 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.models.Device;
@@ -223,14 +226,21 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         }
     };
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void saveReport(){
         Log.i("printPDF","print clicked");
 
-        PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
 
-        String jobName = this.getString(R.string.app_name) + " Document";
+            PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
 
-        printManager.print(jobName,new MyPrintDocumentAdapter(this),null);
+            String jobName = this.getString(R.string.app_name) + " Document";
+
+            printManager.print(jobName,new MyPrintDocumentAdapter(this),null);
+        }
+        else {
+            Toast.makeText(this,"You need Android version 4.4 or above to save report as pdf",Toast.LENGTH_LONG).show();
+        }
 
     }
 
@@ -242,7 +252,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         List<List<Integer>> list2;
         List<Integer> list3;
 
-        for(int i=0; i<37; i++){
+        for(int i=0; i<1; i++){
 
             report = new Report(1, Calendar.getInstance(),true);
 
@@ -262,6 +272,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         return list;
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
 
         Context context;
@@ -360,6 +371,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private boolean pagesInRange(PageRange[] pageRanges,int page) {
         for (PageRange pageRange : pageRanges) {
 
@@ -390,6 +402,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         this.reportPageSoFar = reportPageSoFar;
     }
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     private void drawPage(PdfDocument.Page page, int pagenumber,int summaryPages, int detailPages)
     {
 

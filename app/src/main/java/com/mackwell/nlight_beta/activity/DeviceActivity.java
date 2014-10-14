@@ -93,7 +93,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	private boolean splitScreen = false;
 
 	private boolean autoRefresh = false;
-	private boolean autoRefreshAllDevices = false;
+	private boolean autoRefreshAllDevicesFlag = false;
 	private boolean autoRefreshSelectedDevice = false;
 	
 	private boolean multiSelectionMode = false;
@@ -141,11 +141,11 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		
 		/**
-		 * @return the autoRefreshAllDevices
+		 * @return the autoRefreshAllDevicesFlag
 		 */
-		public boolean isAutoRefreshAllDevices() {
-			autoRefreshAllDevices = sharedPreferences.getBoolean("pref_auto_refresh_all_devices", false);
-			return autoRefreshAllDevices;
+		public boolean isAutoRefreshAllDevicesFlag() {
+			autoRefreshAllDevicesFlag = sharedPreferences.getBoolean("pref_auto_refresh_all_devices", false);
+			return autoRefreshAllDevicesFlag;
 		}
 
 		/**
@@ -189,7 +189,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
     @Override
     public void onError(String ip, Exception e) {
         if (e instanceof TCPConnection.PanelResetException) {
-            mHandler.post(panelResetError);
+            mHandler.post(new PanelResetError(ip));
         }
     }
 
@@ -250,11 +250,11 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		if(groupPosition==0)
 		{
 			currentSelectedDevice = panel.getLoop1().getDevice(childPosition);
-			if(splitScreen) deviceInfoFragment = DeviceInfoFragment.newInstance(currentSelectedDevice, isAutoRefreshAllDevices());
+			if(splitScreen) deviceInfoFragment = DeviceInfoFragment.newInstance(currentSelectedDevice, isAutoRefreshAllDevicesFlag());
 		}
 		else {
 			currentSelectedDevice = panel.getLoop2().getDevice(childPosition);
-			if(splitScreen) deviceInfoFragment = DeviceInfoFragment.newInstance(currentSelectedDevice,isAutoRefreshAllDevices());
+			if(splitScreen) deviceInfoFragment = DeviceInfoFragment.newInstance(currentSelectedDevice, isAutoRefreshAllDevicesFlag());
 		}
 
 //      if in splitScreen Mode, then set fragment transaction
@@ -348,8 +348,8 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 
             messageTextView.setText(getResources().getString(R.string.text_panel_faulty_message, panel.getFaultDeviceNo()));
 
-
-            if(panel.getOverAllStatus()!=0)
+            //set status image
+            if(panel.getOverAllStatus()!=Panel.OK)
             {
                 imageView.setImageResource(R.drawable.redcross);
             }
@@ -375,17 +375,14 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		getActionBar().setSubtitle(R.string.subtitle_activity_device);
 		
 		if(isConnected && !isDemo) connection = new TCPConnection(this,panel.getIp());
-		
 
-
-		
 		deviceListFragment = (DeviceListFragment) getFragmentManager().findFragmentById(R.id.device_list_fragment);
 		deviceListFragment.setLoop1(panel.getLoop1());
 		deviceListFragment.setLoop2(panel.getLoop2());
 		
 		
 		//start auto refresh
-		mHandler.post(auroRefreshAllDevices);
+		mHandler.post(autoRefreshAllDevices);
 		mHandler.postDelayed(autoRefreshCurrentDevice,TimeUnit.SECONDS.toMillis(1));
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
@@ -560,7 +557,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		}
 		
 		//stop all repeating tasks
-		mHandler.removeCallbacks(auroRefreshAllDevices);
+		mHandler.removeCallbacks(autoRefreshAllDevices);
 		mHandler.removeCallbacks(autoRefreshCurrentDevice);
 		super.onDestroy();
 	}
@@ -773,15 +770,15 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 	};
 	
-	Runnable auroRefreshAllDevices = new Runnable(){
+	Runnable autoRefreshAllDevices = new Runnable(){
 
 		@Override
 		public void run() {
 			//System.out.println("---------------auto refresh all devices----------------");
-			//System.out.println("AutoRresh: " + isAutoRefreshAllDevices());
+			//System.out.println("AutoRresh: " + isAutoRefreshAllDevicesFlag());
 			
 			
-			if( isActivityActive && isAutoRefresh() && isAutoRefreshAllDevices()){
+			if( isActivityActive && isAutoRefresh() && isAutoRefreshAllDevicesFlag()){
 				refreshAllDevices();
 			}
 			//setup refresh frequency
@@ -853,11 +850,21 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 	};
 
-    Runnable panelResetError = new Runnable() {
+    class PanelResetError implements Runnable {
+
+        private  String ip;
+
+        public PanelResetError(String ip){
+            this.ip  = ip;
+        }
+
         @Override
         public void run() {
             //display error message
             Toast.makeText(DeviceActivity.this,R.string.toast_panel_reset,Toast.LENGTH_LONG).show();
+            PanelResetDialogFragment dialog = new PanelResetDialogFragment();
+            dialog.setIp(ip);
+            dialog.show(getFragmentManager(),"PanelResetDialog");
 
             //force navigate back to loading screen
             /*Intent intent = new Intent(DeviceActivity.this,LoadingScreenActivity.class);
@@ -865,7 +872,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
             startActivity(intent);
             */
         }
-    };
+    }
 	
 	
 	
@@ -892,17 +899,5 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		dialog.show(getFragmentManager(), "SetLocation");	
 	}
 
-	
-
-	
-
-	
-
-	
-
-	
-	
-	
-	
-	
 }
+

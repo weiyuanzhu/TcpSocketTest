@@ -179,7 +179,11 @@
     <string name="pref_title_customIcon_checkbox">Custom icon for the App</string>
     <string name="pref_summary_customIcon_unchecked">Icon is set to default image.</string>
     <string name="pref_summary_customIcon_checked">Please choose an image from media gallery.</string>
-    <string name="dialogmessage_panel_busy">Some panel(s) is busy and cannot be connected</string>
+    <string name="dialogmessage_panel_busy">Some panel(s) are busy and cannot be connected</string>
     <string name="toast_panel_reset">Panel has been reset, please check connection</string>
+    <string name="dialog_panelreset_positivebutton">Return</string>
+    <string name="dialog_panelreset_negtivebutton">Stay</string>
+    <string name="dialog_panelreset_title"><xliff:g id="dialog_panelreset_ip">%1$s</xliff:g> panel has been reset by another device</string>
+    <string name="dialog_panelrest_message">Do you want to return to loading screen and re-connect to panel or stay on this screen?</string>
 
 </resources>

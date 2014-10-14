@@ -181,6 +181,10 @@
     <string name="pref_summary_customIcon_checked">"S'il vous plaît choisir une image de la galerie de médias."</string>
     <string name="dialogmessage_panel_busy">Certains panneau (s ) est occupé et ne peut pas être connecté</string>
     <string name="toast_panel_reset">"Groupe spécial a été remis à zéro , s'il vous plaît vérifier la connexion"</string>
+    <string name="dialog_panelreset_positivebutton">Retour</string>
+    <string name="dialog_panelreset_negtivebutton">Rester</string>
+    <string name="dialog_panelreset_title"><xliff:g id="dialog_panelreset_ip">%1$s</xliff:g> panneau a été réinitialisé par un autre appareil</string>
+    <string name="dialog_panelrest_message">"Voulez-vous revenir à l'écran de chargement et re-connecter au panneau ou rester sur cet écran ?"</string>
 
 
 </resources>

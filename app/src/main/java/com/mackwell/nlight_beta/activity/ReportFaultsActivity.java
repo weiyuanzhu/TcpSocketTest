@@ -92,7 +92,7 @@ public class ReportFaultsActivity extends BaseActivity {
             for(int i=0; i<report.getFaultyDeviceList().size();i++) {
                 map = new HashMap<String, String>();
 
-                ArrayList<Integer> list = (ArrayList<Integer>) report.getFaultyDeviceList().get(i);
+                List<Integer> list = report.getFaultyDeviceList().get(i);
 
                 int address = list.get(0);
                 int fs = list.get(1);
