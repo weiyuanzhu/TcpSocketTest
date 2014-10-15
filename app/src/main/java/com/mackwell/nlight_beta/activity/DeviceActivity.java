@@ -346,6 +346,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
             this.imageView = (ImageView) findViewById(R.id.deviceInfo_image);
             this.messageTextView = (TextView) findViewById(R.id.deviceInfo_faultyNo_text);
 
+            //set status text
             messageTextView.setText(getResources().getString(R.string.text_panel_faulty_message, panel.getFaultDeviceNo()));
 
             //set status image

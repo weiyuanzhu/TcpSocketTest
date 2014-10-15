@@ -313,6 +313,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         {
             //flag true for split screen
             splitScreen = true;
+
+            //set screen orientation
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
 
             //set panel fragments

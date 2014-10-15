@@ -190,13 +190,14 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
     private void fetchReport()
     {
-        reportRawData.clear();
 
-        fragment.showLoading();
 
         Log.i(TAG,ip);
 
         if (isConnected && !isDemo) {
+            reportRawData.clear();
+
+            fragment.showLoading();
 //            connection = new TCPConnection(this,ip);
             connection.fetchData(GetCmdEnum.GET_REPORT.get());
         }
@@ -230,7 +231,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     private void saveReport(){
         Log.i("printPDF","print clicked");
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
             PrintManager printManager = (PrintManager) this.getSystemService(Context.PRINT_SERVICE);
 
