@@ -5,17 +5,21 @@ import com.mackwell.nlight_beta.socket.UDPConnection;
 import java.util.Map;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 import com.mackwell.nlight_beta.R;
-import com.mackwell.nlight_beta.adapter.CachedPanelListAdapter;
+import com.mackwell.nlight_beta.util.MySQLiteController;
+import com.mackwell.nlight_beta.util.MySQLiteOpenHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,8 +34,13 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
     private EditText ipEditText;
 
     //list view adapter and data
-    private CachedPanelListAdapter mAdapter;
+    private SimpleCursorAdapter mAdapter;
     private List<Map<String,String>> dataList;
+    private Cursor mCursor;
+    private MySQLiteController sqlControler;
+
+    private String[] from;
+    private int[] to;
 
     //connection
     private UDPConnection udpConnection;
@@ -68,16 +77,31 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
         mListView = (ListView) findViewById(R.id.cached_panel_list_listView);
         ipEditText = (EditText) findViewById(R.id.cached_panel_list_ip_editText);
 
-        String[] days = new String[]{"Monday","Tuesday"};
-        mAdapter = new CachedPanelListAdapter(this, getDataList());
+        sqlControler = new MySQLiteController(this);
+
+        sqlControler.open();
+        mCursor = sqlControler.readData();
+
+
+        from = new String[]{
+                MySQLiteOpenHelper.COLUMN_PANELIP,
+                MySQLiteOpenHelper.COLUMN_PANELMAC,
+                MySQLiteOpenHelper.COLUMN_PANELLOCATION};
+
+
+        to = new int[]{R.id.cached_panel_list_ip_textView, R.id.cached_panel_list_macAddress_textView, R.id.cached_panel_list_location_textView};
+
+        mAdapter = new SimpleCursorAdapter(this, R.layout.panel_list_row3, mCursor, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
         mListView.setAdapter(mAdapter);
 
+        sqlControler.close();
+
         //set <Back
-        if(getActionBar()!=null)
-        {
+        if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
 
     }
 

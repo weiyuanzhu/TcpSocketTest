@@ -26,6 +26,7 @@ public class Panel  implements Parcelable {
 	private Loop loop2;
 	
 	private String ip;
+    private String mac;
 	
 	private String panelLocation;
 	private String contact;
