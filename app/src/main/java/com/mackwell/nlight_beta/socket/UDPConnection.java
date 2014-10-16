@@ -25,7 +25,11 @@ public class UDPConnection {
 
     private String broadCastIp;
 	private DatagramSocket udpSocket = null;
-	private DatagramPacket udpPacket = null; 
+	private DatagramPacket udpTxPacket = null;
+	private DatagramPacket udpRxPacket = null;
+
+    private byte[] rxBuffer;
+
 	private boolean isListening = true; // a flag for keep/stop listening on socket
 	private UDPCallback mCallback;
 	
@@ -60,15 +64,20 @@ public class UDPConnection {
 		panelUDPDataList = new ArrayList<byte[]>();
 		this.msg = msg;
 		mCallback = callback;
-		
+
+        rxBuffer = new byte[256];
+
 		//start udp listining
-	
+
 	}
-	
-	
+
+
 	public void tx(String ip,String msg){
 		this.msg = msg;
         this.broadCastIp = ip;
+
+
+
 		Thread t = new Thread(tx);
 		t.start();
 		
@@ -89,9 +98,9 @@ public class UDPConnection {
 				
 				int msg_len = msg == null? 0 : msg.length();
 				
-				udpPacket = new DatagramPacket(msg.getBytes(),msg_len,address,SERVER_PORT);
+				udpTxPacket = new DatagramPacket(msg.getBytes(),msg_len,address,SERVER_PORT);
 				
-				udpSocket.send(udpPacket);
+				udpSocket.send(udpTxPacket);
 				
 				if(rxThread == null){
 					rxThread = new Thread(rx);
@@ -120,9 +129,8 @@ public class UDPConnection {
 		public void run() {
 
 			System.out.println("---------------receiving udp packages------------");
-			byte[] buf = new byte[1024];
-			udpPacket = new DatagramPacket(buf, buf.length);
-			
+
+
 			
 			
 			try{
@@ -133,26 +141,30 @@ public class UDPConnection {
 				
 				while(isListening)
 				{
-				
-					udpSocket.receive(udpPacket);
-					byte[] buffer = new byte[buf.length];
+                    udpRxPacket= new DatagramPacket(rxBuffer, rxBuffer.length);
+					udpSocket.receive(udpRxPacket);
+					//byte[] buffer = new byte[rxBuffer.length];
 					int i = 0;
-					for(byte b : udpPacket.getData()) {
+					for(byte b : udpRxPacket.getData()) {
 						//int a = b & 0xFF;
-						buffer[i] = b;
+						rxBuffer[i] = b;
 						
 						i++;
 					}
 					
-					/*for(int j =0; j<buffer.length;j++)
+					/*for(int j =0; j<rxBuffer.length;j++)
 					{
-						System.out.print(buffer[j] + " ");
+						System.out.print(rxBuffer[j] + " ");
 						
 					}*/
 					
-					panelUDPDataList.add(buffer);
-					mCallback.addIp(getMac(buffer),getIp(buffer));
-					
+					panelUDPDataList.add(rxBuffer);
+					mCallback.addIp(getMac(rxBuffer),getIp(rxBuffer));
+
+                    //clear buffer
+                    rxBuffer = new byte[256];
+
+
 				}
 			}
 			catch (IOException e) {
@@ -235,7 +247,7 @@ public class UDPConnection {
     private byte[] getMac(byte[] buffer){
 
         byte[] macAddress = new byte[6];
-        for(int j=4; j<9; j++)
+        for(int j=4; j<10; j++)
         {
             macAddress[j-4] = buffer[j];
         }

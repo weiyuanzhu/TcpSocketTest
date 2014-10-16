@@ -6,6 +6,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,7 +16,6 @@ import android.widget.ListView;
 
 import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.adapter.CachedPanelListAdapter;
-import com.mackwell.nlight_beta.socket.UDPConnection;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,11 +28,16 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
     //activity controls
     private ListView mListView;
     private EditText ipEditText;
+
+    //list view adapter and data
     private CachedPanelListAdapter mAdapter;
+    private List<Map<String,String>> dataList;
 
     //connection
     private UDPConnection udpConnection;
     private String searchIP;
+
+    private Handler mHandler;
 
     //implements interfaces
     @Override
@@ -42,9 +47,12 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
                 mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
         Log.d(TAG,"UDP received MAC: " + macString);
+        Log.d(TAG,"UDP received IP: " + ip);
+
+        mHandler.post(new UpdateListView(macString,ip));
 
 
-        Log.d(TAG,"\nUDP received IP: " + ip);
+
         return 0;
     }
 
@@ -53,6 +61,8 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cached_panel_list);
+
+        mHandler = new Handler();
 
         //setup list view
         mListView = (ListView) findViewById(R.id.cached_panel_list_listView);
@@ -71,17 +81,22 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(udpConnection!=null)
+        {
+            udpConnection.closeConnection();
+            udpConnection = null;
+        }
+    }
+
     private List<Map<String,String>> getDataList(){
-        List<Map<String,String>> dataList = new ArrayList<Map<String, String>>();
+        dataList = new ArrayList<Map<String, String>>();
 
         Map map = new HashMap<String,String>();
-        map.put("ip","IP Address");
-        map.put("mac","Mac Address");
-        map.put("location","Panel Location");
 
-        dataList.add(map);
-
-        map = new HashMap<String,String>();
         map.put("ip","192.168.1.17");
         map.put("mac","00:92:12:8e:12:09");
         map.put("location","test location");
@@ -133,6 +148,9 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
             udpConnection = new UDPConnection(UDPConnection.FIND,this);
             udpConnection.tx(searchIP,UDPConnection.FIND);
         }
+        else{
+            udpConnection.tx(searchIP,UDPConnection.FIND);
+        }
 
     }
 
@@ -141,5 +159,34 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
         Log.d(TAG,"IP entered: " + ipEditText.getText().toString());
 
     }
+
+    class UpdateListView implements Runnable{
+
+        private String mac;
+        private String ip;
+
+        public UpdateListView(String mac, String ip){
+            this.mac = mac;
+            this.ip = ip;
+        }
+
+        @Override
+        public void run() {
+            if (dataList !=null) {
+                Map map = new HashMap<String, String>();
+                map.put("ip",ip);
+                map.put("mac",mac);
+                map.put("location","");
+
+                dataList.add(map);
+
+            }
+
+            mAdapter.notifyDataSetChanged();
+
+        }
+    }
+
+
 
 }
