@@ -185,5 +185,7 @@
     <string name="dialog_panelreset_negtivebutton">不返回</string>
     <string name="dialog_panelreset_title"><xliff:g id="dialog_panelreset_ip">%1$s</xliff:g> panel被另外一个客户端重置</string>
     <string name="dialog_panelrest_message">您是否想回到首页并重新连接到Panel？</string>
+    <string name="pref_panel_list">本地Panel列表</string>
+    <string name="pref_panel_lists_summary">手动添加/删除列表</string>
 
 </resources>

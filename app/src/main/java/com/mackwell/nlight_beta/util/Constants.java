@@ -87,6 +87,6 @@ public class Constants {
 	public static final int DEVICE_ID = 0x3F;
 	public static final int DEVICE_LOST_BYTE = 0x40;
 
-	public static final String FIND_PANELS = "FIND";
+
 	
 }

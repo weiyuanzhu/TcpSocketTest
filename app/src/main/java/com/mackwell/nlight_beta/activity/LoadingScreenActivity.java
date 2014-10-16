@@ -147,7 +147,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	/* (non-Javadoc) implementing UDPcallback
 	 * @see nlight_android.socket.UDPConnection.UDPCallback#addIp(java.lang.String)
 	 */
-	public int addIp(String ip)
+	public int addIp(byte[] mac,String ip)
 	{
 		System.out.println("Received UDP package");
 		if(!ipListAll.contains(ip))
@@ -456,7 +456,12 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 
 		@Override
 		public void run() {
-			
+
+            //close UDP connection
+            if(udpConnection!=null){
+                udpConnection.closeConnection();
+                udpConnection = null;
+            }
 			isLoading = false;
 
 			//create intent
@@ -656,23 +661,23 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 
 	private void searchUDP(){
 		
-		//clear current ip list and datalist for dialog listview;
+		//clear current ip list and data list for dialog list view;
 		ipListAll.clear();
 		dataList.clear();
 		
 		if(udpConnection == null ){
-			udpConnection = new UDPConnection(Constants.FIND_PANELS, this);
+			udpConnection = new UDPConnection(UDPConnection.FIND, this);
 		}
 		else
 		{
 			udpConnection.closeConnection();
-			udpConnection = new UDPConnection(Constants.FIND_PANELS,this);
+			udpConnection = new UDPConnection(UDPConnection.FIND,this);
 			
 		}
 		
 		//send UDP panel search messages
 		
-		udpConnection.tx(Constants.FIND_PANELS);
+		udpConnection.tx("255.255.255.255",UDPConnection.FIND);
 		
 		
 		Toast.makeText(this, R.string.toast_search_panel, Toast.LENGTH_LONG).show();	

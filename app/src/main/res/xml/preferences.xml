@@ -86,5 +86,13 @@
         </Preference>
 
     </PreferenceCategory>
+
+    <Preference
+        android:key="pref_panel_list"
+        android:title="@string/pref_panel_list"
+        android:summary="@string/pref_panel_lists_summary"
+        >
+
+    </Preference>
     
 </PreferenceScreen>

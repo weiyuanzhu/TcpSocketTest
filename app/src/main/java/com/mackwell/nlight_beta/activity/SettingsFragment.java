@@ -17,6 +17,7 @@ public class SettingsFragment extends PreferenceFragment implements  SharedPrefe
 
     public static final int RESULT_LOAD_IMAGE = 0; //request code
     private Preference customIconPref;
+    private Preference paneListPref;
 
     @Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,18 @@ public class SettingsFragment extends PreferenceFragment implements  SharedPrefe
 //                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 startActivityForResult(i, RESULT_LOAD_IMAGE);
+
+                return true;
+            }
+        });
+
+        paneListPref = findPreference("pref_panel_list");
+
+        paneListPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(getActivity(),CachedPanelList.class);
+                startActivity(intent);
 
                 return true;
             }

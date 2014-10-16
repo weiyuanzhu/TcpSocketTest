@@ -498,7 +498,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
     
     /**
      * clear checked status for a particular loop
-     * @param groupPosition
      */
     public void clearCheck()
     {

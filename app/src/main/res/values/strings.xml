@@ -185,5 +185,8 @@
     <string name="dialog_panelreset_negtivebutton">Stay</string>
     <string name="dialog_panelreset_title"><xliff:g id="dialog_panelreset_ip">%1$s</xliff:g> panel has been reset by another device</string>
     <string name="dialog_panelrest_message">Do you want to return to loading screen and re-connect to panel or stay on this screen?</string>
+    <string name="pref_panel_list">Local Panel List</string>
+    <string name="pref_panel_lists_summary">Cached panel ist, which can be added/remove manually</string>
+    <string name="title_activity_cached_panel_list">CachedPanelList</string>
 
 </resources>

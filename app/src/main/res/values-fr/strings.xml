@@ -185,6 +185,8 @@
     <string name="dialog_panelreset_negtivebutton">Rester</string>
     <string name="dialog_panelreset_title"><xliff:g id="dialog_panelreset_ip">%1$s</xliff:g> panneau a été réinitialisé par un autre appareil</string>
     <string name="dialog_panelrest_message">"Voulez-vous revenir à l'écran de chargement et re-connecter au panneau ou rester sur cet écran ?"</string>
+    <string name="pref_panel_list">Liste de panneau de contrôle local</string>
+    <string name="pref_panel_lists_summary">”Liste du panneau cache , qui peut être ajouté / supprimer manuellement“</string>
 
 
 </resources>

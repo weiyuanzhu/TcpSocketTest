@@ -11,6 +11,10 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="19" />
 
     <supports-screens
         android:largeScreens="true"
@@ -20,6 +24,9 @@
         android:xlargeScreens="true" >
     </supports-screens>
 
+
+
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/mackwell_logo"
@@ -27,7 +34,7 @@
         android:theme="@android:style/Theme.Holo.Light" >
         <meta-data
             android:name="android.app.default_searchable"
-            android:value="nlight_android.nlight.DeviceActivity"/>
+            android:value="nlight_android.nlight.DeviceActivity" />
 
         <activity
             android:name="com.mackwell.nlight_beta.activity.PanelStatusActivity"
@@ -95,6 +102,10 @@
             android:name="com.mackwell.nlight_beta.activity.ReportFaultsActivity"
             android:label="@string/title_activity_report_faults"
             android:theme="@style/Theme.AppCompat.Light" >
+        </activity>
+        <activity
+            android:name="com.mackwell.nlight_beta.activity.CachedPanelList"
+            android:label="@string/title_activity_cached_panel_list" >
         </activity>
     </application>
 
