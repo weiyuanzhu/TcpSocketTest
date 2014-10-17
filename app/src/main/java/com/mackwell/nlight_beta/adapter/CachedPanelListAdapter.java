@@ -21,7 +21,7 @@ public class CachedPanelListAdapter extends BaseAdapter {
 
 
     class ViewHolder{
-        CheckBox ip;
+        TextView ip;
         TextView macAddress;
         TextView location;
 
@@ -63,7 +63,7 @@ public class CachedPanelListAdapter extends BaseAdapter {
         if(rowView==null){
             rowView = mInflater.inflate(R.layout.panel_list_row3, parent,false);
             ViewHolder viewHolder = new ViewHolder();
-            viewHolder.ip = (CheckBox) rowView.findViewById(R.id.cached_panel_list_ip_textView);
+            viewHolder.ip = (TextView) rowView.findViewById(R.id.cached_panel_list_ip_textView);
             viewHolder.macAddress = (TextView) rowView.findViewById(R.id.cached_panel_list_macAddress_textView);
             viewHolder.location = (TextView) rowView.findViewById(R.id.cached_panel_list_location_textView);
             rowView.setTag(viewHolder);
