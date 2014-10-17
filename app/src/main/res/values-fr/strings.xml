@@ -187,6 +187,7 @@
     <string name="dialog_panelrest_message">"Voulez-vous revenir à l'écran de chargement et re-connecter au panneau ou rester sur cet écran ?"</string>
     <string name="pref_panel_list">Liste de panneau de contrôle local</string>
     <string name="pref_panel_lists_summary">”Liste du panneau cache , qui peut être ajouté / supprimer manuellement“</string>
+    <string name="title_activity_cached_panel_list">CachedPanelList</string>
 
 
 </resources>

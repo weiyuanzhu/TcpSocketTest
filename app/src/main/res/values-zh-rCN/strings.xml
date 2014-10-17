@@ -187,5 +187,6 @@
     <string name="dialog_panelrest_message">您是否想回到首页并重新连接到Panel？</string>
     <string name="pref_panel_list">本地Panel列表</string>
     <string name="pref_panel_lists_summary">手动添加/删除列表</string>
+    <string name="title_activity_cached_panel_list">本地列表</string>
 
 </resources>
