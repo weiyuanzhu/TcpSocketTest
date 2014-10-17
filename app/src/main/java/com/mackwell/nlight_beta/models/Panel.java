@@ -238,11 +238,16 @@ public class Panel  implements Parcelable {
 	public Long getSerialNumber() {
 		return serialNumber;
 	}
-	
-	
 
+    public String getMac() {
+        return mac;
+    }
 
-	public void setSerialNumber(Long serialNumber) {
+    public void setMac(String mac) {
+        this.mac = mac;
+    }
+
+    public void setSerialNumber(Long serialNumber) {
 		this.serialNumber = serialNumber;
 	}
 
@@ -345,6 +350,8 @@ public class Panel  implements Parcelable {
 		this.overAllStatus = overAllStatus;
 	}
 
+
+
 	@Override
 	public int describeContents() {
 		// TODO Auto-generated method stub
@@ -373,6 +380,7 @@ public class Panel  implements Parcelable {
 		dest.writeValue(loop2);
 		
 		dest.writeString(ip);
+//        dest.writeString(mac);
 		dest.writeString(panelLocation);
 		dest.writeString(contact);
 		dest.writeString(tel);
@@ -397,6 +405,7 @@ public class Panel  implements Parcelable {
 		loop2 = (Loop) source.readValue(Loop.class.getClassLoader());
 		
 		ip = source.readString();
+//        mac = source.readString();
 		panelLocation = source.readString();
 		contact = source.readString();
 		tel  = source.readString();

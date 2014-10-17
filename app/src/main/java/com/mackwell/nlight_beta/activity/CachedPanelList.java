@@ -1,5 +1,6 @@
 package com.mackwell.nlight_beta.activity;
 
+import com.mackwell.nlight_beta.models.Panel;
 import com.mackwell.nlight_beta.socket.UDPConnection;
 
 import java.util.Map;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -35,8 +37,8 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
 
     //list view adapter and data
     private SimpleCursorAdapter mAdapter;
-    private List<Map<String,String>> dataList;
     private Cursor mCursor;
+    private List<Panel> panelList;
     private MySQLiteController sqlControler;
 
     private String[] from;
@@ -78,6 +80,7 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
         ipEditText = (EditText) findViewById(R.id.cached_panel_list_ip_editText);
 
         sqlControler = new MySQLiteController(this);
+        panelList = new ArrayList<Panel>();
 
         sqlControler.open();
         mCursor = sqlControler.readData();
@@ -93,7 +96,16 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
 
         mAdapter = new SimpleCursorAdapter(this, R.layout.panel_list_row3, mCursor, from, to, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
 
+
         mListView.setAdapter(mAdapter);
+        mListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                mListView.setItemChecked(position, true);
+                mListView.setSelection(position);
+            }
+        });
 
         sqlControler.close();
 
@@ -114,27 +126,6 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
             udpConnection.closeConnection();
             udpConnection = null;
         }
-    }
-
-    private List<Map<String,String>> getDataList(){
-        dataList = new ArrayList<Map<String, String>>();
-
-        Map map = new HashMap<String,String>();
-
-        map.put("ip","192.168.1.17");
-        map.put("mac","00:92:12:8e:12:09");
-        map.put("location","test location");
-
-        dataList.add(map);
-
-        map = new HashMap<String,String>();
-        map.put("ip","192.168.1.19");
-        map.put("mac","01:92:12:8f:12:09");
-        map.put("location","Link building");
-
-        dataList.add(map);
-
-        return dataList;
     }
 
 
@@ -181,6 +172,19 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
     public void remove(View view)
     {
         Log.d(TAG,"IP entered: " + ipEditText.getText().toString());
+        int position = mListView.getCheckedItemPosition();
+
+        mCursor.moveToPosition(position);
+        String ip = mCursor.getString(mCursor.getColumnIndex(MySQLiteOpenHelper.COLUMN_PANELIP));
+
+        sqlControler.open();
+
+        sqlControler.deletePanel(ip);
+        mCursor = sqlControler.readData();
+        mAdapter.changeCursor(mCursor);
+        mAdapter.notifyDataSetChanged();
+
+        sqlControler.close();
 
     }
 
@@ -196,17 +200,20 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
 
         @Override
         public void run() {
-            if (dataList !=null) {
-                Map map = new HashMap<String, String>();
-                map.put("ip",ip);
-                map.put("mac",mac);
-                map.put("location","");
+            Panel panel = new Panel();
+            panel.setIp(ip);
+            panel.setMac(mac);
+            panel.setPanelLocation("");
+            panelList.add(panel);
 
-                dataList.add(map);
+            sqlControler.open();
 
-            }
-
+            sqlControler.insertPanel(panel);
+            mCursor = sqlControler.readData();
+            mAdapter.changeCursor(mCursor);
             mAdapter.notifyDataSetChanged();
+
+            sqlControler.close();
 
         }
     }

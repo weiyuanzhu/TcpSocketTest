@@ -40,10 +40,13 @@ public class MySQLiteController {
         return c;
     }
 
-    public void addProduct(Panel panel){
+    public void insertPanel(Panel panel){
         ContentValues values = new ContentValues();
-        values.put(MySQLiteOpenHelper.COLUMN_PANELLOCATION, panel.getPanelLocation());
+        values.put(MySQLiteOpenHelper.COLUMN_ID,0);
         values.put(MySQLiteOpenHelper.COLUMN_PANELIP, panel.getIp());
+        values.put(MySQLiteOpenHelper.COLUMN_PANELMAC, panel.getMac());
+        values.put(MySQLiteOpenHelper.COLUMN_PANELLOCATION, panel.getPanelLocation());
+        values.put(MySQLiteOpenHelper.COLUMN_CHECK,0);
 
         database.insert(MySQLiteOpenHelper.TABLE_PANEL,null,values);
     }
@@ -72,22 +75,20 @@ public class MySQLiteController {
         return panel;
     }
 
-    public boolean deletePanel(String panelIP){
+    public boolean deletePanel(String ip){
 
         boolean result = false;
 
-        String query = "SELECT * FROM " + MySQLiteOpenHelper.TABLE_PANEL + " WHERE " + MySQLiteOpenHelper.COLUMN_PANELIP + " = \"" + panelIP + "\"";
+        String query = "Select * FROM " + MySQLiteOpenHelper.TABLE_PANEL + " WHERE " + MySQLiteOpenHelper.COLUMN_PANELIP + " = \"" + ip + "\"";
 
 
-        Cursor cursor = database.rawQuery(query,null);
+       Cursor cursor = database.rawQuery(query,null);
 
-        Panel panel = new Panel();
+        //Panel panel = new Panel();
 
         if(cursor.moveToFirst())
         {
-            panel.setIp(cursor.getString(2));
-
-            database.delete(MySQLiteOpenHelper.TABLE_PANEL, MySQLiteOpenHelper.COLUMN_PANELIP + " = ?", new String[]{panel.getIp()});
+            database.delete(MySQLiteOpenHelper.TABLE_PANEL, MySQLiteOpenHelper.COLUMN_PANELIP + " = ?", new String[]{ip});
             cursor.close();
 
             result = true;

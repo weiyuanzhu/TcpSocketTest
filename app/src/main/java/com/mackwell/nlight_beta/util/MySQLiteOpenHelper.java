@@ -32,11 +32,11 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_PRODUCTS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_PANEL
-                + " ( " + COLUMN_ID + " INTEGER, "
+                + " ( " + COLUMN_ID + " INTEGER DEFAULT 0, "
                 + COLUMN_PANELIP + " TEXT PRIMARY KEY NOT NULL, "
                 + COLUMN_PANELMAC + " TEXT NOT NULL, "
                 + COLUMN_PANELLOCATION + " TEXT, "
-                + COLUMN_CHECK + " INTEGER)";
+                + COLUMN_CHECK + " INTEGER DEFAULT 0 )";
         db.execSQL(CREATE_PRODUCTS_TABLE);
 
     }
