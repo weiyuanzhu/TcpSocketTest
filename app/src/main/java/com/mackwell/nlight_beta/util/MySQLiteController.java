@@ -97,4 +97,12 @@ public class MySQLiteController {
         return result;
 
     }
+
+    public void updatePanelLocation(String ip, String location){
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteOpenHelper.COLUMN_PANELLOCATION,location);
+
+        database.update(MySQLiteOpenHelper.TABLE_PANEL,values,MySQLiteOpenHelper.COLUMN_PANELIP + "=" + ip,null);
+
+    }
 }

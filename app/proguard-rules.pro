@@ -22,8 +22,8 @@
     public static *** i(...);
 }
 
--assumenosideeffects class java.io.PrintStream {
-    public void println(%);
-    public void println(**);
-}
+#-assumenosideeffects class java.io.PrintStream {
+#    public void println(%);
+#    public void println(**);
+#}
 #-keep class com.mackwell.nlight_beta.activity.**

@@ -16,6 +16,7 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="19" />
 
+    <!--App now supports large and xlarge tablet-->
     <supports-screens
         android:largeScreens="true"
         android:normalScreens="false"
