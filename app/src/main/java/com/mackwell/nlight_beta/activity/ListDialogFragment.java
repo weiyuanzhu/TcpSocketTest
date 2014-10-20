@@ -131,7 +131,9 @@ public class ListDialogFragment extends DialogFragment {
             return true;
         }
 		else return false;*/
-		return (save_checked && check);
+
+		//return true if ip is enabled as well as checked
+        return (save_checked && check && ipEnableMap.get(ip));
 	}
 
 	@Override
@@ -156,6 +158,7 @@ public class ListDialogFragment extends DialogFragment {
                 //if this panel has an error then it cannot be checked
 				if(checkedTextView.isChecked() || !ipEnableMap.get(ip))
 					checkedTextView.setChecked(false);
+
 				else {
                     checkedTextView.setChecked(true);
                 }
@@ -220,9 +223,9 @@ public class ListDialogFragment extends DialogFragment {
 	                   // User clicked OK, so save the mSelectedItems results somewhere
 	                   // or return them to the component that opened the dialog
 	            	   
-	            	   mSelectedItems = getCheckedItemsList(listView.getCheckedItemPositions()); // convert SparseBooleanMap to list
-	            	   mListener.connectToPanels(mSelectedItems);
-	            	   System.out.println(getCheckedItemsList(listView.getCheckedItemPositions()).toString());
+                       mSelectedItems = getCheckedItemsList(listView.getCheckedItemPositions()); // convert SparseBooleanMap to list
+                       mListener.connectToPanels(mSelectedItems);
+                       System.out.println(getCheckedItemsList(listView.getCheckedItemPositions()).toString());
 	                   
 	               }
 	           });

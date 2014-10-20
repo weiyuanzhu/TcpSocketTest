@@ -44,7 +44,7 @@ public class MySQLiteController {
         ContentValues values = new ContentValues();
         values.put(MySQLiteOpenHelper.COLUMN_ID,0);
         values.put(MySQLiteOpenHelper.COLUMN_PANELIP, panel.getIp());
-        values.put(MySQLiteOpenHelper.COLUMN_PANELMAC, panel.getMac());
+        values.put(MySQLiteOpenHelper.COLUMN_PANELMAC, panel.getMacString());
         values.put(MySQLiteOpenHelper.COLUMN_PANELLOCATION, panel.getPanelLocation());
         values.put(MySQLiteOpenHelper.COLUMN_CHECK,0);
 
@@ -101,8 +101,9 @@ public class MySQLiteController {
     public void updatePanelLocation(String ip, String location){
         ContentValues values = new ContentValues();
         values.put(MySQLiteOpenHelper.COLUMN_PANELLOCATION,location);
+        String whereClause = MySQLiteOpenHelper.COLUMN_PANELIP + "=" + "\"" + ip + "\"";
 
-        database.update(MySQLiteOpenHelper.TABLE_PANEL,values,MySQLiteOpenHelper.COLUMN_PANELIP + "=" + ip,null);
+        database.update(MySQLiteOpenHelper.TABLE_PANEL,values,whereClause,null);
 
     }
 }

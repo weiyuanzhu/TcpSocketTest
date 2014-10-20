@@ -19,8 +19,8 @@ import com.mackwell.nlight_beta.util.Constants;
 
 public class PanelConnection {
 
-    public static final int CONNECTION_TIMEOUT = 10000; // 3 seconds
-    public static final int READ_TIMEOUT = 5000;    // 5 seconds
+    public static final int CONNECTION_TIMEOUT = 10000; // 10 seconds
+    public static final int READ_TIMEOUT = 10000;    // 10 seconds
 
 	
 	//interface for callback
@@ -47,8 +47,15 @@ public class PanelConnection {
 	private boolean isListening; // a flag for keep/stop the socket listening
 
 
-	
-	public synchronized boolean  isListening() {
+    public synchronized boolean isError() {
+        return error;
+    }
+
+    public synchronized void setError(boolean error) {
+        this.error = error;
+    }
+
+    public synchronized boolean  isListening() {
 		return isListening;
 	}
 
@@ -138,43 +145,43 @@ public class PanelConnection {
 			
 			//char[] getPackageTest = new char[] {2, 165, 64, 15, 96, 0,0x5A,0xA5,0x0D,0x0A};
 			//char[] getConfig = new char[] {0x02,0xA0,0x21,0x68,0x18,0x5A,0xA5,0x0D,0x0A};
-			
-			for(int i=0; i<commandList.size(); i++){
-				
-				char[] command = commandList.get(i);
-			
-				try {
-					// init socket and in/out stream
-					
-					setListening(true);
 
-                    //re-create if socket not exist or has been closed
-					if(socket == null || socket.isClosed())
-					{
+            for(int i=0; i<commandList.size(); i++) {
+                if(!isError()){
+
+                    char[] command = commandList.get(i);
+
+                    try {
+                        // init socket and in/out stream
+
+                        setListening(true);
+
+                        //re-create if socket not exist or has been closed
+                        if (socket == null || socket.isClosed()) {
 //						socket = new Socket(ip,port);
-                        socket = new Socket();
+                            socket = new Socket();
 
-                        //set socket read() timeout
-						socket.setSoTimeout(READ_TIMEOUT);
+                            //set socket read() timeout
+                            socket.setSoTimeout(READ_TIMEOUT);
 
-                        socket.setKeepAlive(true);
+                            socket.setKeepAlive(true);
 
-                        //connect socket to server with a 3secs timeout
-                        socket.connect(new InetSocketAddress(ip,port),CONNECTION_TIMEOUT);
-						//socket.setReceiveBufferSize(20000);
+                            //connect socket to server with a 3secs timeout
+                            socket.connect(new InetSocketAddress(ip, port), CONNECTION_TIMEOUT);
+                            //socket.setReceiveBufferSize(20000);
 
-                        out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "ISO8859_1")), false);
-                        in = socket.getInputStream();
+                            out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(), "ISO8859_1")), false);
+                            in = socket.getInputStream();
 
-					}
+                        }
 
-                    // send command to panel if socket is connected to server and not closed
-                    if(socket.isConnected() && !socket.isClosed()) {
-                        //TCPConnection.printSocketInformation(socket);
+                        // send command to panel if socket is connected to server and not closed
+                        if (socket.isConnected() && !socket.isClosed()) {
+                            //TCPConnection.printSocketInformation(socket);
 
-                        out.print(command);
-                        out.flush();
-                    }
+                            out.print(command);
+                            out.flush();
+                        }
 	
 					/*
 					 *   Receive bytes from panel and put in rxBuffer arrayList
@@ -193,55 +200,52 @@ public class PanelConnection {
 					}
 	
 					*/
-					
-					int data = 0;
-					
-					//TimeUnit.SECONDS.sleep(3);
-					while(isListening() && !socket.isClosed() && socket.isConnected())
-					{	
-						//checks if a package is complete
-						//and call callback
-						if(in.available()==0 && !rxBuffer.isEmpty() && (data == Constants.UART_NEW_LINE_L) && 
-		        				rxBuffer.get(rxBuffer.size() - 2).equals(Constants.UART_NEW_LINE_H) &&
-		        				rxBuffer.get(rxBuffer.size() - 3).equals(Constants.UART_STOP_BIT_L) &&
-		        				rxBuffer.get(rxBuffer.size() - 4).equals(Constants.UART_STOP_BIT_H))   // check finished bit; to be changed 
-						{
-							//System.out.println(rxBuffer.get(rxBuffer.size()-23));
-							
-							//mCallback.get() to get mCallBack instance, for it is  weakReference
-							
-							panelInfoPackageNo ++ ;
-							
-							if(panelInfoPackageNo == commandList.size()){
-								System.out.println(" All packages received");
-								rxCompleted = true;
-							}
-							
-							mCallBack.get().receive(rxBuffer,ip);
-							System.out.println("rxBuffer size: " + rxBuffer.size());
-							rxBuffer.clear();
-						}
-						
-						//reading data from stream
+
+                        int data = 0;
+
+                        //TimeUnit.SECONDS.sleep(3);
+                        while (isListening() && !socket.isClosed() && socket.isConnected()) {
+                            //checks if a package is complete
+                            //and call callback
+                            if (in.available() == 0 && !rxBuffer.isEmpty() && (data == Constants.UART_NEW_LINE_L) &&
+                                    rxBuffer.get(rxBuffer.size() - 2).equals(Constants.UART_NEW_LINE_H) &&
+                                    rxBuffer.get(rxBuffer.size() - 3).equals(Constants.UART_STOP_BIT_L) &&
+                                    rxBuffer.get(rxBuffer.size() - 4).equals(Constants.UART_STOP_BIT_H))   // check finished bit; to be changed
+                            {
+                                //System.out.println(rxBuffer.get(rxBuffer.size()-23));
+
+                                //mCallback.get() to get mCallBack instance, for it is  weakReference
+
+                                panelInfoPackageNo++;
+
+                                if (panelInfoPackageNo == commandList.size()) {
+                                    System.out.println(" All packages received");
+                                    rxCompleted = true;
+                                }
+
+                                mCallBack.get().receive(rxBuffer, ip);
+                                System.out.println("rxBuffer size: " + rxBuffer.size());
+                                rxBuffer.clear();
+                            }
+
+                            //reading data from stream
 //						if(in.available()>0)
-                        if(isListening() && !socket.isClosed())
-						{
-							data = in.read();
-                            if (data==-1) {
-                                throw new TCPConnection.PanelResetException();
+                            if (isListening() && !socket.isClosed()) {
+                                data = in.read();
+                                if (data == -1) {
+                                    throw new TCPConnection.PanelResetException();
+
+                                }
+
+                                rxBuffer.add(data);
 
                             }
 
-							rxBuffer.add(data);
-		
-						}
-						
-						//keep listening while available until isClosed flag is set to true
-						
-						else
-						{
-							TimeUnit.MILLISECONDS.sleep(100);
-						}	
+                            //keep listening while available until isClosed flag is set to true
+
+                            else {
+                                TimeUnit.MILLISECONDS.sleep(100);
+                            }
 						
 						/*for(int j=0; j<rxBuffer.size();j+=1033)
 						{
@@ -252,72 +256,66 @@ public class PanelConnection {
 							}
 							System.out.println();
 						}*/
-						
-					}
-				
-					
-			
-				} catch(SocketTimeoutException e)
-                {
-                    e.printStackTrace();
-                    error = true;
-                    setListening(false);
-                    mCallBack.get().onError(ip,e);
-
-                } catch (TCPConnection.PanelResetException e1){
-                    e1.printStackTrace();
-                    error = true;
-                    setListening(false);
-                    mCallBack.get().onError(ip,e1);
-                }
-
-                catch(Exception ex)
-				{
-					ex.printStackTrace();
-                    error = true;
-                    setListening(false);
-					mCallBack.get().onError(ip,ex);
-				} finally{
-
-                    //close socket if all packages are received
-                    if(panelInfoPackageNo == commandList.size()){
-                        System.out.println("Finally: closing socket");
-                        rxCompleted = true;
-                        try {
-                            if(socket != null && !socket.isClosed())
-                            {
-                                out.close();
-                                in.close();
-                                socket.close();
-                            }
-
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
 
                         }
-                    }
-                    else if(error) {
 
-                        //break out the command list for loop if there is connection exception
-                        try {
-                            if(socket != null && socket.isConnected() && !socket.isClosed())
-                            {
-                                out.close();
-                                in.close();
-                                socket.close();
+
+                    } catch (SocketTimeoutException e) {
+                        e.printStackTrace();
+                        error = true;
+                        setListening(false);
+                        mCallBack.get().onError(ip, e);
+
+                    } catch (TCPConnection.PanelResetException e1) {
+                        e1.printStackTrace();
+                        error = true;
+                        setListening(false);
+                        mCallBack.get().onError(ip, e1);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        error = true;
+                        setListening(false);
+                        mCallBack.get().onError(ip, ex);
+                    } finally {
+
+                        //close socket if all packages are received
+                        if (panelInfoPackageNo == commandList.size()) {
+                            System.out.println("Finally: closing socket");
+                            rxCompleted = true;
+                            try {
+                                if (socket != null && !socket.isClosed()) {
+                                    out.close();
+                                    in.close();
+                                    socket.close();
+                                }
+
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+
                             }
+                        } else if (error) {
 
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
+                            //break out the command list for loop if there is connection exception
+                            try {
+                                if (socket != null && socket.isConnected() && !socket.isClosed()) {
+                                    out.close();
+                                    in.close();
+                                    socket.close();
+                                }
 
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+
+                            }
+                            break;
                         }
-                        break;
+
+
                     }
+                }else break;
 
 
-				}		
-		
-			}
+            }
 		}
 	
 	};

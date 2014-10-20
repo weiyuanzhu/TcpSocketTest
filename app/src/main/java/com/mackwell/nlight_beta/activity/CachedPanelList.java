@@ -3,8 +3,6 @@ package com.mackwell.nlight_beta.activity;
 import com.mackwell.nlight_beta.models.Panel;
 import com.mackwell.nlight_beta.socket.UDPConnection;
 
-import java.util.Map;
-
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -24,7 +22,6 @@ import com.mackwell.nlight_beta.util.MySQLiteController;
 import com.mackwell.nlight_beta.util.MySQLiteOpenHelper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class CachedPanelList extends Activity  implements UDPConnection.UDPCallback{
@@ -171,7 +168,7 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
 
     public void remove(View view)
     {
-        Log.d(TAG,"IP entered: " + ipEditText.getText().toString());
+        Log.d(TAG, "IP entered: " + ipEditText.getText().toString());
         int position = mListView.getCheckedItemPosition();
 
         mCursor.moveToPosition(position);
@@ -180,6 +177,17 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
         sqlControler.open();
 
         sqlControler.deletePanel(ip);
+        mCursor = sqlControler.readData();
+        mAdapter.changeCursor(mCursor);
+        mAdapter.notifyDataSetChanged();
+
+        sqlControler.close();
+
+    }
+
+    public void update(View view){
+        sqlControler.open();
+        sqlControler.updatePanelLocation("192.168.1.17","testtesttest");
         mCursor = sqlControler.readData();
         mAdapter.changeCursor(mCursor);
         mAdapter.notifyDataSetChanged();
@@ -202,7 +210,7 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
         public void run() {
             Panel panel = new Panel();
             panel.setIp(ip);
-            panel.setMac(mac);
+            panel.setMacString(mac);
             panel.setPanelLocation("");
             panelList.add(panel);
 

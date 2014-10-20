@@ -29,7 +29,6 @@ import com.mackwell.nlight_beta.socket.PanelConnection;
 import com.mackwell.nlight_beta.socket.UDPConnection;
 import com.mackwell.nlight_beta.socket.UDPConnection.UDPCallback;
 import com.mackwell.nlight_beta.util.CommandFactory;
-import com.mackwell.nlight_beta.util.Constants;
 import com.mackwell.nlight_beta.util.DataParser;
 
 /**
@@ -135,6 +134,12 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
             ip_connection_map.get(ip).setListening(false);
         }
 
+        //stop all other connections
+        for(PanelConnection connection1:ip_connection_map.values())
+        {
+            connection1.setError(true);
+        }
+
         Message msg = mHandler.obtainMessage();
         msg.arg1 = ERROR;
         msg.obj = ip;
@@ -153,6 +158,15 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		if(!ipListAll.contains(ip))
 		{
 			ipListAll.add(ip);
+
+            //get macString from byte[]
+            String macString = String.format("%02X:%02X:%02X:%02X:%02X:%02X",
+                    mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+
+            //create new panel and put it in the panel map
+            Panel panel = new Panel(ip,macString);
+            panelMap.put(ip,panel);
+
             ipEnableMap.put(ip,true);
 			
 			//put ip and location into a map and add to dataList for dialog listview;
@@ -186,7 +200,12 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	public void connectToPanels(List<Integer> selected) {
 		
 		//connecting to panels, and close UDP socket
-		udpConnection.setListen(false);
+		if(udpConnection!=null) {
+            udpConnection.setListen(false);
+        }
+
+        //clear panel list from previous loading
+        panelList.clear();
 		
 		//save check status
 		
@@ -278,7 +297,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			return sp.getString(ip, "");
 		}
 		
-		return "";
+		else return "";
 	}
 	
 	
@@ -318,7 +337,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 				
 				switch(msg.arg1){
 					case LOADING:
-						progressText.setText(getResources().getString(R.string.text_loading_panel,panelToLoad));
+                        if(isLoading){
+                            progressText.setText(getResources().getString(R.string.text_loading_panel,panelToLoad));
+                        }
 						break;
 					case PARSING: 
 						progressText.setText(R.string.text_analyzing_data);
@@ -527,9 +548,20 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			
 			searchUDP();
 		}*/
-		popDialog();
-		
-		
+
+        //create a new ListDialogFragment and set its String[] ips to be udp search result
+        ListDialogFragment panelListDialog = new ListDialogFragment();
+
+        //get a String[] from ipSet and pass to dialog window
+        String[] ipArray = new String[ipListAll.size()];
+        ipListAll.toArray(ipArray);
+        panelListDialog.setIps(ipArray);
+        panelListDialog.setDataList(dataList);
+        panelListDialog.setIpEnableMap(ipEnableMap);
+
+        //test.setIps(null); //null test
+        panelListDialog.show(getFragmentManager(), "panelListDialog"); //popup dialog
+
 	}
 	
 	public void parse(String ip)
@@ -548,9 +580,11 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		
 		try {
-			Panel newPanel = new Panel(eepRom, deviceList, ip);
-			panelMap.put(ip, newPanel);
-			panelList.add(newPanel);
+			Panel panel = panelMap.get(ip);
+
+            panel.updatePanel(eepRom, deviceList, ip);
+			panelMap.put(ip, panel);
+			panelList.add(panel);
 			
 			if(panelList.size()==ipListSelected.size()){
 				
@@ -572,7 +606,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	{
 		panelList = new ArrayList<Panel>();
 	
-		Panel panel = new Panel("192.168.1.241");
+		Panel panel = new Panel("192.168.1.241","0:0:0:0:0:0");
 		panel.setPanelLocation("Mackwell L&B 1   ");
 		panel.setSerialNumber((long)1376880756);
 		panel.setGtinArray(new int[]{131,1,166,43,154,4});
@@ -588,7 +622,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		panelList.add(panel);
 	
-		panel = new Panel("192.168.1.242");
+		panel = new Panel("192.168.1.242","0:0:0:0:0:0");
 		panel.setPanelLocation("Mackwell L&B 2    ");
 		panel.setSerialNumber((long)1375868516);
 		panel.setGtinArray(new int[]{132,2,166,43,154,4});
@@ -610,45 +644,6 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 	}
 
-
-
-	
-	
-	
-	
-	
-	public void popDialog()
-	{
-	
-		
-		/*Map<String, Object> map = new HashMap<String,Object>();
-		map.put("ip", "192.168.1.20");
-		map.put("location","Mackwell R&D");
-		dataList.add(map);
-		
-		map = new HashMap<String,Object>();
-		map.put("ip", "192.168.1.24");
-		map.put("location","Mackwell Special");
-		dataList.add(map);*/
-		
-		
-		
-		//create a new ListDialogFragment and set its String[] ips to be udp search result
-		ListDialogFragment panelListDialog = new ListDialogFragment();
-				
-		//get a String[] from ipSet and pass to dialog window
-		String[] ipArray = new String[ipListAll.size()];
-		ipListAll.toArray(ipArray);
-		panelListDialog.setIps(ipArray);
-		panelListDialog.setDataList(dataList);
-		panelListDialog.setIpEnableMap(ipEnableMap);
-
-		//test.setIps(null); //null test
-		panelListDialog.show(getFragmentManager(), "panelListDialog"); //popup dialog
-				
-		
-	}
-	
 	/**
 	 * This is when search button clicked on loading screen
 	 * @param view button
