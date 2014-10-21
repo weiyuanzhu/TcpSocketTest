@@ -729,6 +729,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		boolean isSave = sp.getBoolean(SettingsActivity.SAVE_PANEL_LOCATION, true);
 		if(isSave)
 		{
+            sqLiteController.open();
 			for(Panel panel : panelList)
 			{
                 //save panel location to SharedPreference
@@ -737,14 +738,14 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 				editor.apply();
 
                 //save panel location to database
-                if (!isDemo) {
-                    sqLiteController.open();
+                if (true) {
+
                     sqLiteController.insertPanel(panel);
                     sqLiteController.updatePanelLocation(panel.getIp(), panel.getPanelLocation());
-                    sqLiteController.close();
                 }
             }
-		}
+            sqLiteController.close();
+        }
 	}
 	
 	void showDropDownMenu(View view)

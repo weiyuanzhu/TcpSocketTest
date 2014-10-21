@@ -140,7 +140,11 @@ public class ListDialogFragment extends DialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		
 		listView = new ListView(getActivity());
-		
+
+        //enable scroll bar
+        listView.setVerticalScrollBarEnabled(true);
+
+		//adapter
 		SimpleAdapter mAdapter = new MyAdapter(getActivity(), getDataList(), R.layout.panel_list_row2, new String[]{"ip","location"},new int[]{R.id.ip_textview,R.id.location_checkedtextview});
 		
 		listView.setAdapter(mAdapter);

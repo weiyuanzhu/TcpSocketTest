@@ -50,12 +50,13 @@
             android:label="@string/title_activity_loading_screen"
             android:screenOrientation="userLandscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name="com.mackwell.nlight_beta.activity.PanelInfoActivity"
@@ -107,6 +108,7 @@
         <activity
             android:name="com.mackwell.nlight_beta.activity.CachedPanelList"
             android:label="@string/title_activity_cached_panel_list" >
+
         </activity>
     </application>
 

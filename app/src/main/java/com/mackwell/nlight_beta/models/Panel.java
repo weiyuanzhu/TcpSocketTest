@@ -64,7 +64,7 @@ public class Panel  implements Parcelable {
 	{
 		setIp(ip);
         macString = mac;
-		panelLocation = "Mackwell L&B Demo";
+		panelLocation = "";
 		contact = "Mackwell Engineer";
 		loop1 = new Loop("Loop1");
 		loop2 = new Loop("Loop2");
