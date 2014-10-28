@@ -132,6 +132,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 
         //set ip checkbox disable
         ipEnableMap.put(ip,false);
+        panelMap.get(ip).setError(true);
 
         System.out.println("Error: " + ip);
         if(ip_connection_map.get(ip)!=null) {
@@ -162,7 +163,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		System.out.println("Received UDP package");
 		if(!ipListAll.contains(ip))
 		{
-			ipListAll.add(ip);
+			//ipListAll.add(ip);
 
             //get macString from byte[]
             String macString = String.format("%02X:%02X:%02X:%02X:%02X:%02X",
@@ -170,7 +171,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 
             //create new panel and put it in the panel map
             Panel panel = new Panel(ip,macString);
-            panelMap.put(ip,panel);
+           // panelMap.put(ip,panel);
             sqLiteController.open();
             sqLiteController.insertPanel(panel);
             sqLiteController.close();
@@ -565,17 +566,24 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             String ip = cursor.getString(0);
             String macString = cursor.getString(1);
+            String location = cursor.getString(2);
 
-            ipListAll.add(ip);
-            Panel panel = new Panel(ip,macString);
-            panelMap.put(ip,panel);
+            if(!ipListAll.contains(ip)) ipListAll.add(ip);
 
-            ipEnableMap.put(ip,true);
+            if(panelMap.get(ip)==null){
+                Panel panel = new Panel(ip,macString);
+                panelMap.put(ip,panel);
+                ipEnableMap.put(ip,true);
+
+            }
+            else ipEnableMap.put(ip,!panelMap.get(ip).isError());
+
+
 
             //put ip and location into a map and add to dataList for dialog listview;
             Map<String, Object> map = new HashMap<String,Object>();
             map.put("ip", ip);
-            map.put("location",getPanelLocationFromPreference(ip));
+            map.put("location",location);
             dataList.add(map);
 
         }

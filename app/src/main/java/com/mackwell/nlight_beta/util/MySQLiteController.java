@@ -42,7 +42,7 @@ public class MySQLiteController {
     }
 
     public Cursor selectIp(){
-        String[] columns = new String[] {MySQLiteOpenHelper.COLUMN_PANELIP,MySQLiteOpenHelper.COLUMN_PANELMAC};
+        String[] columns = new String[] {MySQLiteOpenHelper.COLUMN_PANELIP,MySQLiteOpenHelper.COLUMN_PANELMAC,MySQLiteOpenHelper.COLUMN_PANELLOCATION};
         String orderBy = MySQLiteOpenHelper.COLUMN_PANELIP + " ASC";
         Cursor c = database.query(MySQLiteOpenHelper.TABLE_PANEL, columns, null,null, null, null, orderBy);
         if (c != null) {

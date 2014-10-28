@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">N-Light Connect</string>
-    <string name="app_version">版本: <xliff:g id="promotion_code">beta 0.8.4</xliff:g>  </string>
+    <string name="app_version">版本: <xliff:g id="promotion_code">beta 0.8.6</xliff:g></string>
     <string name="action_settings">设置</string>
     <string name="action_about">关于</string>
     <string name="action_search">搜索</string>

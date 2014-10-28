@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">N-Light Connect</string>
-	<string name="app_version">Version: <xliff:g id="promotion_code">beta 0.8.4</xliff:g></string>
+	<string name="app_version">Version: <xliff:g id="promotion_code">beta 0.8.6</xliff:g></string>
 	<string name="action_settings">Paramètres</string>
 	<string name="action_about">A propos</string> 
 	<string name="action_search">Recherche</string> 
