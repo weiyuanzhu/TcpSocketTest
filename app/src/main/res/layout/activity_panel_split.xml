@@ -34,8 +34,8 @@
             
         <ImageView
             android:id="@+id/panelInfo_image"
-            android:layout_width="300dp"
-            android:layout_height="300dp"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:contentDescription="@string/title_activity_panel_info"

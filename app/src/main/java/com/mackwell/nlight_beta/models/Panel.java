@@ -51,8 +51,7 @@ public class Panel  implements Parcelable {
 	private int faultDeviceNo;
 	
 	private boolean engineerMode = false;
-    private boolean error;
-	
+
 	
 	public Panel()
 	{
@@ -79,17 +78,10 @@ public class Panel  implements Parcelable {
 		serialNumber = (long) 1234567;
 		gtinArray = new int[]{6,5,4,3,2,1};
 		overAllStatus = 0;
-        error=false;
-		
+
 	}
 
-    public boolean isError() {
-        return error;
-    }
 
-    public void setError(boolean error) {
-        this.error = error;
-    }
 
     public Panel(Parcel source)
 	{

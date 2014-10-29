@@ -42,7 +42,7 @@ public class MySQLiteController {
     }
 
     public Cursor selectIp(){
-        String[] columns = new String[] {MySQLiteOpenHelper.COLUMN_PANELIP,MySQLiteOpenHelper.COLUMN_PANELMAC,MySQLiteOpenHelper.COLUMN_PANELLOCATION};
+        String[] columns = new String[] {MySQLiteOpenHelper.COLUMN_PANELIP,MySQLiteOpenHelper.COLUMN_PANELMAC,MySQLiteOpenHelper.COLUMN_PANELLOCATION,MySQLiteOpenHelper.COLUMN_ENABLE};
         String orderBy = MySQLiteOpenHelper.COLUMN_PANELIP + " ASC";
         Cursor c = database.query(MySQLiteOpenHelper.TABLE_PANEL, columns, null,null, null, null, orderBy);
         if (c != null) {
@@ -119,8 +119,34 @@ public class MySQLiteController {
         database.update(MySQLiteOpenHelper.TABLE_PANEL,values,whereClause,null);
     }
 
-    public void updatePanelCheckedStatus(String ip, boolean check)
+    public boolean isEnable(String ip)
     {
+        String[] columns = new String[] {MySQLiteOpenHelper.COLUMN_ENABLE};
+
+        Cursor c = database.query(MySQLiteOpenHelper.TABLE_PANEL, columns, MySQLiteOpenHelper.COLUMN_PANELIP + " = ?",new String[]{ip}, null, null, null);
+        if (c != null) {
+            c.moveToFirst();
+
+        }
+
+        return (c.getInt(0) != 0);
+
+    }
+
+    public void updateEnable(String ip,int enable){
+
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteOpenHelper.COLUMN_ENABLE,enable);
+        String whereClause = MySQLiteOpenHelper.COLUMN_PANELIP + "=" + "\"" + ip + "\"";
+
+        database.update(MySQLiteOpenHelper.TABLE_PANEL,values,whereClause,null);
+
+    }
+
+    public void resetEnable(){
+        ContentValues values = new ContentValues();
+        values.put(MySQLiteOpenHelper.COLUMN_ENABLE,1);
+        database.update(MySQLiteOpenHelper.TABLE_PANEL,values,null,null);
 
     }
 

@@ -25,6 +25,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.mackwell.nlight_beta.R;
+import com.mackwell.nlight_beta.util.MySQLiteController;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -45,6 +46,9 @@ public class ListDialogFragment extends DialogFragment {
 	private String[] ips; 												//An array contains panels' IP
 	private ListDialogListener mListener; 								//A callback listener for dialog when button clicked
 	private List<Integer> mSelectedItems = new ArrayList<Integer>();        	//a list contains item selected
+
+    //sqlite
+    private MySQLiteController sqLiteController;
 
 	public ListDialogFragment() {
 		// Required empty public constructor
@@ -76,32 +80,32 @@ public class ListDialogFragment extends DialogFragment {
 
 			View rowView = inflater.inflate(resource, parent, false);
 
-			TextView ip = (TextView) rowView.findViewById(to[0]);
-			CheckedTextView location = (CheckedTextView) rowView.findViewById(to[1]);
+			TextView ipTextView = (TextView) rowView.findViewById(to[0]);
+			CheckedTextView locationCheckedTextView = (CheckedTextView) rowView.findViewById(to[1]);
 
-			String ipText = (String) dataList.get(position).get(from[0]);
-			ip.setText(ipText);
+			String ip = (String) dataList.get(position).get(from[0]);
+			ipTextView.setText(ip);
 
 			String locationText = (String) dataList.get(position).get(from[1]);
-			location.setText(locationText);
+			locationCheckedTextView.setText(locationText);
 
 
 
 
-			if(check(ipText))
+			if(check(ip))
 			{
-				location.setChecked(true);
+				locationCheckedTextView.setChecked(true);
 //                location.setEnabled(false);
 
 				listView.setItemChecked(position, true);
 			}
 
             //disable and un-check location check box and ip text
-            if(!ipEnableMap.get(ipText))
+            if(!ipEnableMap.get(ip))
             {
-                location.setChecked(false);
-                location.setEnabled(false);
-                ip.setEnabled(false);
+                locationCheckedTextView.setChecked(false);
+                locationCheckedTextView.setEnabled(false);
+                ipTextView.setEnabled(false);
             }
 
 			/*if(position==0)
@@ -131,9 +135,17 @@ public class ListDialogFragment extends DialogFragment {
             return true;
         }
 		else return false;*/
+        //sqLiteController.open();
 
+        //boolean test = sqLiteController.isEnable(ip);
+
+		//sqLiteController.close();
 		//return true if ip is enabled as well as checked
         return (save_checked && check && ipEnableMap.get(ip));
+
+
+
+
 	}
 
 	@Override
@@ -306,6 +318,15 @@ public class ListDialogFragment extends DialogFragment {
     }
 
     public void setIpEnableMap(Map<String, Boolean> ipEnableMap) {
+
         this.ipEnableMap = ipEnableMap;
+    }
+
+    public MySQLiteController getSqLiteController() {
+        return sqLiteController;
+    }
+
+    public void setSqLiteController(MySQLiteController sqLiteController) {
+        this.sqLiteController = sqLiteController;
     }
 }

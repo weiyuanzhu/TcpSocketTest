@@ -32,6 +32,7 @@ import com.mackwell.nlight_beta.socket.UDPConnection.UDPCallback;
 import com.mackwell.nlight_beta.util.CommandFactory;
 import com.mackwell.nlight_beta.util.DataParser;
 import com.mackwell.nlight_beta.util.MySQLiteController;
+import com.mackwell.nlight_beta.util.MySQLiteOpenHelper;
 
 /**
  * @author  weiyuan zhu15/04/2014 Starting develop branch test on develop branch test 2 on feature branch test 3 on feature branch after rebase
@@ -131,8 +132,12 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
         isLoading = false;
 
         //set ip checkbox disable
-        ipEnableMap.put(ip,false);
-        panelMap.get(ip).setError(true);
+        ipEnableMap.put(ip, false);
+        sqLiteController.open();
+        sqLiteController.updateEnable(ip, MySQLiteOpenHelper.DISABLE);
+        sqLiteController.close();
+
+
 
         System.out.println("Error: " + ip);
         if(ip_connection_map.get(ip)!=null) {
@@ -141,9 +146,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
         }
 
         //stop all other connections
-        for(PanelConnection connection1:ip_connection_map.values())
+        for(PanelConnection connection:ip_connection_map.values())
         {
-            connection1.setError(true);
+            connection.setError(true);
         }
 
         Message msg = mHandler.obtainMessage();
@@ -199,8 +204,12 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
         //reset all items in ipEnableMap to true
         if(ipEnableMap!=null) ipEnableMap.clear();
 
-        for(Panel panel: panelMap.values()){
-            panel.setError(false);
+        sqLiteController.open();
+        sqLiteController.resetEnable();
+        sqLiteController.close();
+
+        for(PanelConnection connection: ip_connection_map.values()){
+            connection.setError(false);
         }
 
 		searchUDP();			
@@ -573,16 +582,17 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
             String ip = cursor.getString(0);
             String macString = cursor.getString(1);
             String location = cursor.getString(2);
+            int enable = cursor.getInt(3);
 
             if(!ipListAll.contains(ip)) ipListAll.add(ip);
 
             if(panelMap.get(ip)==null){
                 Panel panel = new Panel(ip,macString);
                 panelMap.put(ip,panel);
-                ipEnableMap.put(ip,true);
-
+                ipEnableMap.put(ip,(enable!=0));
             }
-            else ipEnableMap.put(ip,!panelMap.get(ip).isError());
+
+            else ipEnableMap.put(ip, (enable!=0));
 
 
 
@@ -608,6 +618,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
         panelListDialog.setIps(ipArray);
         panelListDialog.setDataList(dataList);
         panelListDialog.setIpEnableMap(ipEnableMap);
+        panelListDialog.setSqLiteController(sqLiteController);
 
         //test.setIps(null); //null test
         panelListDialog.show(getFragmentManager(), "panelListDialog"); //popup dialog
@@ -700,7 +711,6 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	 */
 	public void searchPanelsBtn(View view)
 	{
-		
 		searchUDP();
 	}
 
@@ -717,13 +727,11 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		{
 			udpConnection.closeConnection();
 			udpConnection = new UDPConnection(UDPConnection.FIND,this);
-			
 		}
 		
 		//send UDP panel search messages
-		
 		udpConnection.tx("255.255.255.255",UDPConnection.FIND);
-		
+
 		progressText.setVisibility(View.INVISIBLE);
 		Toast.makeText(this, R.string.toast_search_panel, Toast.LENGTH_LONG).show();	
 	}
