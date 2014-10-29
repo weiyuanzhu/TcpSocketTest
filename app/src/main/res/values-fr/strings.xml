@@ -188,6 +188,8 @@
     <string name="pref_panel_list">Liste de panneau de contrôle local</string>
     <string name="pref_panel_lists_summary">”Liste du panneau cache , qui peut être ajouté / supprimer manuellement“</string>
     <string name="title_activity_cached_panel_list">CachedPanelList</string>
+    <string name="dialog_SocketTimeout_title">Connexion au panneau: "<xliff:g id="dialog_SocketTimeout_panelname">%1$s</xliff:g>" a été temporisation (<xliff:g id="dialog_SocketTimeout_ip">%2$s</xliff:g>) </string>
+
 
 
 </resources>

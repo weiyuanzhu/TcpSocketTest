@@ -117,7 +117,7 @@ public class DataParser {
 			for(byte b : byteArray) {
 				buffer.add(CRC.getUnsignedInt(b));
 			}
-			for(int i = buffer.size(); i < 33; i++) {
+			for(int i = buffer.size(); i < 32; i++) {
 				buffer.add(0x20);  // append SPACE '0x20' at the end to fill 32 character space
 			}
 			

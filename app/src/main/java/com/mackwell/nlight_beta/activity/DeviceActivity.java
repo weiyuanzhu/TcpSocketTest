@@ -1,5 +1,6 @@
 package com.mackwell.nlight_beta.activity;
 
+import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -111,6 +112,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 
 	private int currentDevicAddress = 0;
 	private int currentGroupPosition = 0;
+    private int currentDevicePosition = 0;
 	
 	
 	private SearchView searchView= null; //search view for search button on the action bar
@@ -189,8 +191,11 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
     @Override
     public void onError(String ip, Exception e) {
         if (e instanceof TCPConnection.PanelResetException) {
-            mHandler.post(new PanelResetError(ip));
+            mHandler.post(new PanelResetError(ip,e));
+        } else if(e instanceof SocketTimeoutException){
+            mHandler.post(new PanelResetError(ip,e));
         }
+
     }
 
     @Override
@@ -211,7 +216,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		//update both device fragment and device list display
 		deviceInfoFragment.updateLocation();
-		deviceListFragment.updateLocation(currentGroupPosition, currentDevicAddress, input);
+		deviceListFragment.updateLocation(currentGroupPosition, currentDevicePosition, input);
 		
 		//send command to panel if not in demo mode
 		
@@ -239,10 +244,14 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	 * @see nlight_android.nlight.DeviceListFragment.OnDevicdListFragmentListener#onDeviceItemClicked(int, int)
 	 */
 	@Override
-	public void onDeviceItemClicked(int groupPosition, int childPosition) {
+	public void onDeviceItemClicked(int groupPosition, int childPosition,int deviceAddress) {
 		
-		currentDevicAddress = childPosition;
+		currentDevicAddress = deviceAddress;
 		currentGroupPosition = groupPosition;
+        currentDevicePosition = childPosition;
+
+
+
 		
 		System.out.println("current device:-------------->" + currentDevicAddress);
 		System.out.println("groupPositon: " + groupPosition + " childPosition: " + childPosition);
@@ -541,7 +550,11 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
     @Override
     protected void onStop() {
 
-
+        //close connection and socket when activity is at background or not visible
+        if(connection!=null){
+            connection.closeConnection();
+            connection = null;
+        }
 
         super.onStop();
 
@@ -854,17 +867,19 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
     class PanelResetError implements Runnable {
 
         private  String ip;
+        Exception e;
 
-        public PanelResetError(String ip){
+        public PanelResetError(String ip,Exception e){
             this.ip  = ip;
+            this.e = e;
         }
 
         @Override
         public void run() {
             //display error message
             Toast.makeText(DeviceActivity.this,R.string.toast_panel_reset,Toast.LENGTH_LONG).show();
-            PanelResetDialogFragment dialog = new PanelResetDialogFragment();
-            dialog.setIp(ip);
+            ErrorDialogFragment dialog = new ErrorDialogFragment();
+            dialog.setIp(ip,panel,e);
             dialog.show(getFragmentManager(),"PanelResetDialog");
 
             //force navigate back to loading screen

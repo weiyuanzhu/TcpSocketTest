@@ -519,10 +519,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	protected void onStop() {
 		
 		if(panelMap!=null && ip_connection_map!=null){
-			for(String key : panelMap.keySet())
+			for(TCPConnection connection : ip_connection_map.values())
 			{
-				
-				TCPConnection connection = ip_connection_map.get(key);
 				if(connection!=null){
 					connection.setListening(false);
 					connection.closeConnection();

@@ -199,6 +199,10 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
         //reset all items in ipEnableMap to true
         if(ipEnableMap!=null) ipEnableMap.clear();
 
+        for(Panel panel: panelMap.values()){
+            panel.setError(false);
+        }
+
 		searchUDP();			
 	}
 	 
@@ -558,7 +562,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			searchUDP();
 		}*/
 
+//        panelMap.clear();
         dataList.clear();
+        ipEnableMap.clear();
 
         //compare current ipListAll with cached sqLite database
         sqLiteController.open();
@@ -703,7 +709,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		//clear current ip list and data list for dialog list view;
 		ipListAll.clear();
 		dataList.clear();
-		
+
 		if(udpConnection == null ){
 			udpConnection = new UDPConnection(UDPConnection.FIND, this);
 		}
