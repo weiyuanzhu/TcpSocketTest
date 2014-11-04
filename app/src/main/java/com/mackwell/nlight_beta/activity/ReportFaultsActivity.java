@@ -108,9 +108,54 @@ public class ReportFaultsActivity extends BaseActivity {
                 dataList.add(map);
 
             }
+
+            for(int i=0; i<report.getLoop1GroupStatus().size();i++){
+                int groupAddress = report.getLoop1GroupStatus().get(i).get(0);
+                int ft = report.getLoop1GroupStatus().get(i).get(1);
+                int dt = report.getLoop1GroupStatus().get(i).get(2);
+
+                map = new HashMap<String, String>();
+                map.put("loop", "Loop1" );
+                map.put("device","Group " + Integer.toString(groupAddress));
+                map.put("serial", "-");
+                map.put("location", "-");
+                map.put("description", getGroupFaultDescription(ft,dt));
+
+                dataList.add(map);
+
+            }
+
+            for(int i=0; i<report.getLoop2GroupStatus().size();i++){
+                int groupAddress = report.getLoop1GroupStatus().get(i).get(0);
+                int ft = report.getLoop1GroupStatus().get(i).get(1);
+                int dt = report.getLoop1GroupStatus().get(i).get(2);
+
+                map = new HashMap<String, String>();
+                map.put("loop", "Loop2" );
+                map.put("device", "Group " + Integer.toString(groupAddress));
+                map.put("serial", "-");
+                map.put("location", "-");
+                map.put("description", getGroupFaultDescription(ft,dt));
+
+                dataList.add(map);
+
+            }
         }
 
         return dataList;
+    }
+
+    private String getGroupFaultDescription(int ft, int dt){
+
+        if(ft>0 && dt>0){
+            return "Group function and duration test missed";
+        }
+        else if (ft>0){
+            return "Group function test missed";
+        }
+        else{
+            return "Group duration test missed";
+        }
     }
 
     public String getFailureStatusText(int failureStatus) {
