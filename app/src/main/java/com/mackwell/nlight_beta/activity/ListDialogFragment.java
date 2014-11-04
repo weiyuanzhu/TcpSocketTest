@@ -10,9 +10,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,13 +40,14 @@ public class ListDialogFragment extends DialogFragment {
 	} 
 	private ListView listView;
     private Map<String,Boolean> ipEnableMap;
+    private Map<String,Boolean> ipCheckMap;
 	private List<Map<String,Object>> dataList;
 	private String[] ips; 												//An array contains panels' IP
 	private ListDialogListener mListener; 								//A callback listener for dialog when button clicked
 	private List<Integer> mSelectedItems = new ArrayList<Integer>();        	//a list contains item selected
 
     //sqlite
-    private MySQLiteController sqLiteController;
+    private MySQLiteController mSqLiteController;
 
 	public ListDialogFragment() {
 		// Required empty public constructor
@@ -89,42 +88,31 @@ public class ListDialogFragment extends DialogFragment {
 			String locationText = (String) dataList.get(position).get(from[1]);
 			locationCheckedTextView.setText(locationText);
 
-
-
-
-			if(check(ip))
-			{
-				locationCheckedTextView.setChecked(true);
-//                location.setEnabled(false);
-
-				listView.setItemChecked(position, true);
-			}
-
+            //check enable and check and set row status
             //disable and un-check location check box and ip text
             if(!ipEnableMap.get(ip))
             {
                 locationCheckedTextView.setChecked(false);
                 locationCheckedTextView.setEnabled(false);
                 ipTextView.setEnabled(false);
+
+                locationCheckedTextView.setChecked(false);
+                listView.setItemChecked(position, false);
+            }else if(ipCheckMap.get(ip))
+			{
+                locationCheckedTextView.setChecked(true);
+//                location.setEnabled(false);
+
+                listView.setItemChecked(position, true);
             }
 
-			/*if(position==0)
-			{
-				location.setTextColor(Color.GREEN);
-			}*/
-			
 			return rowView;
-			
 		}
-		
-		
-		
-		
 	}
 	
 	boolean check(String ip)
 	{
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		/*SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		boolean save_checked = sp.getBoolean(SettingsActivity.SAVE_CHECKED, false);
 		
 		StringBuilder sb = new StringBuilder(ip);
@@ -135,15 +123,19 @@ public class ListDialogFragment extends DialogFragment {
             return true;
         }
 		else return false;*/
-        //sqLiteController.open();
+        //mSqLiteController.open();
 
-        //boolean test = sqLiteController.isEnable(ip);
+        //boolean test = mSqLiteController.isEnable(ip);
 
-		//sqLiteController.close();
+		//mSqLiteController.close();
 		//return true if ip is enabled as well as checked
-        return (save_checked && check && ipEnableMap.get(ip));
+//        return (save_checked && check && ipEnableMap.get(ip));
 
+        mSqLiteController.open();
+        boolean check = mSqLiteController.isChedked(ip);
+        mSqLiteController.close();
 
+        return check;
 
 
 	}
@@ -155,6 +147,9 @@ public class ListDialogFragment extends DialogFragment {
 
         //enable scroll bar
         listView.setVerticalScrollBarEnabled(true);
+
+        //SQLite
+        mSqLiteController = new MySQLiteController(getActivity());
 
 		//adapter
 		SimpleAdapter mAdapter = new MyAdapter(getActivity(), getDataList(), R.layout.panel_list_row2, new String[]{"ip","location"},new int[]{R.id.ip_textview,R.id.location_checkedtextview});
@@ -193,12 +188,8 @@ public class ListDialogFragment extends DialogFragment {
 
 
         //set dialog message panel is busy
-        boolean grayOut = false;
-        for(Boolean value: ipEnableMap.values())
+        if(ipEnableMap.values().contains(false))
         {
-            if(!value) grayOut = true;
-        }
-        if(grayOut) {
             builder.setMessage(R.string.dialogmessage_panel_busy);
         }
 
@@ -322,11 +313,19 @@ public class ListDialogFragment extends DialogFragment {
         this.ipEnableMap = ipEnableMap;
     }
 
-    public MySQLiteController getSqLiteController() {
-        return sqLiteController;
+    public MySQLiteController getmSqLiteController() {
+        return mSqLiteController;
     }
 
-    public void setSqLiteController(MySQLiteController sqLiteController) {
-        this.sqLiteController = sqLiteController;
+    public void setmSqLiteController(MySQLiteController mSqLiteController) {
+        this.mSqLiteController = mSqLiteController;
+    }
+
+    public Map<String,Boolean> getIpCheckMap() {
+        return ipCheckMap;
+    }
+
+    public void setIpCheckMap(Map<String,Boolean> ipCheckMap) {
+        this.ipCheckMap = ipCheckMap;
     }
 }
