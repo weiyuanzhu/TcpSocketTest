@@ -19,8 +19,8 @@ import com.mackwell.nlight_beta.util.DataHelper;
 
 public class PanelConnection {
 
-    public static final int CONNECTION_TIMEOUT = 10000; // 10 seconds
-    public static final int READ_TIMEOUT = 10000;    // 10 seconds
+    public static final int CONNECTION_TIMEOUT = 3000; // 10 seconds
+    public static final int READ_TIMEOUT = 3000;    // 10 seconds
 
 	
 	//interface for callback
@@ -208,7 +208,8 @@ public class PanelConnection {
                         {
                             //checks if a package is complete
                             //and call callback
-                            if (in.available() == 0 && !rxBuffer.isEmpty() && (data == Constants.UART_NEW_LINE_L) &&
+                            //in.available()==0
+                            if (!rxBuffer.isEmpty() && (data == Constants.UART_NEW_LINE_L) &&
                                     rxBuffer.get(rxBuffer.size() - 2).equals(Constants.UART_NEW_LINE_H) &&
                                     rxBuffer.get(rxBuffer.size() - 3).equals(Constants.UART_STOP_BIT_L) &&
                                     rxBuffer.get(rxBuffer.size() - 4).equals(Constants.UART_STOP_BIT_H))   // check finished bit; to be changed
@@ -217,16 +218,20 @@ public class PanelConnection {
 
                                 //mCallback.get() to get mCallBack instance, for it is  weakReference
 
-                                DataHelper.checkDataIntegrity(rxBuffer);
+//                                DataHelper.checkDataIntegrity(rxBuffer);
                                 System.out.println("single rxBuffer size: " + rxBuffer.size());
                                 panelInfoPackageNo++;
 
-                                if (panelInfoPackageNo == commandList.size()) {
+                                /*if (panelInfoPackageNo == commandList.size()) {
                                     System.out.println(" All packages received");
                                     rxCompleted = true;
                                 }
+                                */
 
-
+                                if(rxBuffer.get(0)==1 && rxBuffer.get(1)==173 && rxBuffer.get(2)==41){
+                                    System.out.println(" All packages received");
+                                    rxCompleted = true;
+                                }
                                 mCallBack.get().receive(rxBuffer, ip);
                                 rxBuffer.clear();
                             }

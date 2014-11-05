@@ -31,6 +31,7 @@ import com.mackwell.nlight_beta.socket.UDPConnection;
 import com.mackwell.nlight_beta.socket.UDPConnection.UDPCallback;
 import com.mackwell.nlight_beta.util.CommandFactory;
 import com.mackwell.nlight_beta.util.DataHelper;
+import com.mackwell.nlight_beta.util.GetCmdEnum;
 import com.mackwell.nlight_beta.util.MySQLiteController;
 import com.mackwell.nlight_beta.util.MySQLiteOpenHelper;
 
@@ -95,11 +96,12 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		List<Integer> rxBuffer = rxBufferMap.get(ip);
 		rxBuffer.addAll(rx);
-		PanelConnection connection = ip_connection_map.get(ip);
-		connection.setListening(false);
-		System.out.println(ip + " received package: " + connection.getPanelInfoPackageNo() + " rxBuffer size: " + rxBuffer.size());
-		if(connection.isRxCompleted())
+//		connection.setListening(false);
+		System.out.println(ip + " received package: " + ip_connection_map.get(ip).getPanelInfoPackageNo() + " rxBuffer size: " + rxBuffer.size());
+		if(ip_connection_map.get(ip).isRxCompleted())
 		{
+            ip_connection_map.get(ip).setListening(false);
+            ip_connection_map.get(ip).closeConnection();
 			panelToLoad--;
 
 			//update progress with handler
@@ -270,8 +272,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			
 			
 			System.out.println("------------liveMode clicked");
-			List<char[]> commandList = CommandFactory.getPanelInfo();
-			
+//			List<char[]> commandList = CommandFactory.getPanelInfo();
+			List<char[]> commandList = GetCmdEnum.GET_INIT.get();
+
 			for(String ip: ipListSelected){
 
                 ip_connection_map.get(ip).fetchData(commandList);
