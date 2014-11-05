@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mackwell.nlight_beta"
-    android:versionCode="7"
+    android:versionCode="10"
     android:versionName="@string/app_version" >
 
     <uses-sdk
@@ -16,6 +16,7 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="19" />
 
+    <!--App now supports large and xlarge tablet-->
     <supports-screens
         android:largeScreens="true"
         android:normalScreens="false"
@@ -49,12 +50,13 @@
             android:label="@string/title_activity_loading_screen"
             android:screenOrientation="userLandscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name="com.mackwell.nlight_beta.activity.PanelInfoActivity"
@@ -106,6 +108,7 @@
         <activity
             android:name="com.mackwell.nlight_beta.activity.CachedPanelList"
             android:label="@string/title_activity_cached_panel_list" >
+
         </activity>
     </application>
 

@@ -36,6 +36,8 @@ import com.mackwell.nlight_beta.activity.PanelListFragment.OnPanelListItemClicke
 import com.mackwell.nlight_beta.socket.TCPConnection;
 import com.mackwell.nlight_beta.util.CommandFactory;
 import com.mackwell.nlight_beta.util.DataParser;
+import com.mackwell.nlight_beta.util.MySQLiteController;
+import com.mackwell.nlight_beta.util.MySQLiteOpenHelper;
 import com.mackwell.nlight_beta.util.SetCmdEnum;
 
 /**
@@ -84,7 +86,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
 	//private int currentSelected;
 
-
+    //database
+    private MySQLiteController sqLiteController;
 
 
 
@@ -300,7 +303,9 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_panel);
 
-        mHandler = new android.os.Handler();
+        mHandler = new android.os.Handler();  //handler
+
+        sqLiteController = new MySQLiteController(this); //sql controller
 
 
 
@@ -514,10 +519,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	protected void onStop() {
 		
 		if(panelMap!=null && ip_connection_map!=null){
-			for(String key : panelMap.keySet())
+			for(TCPConnection connection : ip_connection_map.values())
 			{
-				
-				TCPConnection connection = ip_connection_map.get(key);
 				if(connection!=null){
 					connection.setListening(false);
 					connection.closeConnection();
@@ -618,7 +621,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		
 		try {
-			Panel newPanel = new Panel(eepRom, deviceList, ip);
+			Panel newPanel = panelMap.get(ip);
+            newPanel.updatePanel(eepRom, deviceList, ip);
 			panelMap.put(ip, newPanel);
 		
 		} catch (UnsupportedEncodingException e) {
@@ -657,27 +661,27 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		rxBufferMap = new HashMap<String,List<Integer>>();
 		
 		String ip1 = "192.168.1.17";
-		panelMap.put(ip1, new Panel(ip1));
+		panelMap.put(ip1, new Panel(ip1,"0:0:0:0:0:0"));
 		rxBufferMap.put(ip1, new ArrayList<Integer>());
 		fragmentList.add(null);
 		
 		String ip2 = "192.168.1.21";
-		panelMap.put(ip2, new Panel(ip2));
+		panelMap.put(ip2, new Panel(ip2,"0:0:0:0:0:0"));
 		rxBufferMap.put(ip2, new ArrayList<Integer>());
 		fragmentList.add(null);
 		
 		String ip3 = "192.168.1.20";
-		panelMap.put(ip3, new Panel(ip3));
+		panelMap.put(ip3, new Panel(ip3,"0:0:0:0:0:0"));
 		rxBufferMap.put(ip3, new ArrayList<Integer>());
 		fragmentList.add(null);
 		
 		String ip4 = "192.168.1.23";
-		panelMap.put(ip4, new Panel(ip4));
+		panelMap.put(ip4, new Panel(ip4,"0:0:0:0:0:0"));
 		rxBufferMap.put(ip4, new ArrayList<Integer>());
 		fragmentList.add(null);
 	
 		String ip5 = "192.168.1.24";
-		panelMap.put(ip5, new Panel(ip5));
+		panelMap.put(ip5, new Panel(ip5,"0:0:0:0:0:0"));
 		rxBufferMap.put(ip5, new ArrayList<Integer>());
 		fragmentList.add(null);
 		
@@ -723,13 +727,22 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		boolean isSave = sp.getBoolean(SettingsActivity.SAVE_PANEL_LOCATION, true);
 		if(isSave)
 		{
+            sqLiteController.open();
 			for(Panel panel : panelList)
 			{
+                //save panel location to SharedPreference
 				SharedPreferences.Editor editor = sp.edit();
 				editor.putString(panel.getIp(), panel.getPanelLocation());
 				editor.apply();
-			}
-		}
+
+                //save panel location to database
+                if(isDemo) sqLiteController.insertPanel(panel); //put demo panel into list for test
+
+                sqLiteController.updatePanelLocation(panel.getIp(), panel.getPanelLocation());
+
+            }
+            sqLiteController.close();
+        }
 	}
 	
 	void showDropDownMenu(View view)
@@ -770,7 +783,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		String ip = currentDisplayingPanel.getIp();
 		if(panelMap.get(ip)==null)
 		{
-			panelMap.put(ip, new Panel(ip));
+			panelMap.put(ip, new Panel(ip,"0:0:0:0:0:0"));
 		}
 		
 		

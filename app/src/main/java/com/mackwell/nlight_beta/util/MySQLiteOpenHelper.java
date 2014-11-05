@@ -18,6 +18,10 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
     public static final String COLUMN_PANELMAC = "panel_mac";
     public static final String COLUMN_PANELLOCATION = "panel_location";
     public static final String COLUMN_CHECK = "panel_check";
+    public static final String COLUMN_ENABLE = "panel_enable";
+
+    public static final int DISABLE = 0;
+
 
 
 
@@ -32,11 +36,12 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_PRODUCTS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_PANEL
-                + " ( " + COLUMN_ID + " INTEGER DEFAULT 0, "
-                + COLUMN_PANELIP + " TEXT PRIMARY KEY NOT NULL, "
-                + COLUMN_PANELMAC + " TEXT NOT NULL, "
+                + " (" + COLUMN_ID + " INTEGER DEFAULT 0, "
+                + COLUMN_PANELIP + " TEXT PRIMARY KEY ASC NOT NULL, "
+                + COLUMN_PANELMAC + " TEXT NOT NULL UNIQUE, "
                 + COLUMN_PANELLOCATION + " TEXT, "
-                + COLUMN_CHECK + " INTEGER DEFAULT 0 )";
+                + COLUMN_CHECK + " INTEGER DEFAULT 0, "
+                + COLUMN_ENABLE + " INTEGER DEFAULT 1)";
         db.execSQL(CREATE_PRODUCTS_TABLE);
 
     }

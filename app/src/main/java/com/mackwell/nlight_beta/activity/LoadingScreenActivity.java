@@ -9,12 +9,14 @@ import java.util.Map;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -29,8 +31,9 @@ import com.mackwell.nlight_beta.socket.PanelConnection;
 import com.mackwell.nlight_beta.socket.UDPConnection;
 import com.mackwell.nlight_beta.socket.UDPConnection.UDPCallback;
 import com.mackwell.nlight_beta.util.CommandFactory;
-import com.mackwell.nlight_beta.util.Constants;
 import com.mackwell.nlight_beta.util.DataParser;
+import com.mackwell.nlight_beta.util.MySQLiteController;
+import com.mackwell.nlight_beta.util.MySQLiteOpenHelper;
 
 /**
  * @author  weiyuan zhu15/04/2014 Starting develop branch test on develop branch test 2 on feature branch test 3 on feature branch after rebase
@@ -44,6 +47,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	//ipListAll = new String[] {"192.168.1.17","192.168.1.20","192.168.1.21","192.168.1.23","192.168.1.24"};
 	private ArrayList<String> ipListAll = null;
     private Map<String,Boolean> ipEnableMap = null;
+    private Map<String,Boolean> ipCheckMap = null;
 	private ArrayList<String> ipListSelected = null;
 	
 	private static final int LOADING = 0;
@@ -63,6 +67,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	private Map<String,Panel> panelMap = null;
 	private Map<String,PanelConnection> ip_connection_map = null;
 	private Map<String,List<Integer>> rxBufferMap = null;
+
+    //database
+    MySQLiteController mSqLiteController;
 	
 	private UDPConnection udpConnection = null;
 	List<Map<String, Object>> dataList = null; // datalist for panel list dialog
@@ -127,12 +134,23 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
         isLoading = false;
 
         //set ip checkbox disable
-        ipEnableMap.put(ip,false);
+        ipEnableMap.put(ip, false);
+        mSqLiteController.open();
+        mSqLiteController.updateEnable(ip, MySQLiteOpenHelper.DISABLE);
+
+
+
 
         System.out.println("Error: " + ip);
         if(ip_connection_map.get(ip)!=null) {
             ip_connection_map.get(ip).closeConnection();
             ip_connection_map.get(ip).setListening(false);
+        }
+
+        //stop all other connections
+        for(PanelConnection connection:ip_connection_map.values())
+        {
+            connection.setError(true);
         }
 
         Message msg = mHandler.obtainMessage();
@@ -152,14 +170,26 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		System.out.println("Received UDP package");
 		if(!ipListAll.contains(ip))
 		{
-			ipListAll.add(ip);
+			//ipListAll.add(ip);
+
+            //get macString from byte[]
+            String macString = String.format("%02X:%02X:%02X:%02X:%02X:%02X",
+                    mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+
+            //create new panel and put it in the panel map
+            Panel panel = new Panel(ip,macString);
+           // panelMap.put(ip,panel);
+            mSqLiteController.open();
+            mSqLiteController.insertPanel(panel);
+            mSqLiteController.close();
+
             ipEnableMap.put(ip,true);
 			
 			//put ip and location into a map and add to dataList for dialog listview;
-			Map<String, Object> map = new HashMap<String,Object>();
-			map.put("ip", ip);
-			map.put("location",getPanelLocationFromPreference(ip));
-			dataList.add(map);
+			//Map<String, Object> map = new HashMap<String,Object>();
+			//map.put("ip", ip);
+			//map.put("location",getPanelLocationFromPreference(ip));
+			//dataList.add(map);
 			
 			return 0;
 		}
@@ -176,6 +206,12 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
         //reset all items in ipEnableMap to true
         if(ipEnableMap!=null) ipEnableMap.clear();
 
+        mSqLiteController.resetEnable();
+
+        for(PanelConnection connection: ip_connection_map.values()){
+            connection.setError(false);
+        }
+
 		searchUDP();			
 	}
 	 
@@ -186,11 +222,15 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	public void connectToPanels(List<Integer> selected) {
 		
 		//connecting to panels, and close UDP socket
-		udpConnection.setListen(false);
+		if(udpConnection!=null) {
+            udpConnection.setListen(false);
+        }
+
+        //clear panel list from previous loading
+        panelList.clear();
 		
 		//save check status
-		
-		savePanelSelectionToIpLIstSelected(selected);
+		savePanelSelectionToIpListSelected(selected);
 		
 		progressBar.setMax(16*ipListSelected.size());
         progress = 0;
@@ -256,7 +296,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	@Override
 	public void cancelDialog(List<Integer> selected) {
 		
-		savePanelSelectionToIpLIstSelected(selected);	
+		savePanelSelectionToIpListSelected(selected);
 		saveCheckedStatsToPreference();
 		
 	}
@@ -278,7 +318,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			return sp.getString(ip, "");
 		}
 		
-		return "";
+		else return "";
 	}
 	
 	
@@ -291,7 +331,10 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_loading_screen);
 		
-		
+		//init SQLite controller
+        mSqLiteController = new MySQLiteController(this);
+        mSqLiteController.open();
+        mSqLiteController.resetEnable();
 		
 		//init all view items
 		liveBtn = (Button) findViewById(R.id.loadscreen_live_imageBtn);
@@ -299,7 +342,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		progressText = (TextView) findViewById(R.id.loadscreen_progress_textView);
 		progressBar = (ProgressBar) findViewById(R.id.loadscreen_progressBar);
 		
-		//init loading panals 
+		//init loading panels
 		initializeFields();
 		
 		//search for all panels
@@ -318,7 +361,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 				
 				switch(msg.arg1){
 					case LOADING:
-						progressText.setText(getResources().getString(R.string.text_loading_panel,panelToLoad));
+                        if(isLoading){
+                            progressText.setText(getResources().getString(R.string.text_loading_panel,panelToLoad));
+                        }
 						break;
 					case PARSING: 
 						progressText.setText(R.string.text_analyzing_data);
@@ -373,6 +418,8 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	protected void onStop()
 	{
 		super.onStop();
+
+        if(mSqLiteController!=null) mSqLiteController.close();
 		
 		//close UDP connection
 		/*if(udpConnection!=null)
@@ -396,6 +443,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		Log.d(TAG,"onResume");
 		super.onResume();
+
+        //open SQLite database
+        if(mSqLiteController!=null) mSqLiteController.open();
 
         //reset panel elements if no panel is being loading
         if (!isLoading) {
@@ -489,6 +539,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 
 		ipListAll = new ArrayList<String>();
         ipEnableMap = new HashMap<String, Boolean>();
+        ipCheckMap = new HashMap<String, Boolean>();
 		ipListSelected = new ArrayList<String>();
 		
 		
@@ -527,9 +578,65 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			
 			searchUDP();
 		}*/
-		popDialog();
-		
-		
+
+//        panelMap.clear();
+        dataList.clear();
+        ipEnableMap.clear();
+        ipCheckMap.clear();
+
+        //compare current ipListAll with cached sqLite database
+        mSqLiteController.open();
+
+        Cursor cursor = mSqLiteController.selectIp();
+        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+        {
+            String ip = cursor.getString(0);
+            String macString = cursor.getString(1);
+            String location = cursor.getString(2);
+            int check = cursor.getInt(3);
+            int enable = cursor.getInt(4);
+
+            ipCheckMap.put(ip,(check!=0));
+            ipEnableMap.put(ip,(enable!=0));
+
+            if(!ipListAll.contains(ip)) ipListAll.add(ip);
+
+            if(panelMap.get(ip)==null){
+                Panel panel = new Panel(ip,macString);
+                panelMap.put(ip,panel);
+            }
+
+
+
+
+
+            //put ip and location into a map and add to dataList for dialog listview;
+            Map<String, Object> map = new HashMap<String,Object>();
+            map.put("ip", ip);
+            map.put("location",location);
+            dataList.add(map);
+
+        }
+
+
+
+        cursor.close();
+
+        //create a new ListDialogFragment and set its String[] ips to be udp search result
+        ListDialogFragment panelListDialog = new ListDialogFragment();
+
+        //get a String[] from ipSet and pass to dialog window
+        String[] ipArray = new String[ipListAll.size()];
+        ipListAll.toArray(ipArray);
+        panelListDialog.setIps(ipArray);
+        panelListDialog.setDataList(dataList);
+        panelListDialog.setIpEnableMap(ipEnableMap);
+        panelListDialog.setIpCheckMap(ipCheckMap);
+        panelListDialog.setmSqLiteController(mSqLiteController);
+
+        //test.setIps(null); //null test
+        panelListDialog.show(getFragmentManager(), "panelListDialog"); //popup dialog
+
 	}
 	
 	public void parse(String ip)
@@ -548,9 +655,11 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		
 		try {
-			Panel newPanel = new Panel(eepRom, deviceList, ip);
-			panelMap.put(ip, newPanel);
-			panelList.add(newPanel);
+			Panel panel = panelMap.get(ip);
+
+            panel.updatePanel(eepRom, deviceList, ip);
+			panelMap.put(ip, panel);
+			panelList.add(panel);
 			
 			if(panelList.size()==ipListSelected.size()){
 				
@@ -572,8 +681,8 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	{
 		panelList = new ArrayList<Panel>();
 	
-		Panel panel = new Panel("192.168.1.241");
-		panel.setPanelLocation("Mackwell L&B 1   ");
+		Panel panel = new Panel("192.168.1.241","00:00:00:00:00:01");
+		panel.setPanelLocation("TEST Mackwell L&B 1   ");
 		panel.setSerialNumber((long)1376880756);
 		panel.setGtinArray(new int[]{131,1,166,43,154,4});
 		panel.setReportUsageLong(10234);
@@ -588,8 +697,8 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		panelList.add(panel);
 	
-		panel = new Panel("192.168.1.242");
-		panel.setPanelLocation("Mackwell L&B 2    ");
+		panel = new Panel("192.168.1.242","00:00:00:00:00:02");
+		panel.setPanelLocation("TEST Mackwell L&B 2    ");
 		panel.setSerialNumber((long)1375868516);
 		panel.setGtinArray(new int[]{132,2,166,43,154,4});
 		panel.setReportUsageLong(1010234);
@@ -610,52 +719,12 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 	}
 
-
-
-	
-	
-	
-	
-	
-	public void popDialog()
-	{
-	
-		
-		/*Map<String, Object> map = new HashMap<String,Object>();
-		map.put("ip", "192.168.1.20");
-		map.put("location","Mackwell R&D");
-		dataList.add(map);
-		
-		map = new HashMap<String,Object>();
-		map.put("ip", "192.168.1.24");
-		map.put("location","Mackwell Special");
-		dataList.add(map);*/
-		
-		
-		
-		//create a new ListDialogFragment and set its String[] ips to be udp search result
-		ListDialogFragment panelListDialog = new ListDialogFragment();
-				
-		//get a String[] from ipSet and pass to dialog window
-		String[] ipArray = new String[ipListAll.size()];
-		ipListAll.toArray(ipArray);
-		panelListDialog.setIps(ipArray);
-		panelListDialog.setDataList(dataList);
-		panelListDialog.setIpEnableMap(ipEnableMap);
-
-		//test.setIps(null); //null test
-		panelListDialog.show(getFragmentManager(), "panelListDialog"); //popup dialog
-				
-		
-	}
-	
 	/**
 	 * This is when search button clicked on loading screen
 	 * @param view button
 	 */
 	public void searchPanelsBtn(View view)
 	{
-		
 		searchUDP();
 	}
 
@@ -664,7 +733,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		//clear current ip list and data list for dialog list view;
 		ipListAll.clear();
 		dataList.clear();
-		
+
 		if(udpConnection == null ){
 			udpConnection = new UDPConnection(UDPConnection.FIND, this);
 		}
@@ -672,14 +741,12 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		{
 			udpConnection.closeConnection();
 			udpConnection = new UDPConnection(UDPConnection.FIND,this);
-			
 		}
 		
 		//send UDP panel search messages
-		
 		udpConnection.tx("255.255.255.255",UDPConnection.FIND);
-		
-		
+
+		progressText.setVisibility(View.INVISIBLE);
 		Toast.makeText(this, R.string.toast_search_panel, Toast.LENGTH_LONG).show();	
 	}
 	
@@ -688,26 +755,33 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	 */
 	private void saveCheckedStatsToPreference()
 	{
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-		boolean saveChecked = sp.getBoolean(SettingsActivity.SAVE_CHECKED, true);
-		SharedPreferences.Editor editor = sp.edit();
-		
-		if(saveChecked)
-		{
-			System.out.println("Save checked");
-			
-			for(String ip : ipListAll)
-			{
-				String ip_ = new String(ip);
-				ip_ += " ";
 
-				System.out.println(ip_);
-				editor.putBoolean(ip_, ipListSelected.contains(ip));
-				editor.commit();
-			}
-		}
+		    /*SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+		    boolean saveChecked = sp.getBoolean(SettingsActivity.SAVE_CHECKED, true);
+		    SharedPreferences.Editor editor = sp.edit();
 		
-		// clear selected IP list 
+		    if(saveChecked)
+		    {
+			    for(String ip : ipListAll)
+			    {
+				    String _ip = new String(ip);
+				    _ip += " ";
+
+				    System.out.println(_ip);
+				    editor.putBoolean(_ip, ipListSelected.contains(ip));
+				    editor.commit();
+			    }
+		    }*/
+
+
+        //save checked status to SQLite database
+
+        for(String ip : ipListAll)
+        {
+            mSqLiteController.updateChecked(ip,ipListSelected.contains(ip)? 1 : 0);
+        }
+
+		// clear selected IP list
 		//ipSelected.clear();
 	}
 
@@ -715,7 +789,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	 * Go thought all IP list and put selected ip in the ipSelected set 
 	 * @param selected list of position that panels selected in the multi selection dialog
 	 */
-	private void savePanelSelectionToIpLIstSelected(List<Integer> selected)
+	private void savePanelSelectionToIpListSelected(List<Integer> selected)
 	{
         ipListSelected.clear();
 		for(Integer i: selected)

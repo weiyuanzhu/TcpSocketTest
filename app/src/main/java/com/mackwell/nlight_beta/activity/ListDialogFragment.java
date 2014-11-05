@@ -10,9 +10,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +23,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import com.mackwell.nlight_beta.R;
+import com.mackwell.nlight_beta.util.MySQLiteController;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass.
@@ -41,10 +40,14 @@ public class ListDialogFragment extends DialogFragment {
 	} 
 	private ListView listView;
     private Map<String,Boolean> ipEnableMap;
+    private Map<String,Boolean> ipCheckMap;
 	private List<Map<String,Object>> dataList;
 	private String[] ips; 												//An array contains panels' IP
 	private ListDialogListener mListener; 								//A callback listener for dialog when button clicked
 	private List<Integer> mSelectedItems = new ArrayList<Integer>();        	//a list contains item selected
+
+    //sqlite
+    private MySQLiteController mSqLiteController;
 
 	public ListDialogFragment() {
 		// Required empty public constructor
@@ -76,51 +79,40 @@ public class ListDialogFragment extends DialogFragment {
 
 			View rowView = inflater.inflate(resource, parent, false);
 
-			TextView ip = (TextView) rowView.findViewById(to[0]);
-			CheckedTextView location = (CheckedTextView) rowView.findViewById(to[1]);
+			TextView ipTextView = (TextView) rowView.findViewById(to[0]);
+			CheckedTextView locationCheckedTextView = (CheckedTextView) rowView.findViewById(to[1]);
 
-			String ipText = (String) dataList.get(position).get(from[0]);
-			ip.setText(ipText);
+			String ip = (String) dataList.get(position).get(from[0]);
+			ipTextView.setText(ip);
 
 			String locationText = (String) dataList.get(position).get(from[1]);
-			location.setText(locationText);
+			locationCheckedTextView.setText(locationText);
 
+            //check enable and check and set row status
+            //disable and un-check location check box and ip text
+            if(!ipEnableMap.get(ip))
+            {
+                locationCheckedTextView.setChecked(false);
+                locationCheckedTextView.setEnabled(false);
+                ipTextView.setEnabled(false);
 
-
-
-			if(check(ipText))
+                locationCheckedTextView.setChecked(false);
+                listView.setItemChecked(position, false);
+            }else if(ipCheckMap.get(ip))
 			{
-				location.setChecked(true);
+                locationCheckedTextView.setChecked(true);
 //                location.setEnabled(false);
 
-				listView.setItemChecked(position, true);
-			}
-
-            //disable and un-check location check box and ip text
-            if(!ipEnableMap.get(ipText))
-            {
-                location.setChecked(false);
-                location.setEnabled(false);
-                ip.setEnabled(false);
+                listView.setItemChecked(position, true);
             }
 
-			/*if(position==0)
-			{
-				location.setTextColor(Color.GREEN);
-			}*/
-			
 			return rowView;
-			
 		}
-		
-		
-		
-		
 	}
 	
 	boolean check(String ip)
 	{
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
+		/*SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getActivity());
 		boolean save_checked = sp.getBoolean(SettingsActivity.SAVE_CHECKED, false);
 		
 		StringBuilder sb = new StringBuilder(ip);
@@ -131,14 +123,35 @@ public class ListDialogFragment extends DialogFragment {
             return true;
         }
 		else return false;*/
-		return (save_checked && check);
+        //mSqLiteController.open();
+
+        //boolean test = mSqLiteController.isEnable(ip);
+
+		//mSqLiteController.close();
+		//return true if ip is enabled as well as checked
+//        return (save_checked && check && ipEnableMap.get(ip));
+
+        mSqLiteController.open();
+        boolean check = mSqLiteController.isChedked(ip);
+        mSqLiteController.close();
+
+        return check;
+
+
 	}
 
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		
 		listView = new ListView(getActivity());
-		
+
+        //enable scroll bar
+        listView.setVerticalScrollBarEnabled(true);
+
+        //SQLite
+        mSqLiteController = new MySQLiteController(getActivity());
+
+		//adapter
 		SimpleAdapter mAdapter = new MyAdapter(getActivity(), getDataList(), R.layout.panel_list_row2, new String[]{"ip","location"},new int[]{R.id.ip_textview,R.id.location_checkedtextview});
 		
 		listView.setAdapter(mAdapter);
@@ -156,6 +169,7 @@ public class ListDialogFragment extends DialogFragment {
                 //if this panel has an error then it cannot be checked
 				if(checkedTextView.isChecked() || !ipEnableMap.get(ip))
 					checkedTextView.setChecked(false);
+
 				else {
                     checkedTextView.setChecked(true);
                 }
@@ -174,12 +188,8 @@ public class ListDialogFragment extends DialogFragment {
 
 
         //set dialog message panel is busy
-        boolean grayOut = false;
-        for(Boolean value: ipEnableMap.values())
+        if(ipEnableMap.values().contains(false))
         {
-            if(!value) grayOut = true;
-        }
-        if(grayOut) {
             builder.setMessage(R.string.dialogmessage_panel_busy);
         }
 
@@ -220,9 +230,9 @@ public class ListDialogFragment extends DialogFragment {
 	                   // User clicked OK, so save the mSelectedItems results somewhere
 	                   // or return them to the component that opened the dialog
 	            	   
-	            	   mSelectedItems = getCheckedItemsList(listView.getCheckedItemPositions()); // convert SparseBooleanMap to list
-	            	   mListener.connectToPanels(mSelectedItems);
-	            	   System.out.println(getCheckedItemsList(listView.getCheckedItemPositions()).toString());
+                       mSelectedItems = getCheckedItemsList(listView.getCheckedItemPositions()); // convert SparseBooleanMap to list
+                       mListener.connectToPanels(mSelectedItems);
+                       System.out.println(getCheckedItemsList(listView.getCheckedItemPositions()).toString());
 	                   
 	               }
 	           });
@@ -299,6 +309,23 @@ public class ListDialogFragment extends DialogFragment {
     }
 
     public void setIpEnableMap(Map<String, Boolean> ipEnableMap) {
+
         this.ipEnableMap = ipEnableMap;
+    }
+
+    public MySQLiteController getmSqLiteController() {
+        return mSqLiteController;
+    }
+
+    public void setmSqLiteController(MySQLiteController mSqLiteController) {
+        this.mSqLiteController = mSqLiteController;
+    }
+
+    public Map<String,Boolean> getIpCheckMap() {
+        return ipCheckMap;
+    }
+
+    public void setIpCheckMap(Map<String,Boolean> ipCheckMap) {
+        this.ipCheckMap = ipCheckMap;
     }
 }

@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">N-Light Connect</string>
-    <string name="app_version">版本: <xliff:g id="promotion_code">beta 0.8.4</xliff:g>  </string>
+    <string name="app_version">版本: <xliff:g id="promotion_code">beta 0.8.9</xliff:g></string>
     <string name="action_settings">设置</string>
     <string name="action_about">关于</string>
     <string name="action_search">搜索</string>
@@ -188,5 +188,6 @@
     <string name="pref_panel_list">本地Panel列表</string>
     <string name="pref_panel_lists_summary">手动添加/删除列表</string>
     <string name="title_activity_cached_panel_list">本地列表</string>
+    <string name="dialog_SocketTimeout_title">连接到Panel: "<xliff:g id="dialog_SocketTimeout_panelname">%1$s</xliff:g>" 发生超时 (<xliff:g id="dialog_SocketTimeout_ip">%2$s</xliff:g>) </string>
 
 </resources>

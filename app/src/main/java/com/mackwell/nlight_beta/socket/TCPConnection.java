@@ -148,7 +148,7 @@ public class TCPConnection {
 	
 	
 	/*	runnable for thread
-	 *	thread will keep listening on socket.inputstream until received data is complete
+	 *	thread will keep listening on socket.input stream until received data is complete
 	 *	and then calls its delegate to 
 	 * 
 	*/

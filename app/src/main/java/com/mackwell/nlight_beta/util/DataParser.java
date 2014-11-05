@@ -117,7 +117,7 @@ public class DataParser {
 			for(byte b : byteArray) {
 				buffer.add(CRC.getUnsignedInt(b));
 			}
-			for(int i = buffer.size(); i < 33; i++) {
+			for(int i = buffer.size(); i < 32; i++) {
 				buffer.add(0x20);  // append SPACE '0x20' at the end to fill 32 character space
 			}
 			
@@ -205,9 +205,10 @@ public class DataParser {
             for(int h=0;h<2;h++)
             {
 
-                int groupNumber = 16;
+                int groupNumber = 0;
                 List<List<Integer>> groupStatusList = new ArrayList<List<Integer>>();
 
+                //10-13 14-27 group status bytes
                 for(int j = (h*4+10); j < (14 + h*4);j++)
                 {
                     int group = reportData.get(j);
@@ -234,7 +235,7 @@ public class DataParser {
 
 
 
-                        groupNumber --;
+                        groupNumber ++;
                     } // end of 1 byte
 
 

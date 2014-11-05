@@ -43,7 +43,7 @@ public class DeviceListFragment extends Fragment {
 	 */
 	public interface OnDevicdListFragmentListener {
 		// TODO: Update argument type and name
-		public void onDeviceItemClicked(int groupPosition, int childPosition);
+		public void onDeviceItemClicked(int groupPosition, int childPosition, int deviceAddress);
 		public void onGroupExpandOrCollapse(int groupPosition);
 		public void onMultiSelectionMode(boolean multiSelect);
 		
@@ -70,6 +70,7 @@ public class DeviceListFragment extends Fragment {
 
     private int currentGroupPosition = -1;
     private int currentChildPosition = -1;
+    private int currentDeviceAddress = -1;
     
 
 	
@@ -427,13 +428,21 @@ public class DeviceListFragment extends Fragment {
             	
             	currentGroupPosition = groupPosition;
                 currentChildPosition = childPosition;
+
+                if(groupPosition==0){
+                    currentDeviceAddress = listDataChild.get(loop1).get(childPosition).getAddress();
+                }else {
+                    currentDeviceAddress = listDataChild.get(loop2).get(childPosition).getAddress();
+                }
             	
             	mAdapter.selectItem(groupPosition, childPosition);
+
+
             	
             	if(mAdapter.isMultiSelectMode()){
             		mActionMode.updateCounter();
             	}else{
-	            	mListener.onDeviceItemClicked(groupPosition, childPosition);
+	            	mListener.onDeviceItemClicked(groupPosition,childPosition,currentDeviceAddress);
             		
             	}
             	
@@ -513,7 +522,7 @@ public class DeviceListFragment extends Fragment {
                     mListener.onGroupExpandOrCollapse(groupPosition);
                 }
                 else{
-                    mListener.onDeviceItemClicked(groupPosition,childPosition);
+                    mListener.onDeviceItemClicked(groupPosition,childPosition,currentChildPosition);
                 }
                 mAdapter.selectItem(groupPosition,childPosition);
             }

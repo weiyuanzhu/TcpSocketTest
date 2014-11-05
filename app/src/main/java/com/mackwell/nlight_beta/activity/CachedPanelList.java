@@ -3,8 +3,6 @@ package com.mackwell.nlight_beta.activity;
 import com.mackwell.nlight_beta.models.Panel;
 import com.mackwell.nlight_beta.socket.UDPConnection;
 
-import java.util.Map;
-
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -24,7 +22,6 @@ import com.mackwell.nlight_beta.util.MySQLiteController;
 import com.mackwell.nlight_beta.util.MySQLiteOpenHelper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class CachedPanelList extends Activity  implements UDPConnection.UDPCallback{
@@ -39,7 +36,7 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
     private SimpleCursorAdapter mAdapter;
     private Cursor mCursor;
     private List<Panel> panelList;
-    private MySQLiteController sqlControler;
+    private MySQLiteController sqlController;
 
     private String[] from;
     private int[] to;
@@ -79,11 +76,11 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
         mListView = (ListView) findViewById(R.id.cached_panel_list_listView);
         ipEditText = (EditText) findViewById(R.id.cached_panel_list_ip_editText);
 
-        sqlControler = new MySQLiteController(this);
+        sqlController = new MySQLiteController(this);
         panelList = new ArrayList<Panel>();
 
-        sqlControler.open();
-        mCursor = sqlControler.readData();
+        sqlController.open();
+        mCursor = sqlController.readData();
 
 
         from = new String[]{
@@ -107,7 +104,7 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
             }
         });
 
-        sqlControler.close();
+        sqlController.close();
 
         //set <Back
         if (getActionBar() != null) {
@@ -171,20 +168,20 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
 
     public void remove(View view)
     {
-        Log.d(TAG,"IP entered: " + ipEditText.getText().toString());
+        Log.d(TAG, "IP entered: " + ipEditText.getText().toString());
         int position = mListView.getCheckedItemPosition();
 
         mCursor.moveToPosition(position);
         String ip = mCursor.getString(mCursor.getColumnIndex(MySQLiteOpenHelper.COLUMN_PANELIP));
 
-        sqlControler.open();
+        sqlController.open();
 
-        sqlControler.deletePanel(ip);
-        mCursor = sqlControler.readData();
+        sqlController.deletePanel(ip);
+        mCursor = sqlController.readData();
         mAdapter.changeCursor(mCursor);
         mAdapter.notifyDataSetChanged();
 
-        sqlControler.close();
+        sqlController.close();
 
     }
 
@@ -202,18 +199,18 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
         public void run() {
             Panel panel = new Panel();
             panel.setIp(ip);
-            panel.setMac(mac);
+            panel.setMacString(mac);
             panel.setPanelLocation("");
             panelList.add(panel);
 
-            sqlControler.open();
+            sqlController.open();
 
-            sqlControler.insertPanel(panel);
-            mCursor = sqlControler.readData();
+            sqlController.insertPanel(panel);
+            mCursor = sqlController.readData();
             mAdapter.changeCursor(mCursor);
             mAdapter.notifyDataSetChanged();
 
-            sqlControler.close();
+            sqlController.close();
 
         }
     }
