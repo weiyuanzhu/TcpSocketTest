@@ -19,7 +19,7 @@ import java.util.List;
 public class TestActivity extends Activity implements TCPConnection.CallBack{
 
 	TCPConnection tcpConnection;
-	final String ip = "192.168.1.17";
+	final String ip = "192.168.1.20";
 	private ArrayList<Integer> rxData = null;
 	
 	@Override

@@ -35,9 +35,8 @@ import com.mackwell.nlight_beta.activity.InputDialogFragment.NoticeDialogListene
 import com.mackwell.nlight_beta.activity.PanelListFragment.OnPanelListItemClickedCallBack;
 import com.mackwell.nlight_beta.socket.TCPConnection;
 import com.mackwell.nlight_beta.util.CommandFactory;
-import com.mackwell.nlight_beta.util.DataParser;
+import com.mackwell.nlight_beta.util.DataHelper;
 import com.mackwell.nlight_beta.util.MySQLiteController;
-import com.mackwell.nlight_beta.util.MySQLiteOpenHelper;
 import com.mackwell.nlight_beta.util.SetCmdEnum;
 
 /**
@@ -145,7 +144,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		//create buffer for input
 		
 		List<Integer> buffer = new ArrayList<Integer>();
-		buffer.addAll(DataParser.convertString(input));
+		buffer.addAll(DataHelper.convertString(input));
 		System.out.println(buffer);
 		
 		switch(type){
@@ -615,9 +614,9 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		List<Integer> rxBuffer = rxBufferMap.get(ip);
 		
-		List<List<Integer>> panelData = DataParser.removeJunkBytes(rxBuffer); 
-		List<List<Integer>> eepRom = DataParser.getEepRom(panelData);	
-		List<List<List<Integer>>> deviceList = DataParser.getDeviceList(panelData,eepRom);
+		List<List<Integer>> panelData = DataHelper.removeJunkBytes(rxBuffer);
+		List<List<Integer>> eepRom = DataHelper.getEepRom(panelData);
+		List<List<List<Integer>>> deviceList = DataHelper.getDeviceList(panelData, eepRom);
 		
 		
 		try {

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.mackwell.nlight_beta.util.Constants;
-
+import com.mackwell.nlight_beta.util.DataHelper;
 
 
 public class PanelConnection {
@@ -204,7 +204,8 @@ public class PanelConnection {
                         int data = 0;
 
                         //TimeUnit.SECONDS.sleep(3);
-                        while (isListening() && !socket.isClosed() && socket.isConnected()) {
+                        while (isListening() && !socket.isClosed() && socket.isConnected())
+                        {
                             //checks if a package is complete
                             //and call callback
                             if (in.available() == 0 && !rxBuffer.isEmpty() && (data == Constants.UART_NEW_LINE_L) &&
@@ -216,6 +217,8 @@ public class PanelConnection {
 
                                 //mCallback.get() to get mCallBack instance, for it is  weakReference
 
+                                DataHelper.checkDataIntegrity(rxBuffer);
+                                System.out.println("single rxBuffer size: " + rxBuffer.size());
                                 panelInfoPackageNo++;
 
                                 if (panelInfoPackageNo == commandList.size()) {
@@ -223,13 +226,13 @@ public class PanelConnection {
                                     rxCompleted = true;
                                 }
 
+
                                 mCallBack.get().receive(rxBuffer, ip);
-                                System.out.println("rxBuffer size: " + rxBuffer.size());
                                 rxBuffer.clear();
                             }
 
                             //reading data from stream
-//						if(in.available()>0)
+//						    if(in.available()>0)
                             if (isListening() && !socket.isClosed()) {
                                 data = in.read();
                                 if (data == -1) {

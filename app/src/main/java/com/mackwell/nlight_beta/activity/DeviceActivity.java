@@ -36,7 +36,7 @@ import com.mackwell.nlight_beta.activity.DeviceListFragment.OnDevicdListFragment
 import com.mackwell.nlight_beta.activity.InputDialogFragment.NoticeDialogListener;
 import com.mackwell.nlight_beta.socket.TCPConnection;
 import com.mackwell.nlight_beta.util.Constants;
-import com.mackwell.nlight_beta.util.DataParser;
+import com.mackwell.nlight_beta.util.DataHelper;
 import com.mackwell.nlight_beta.util.GetCmdEnum;
 import com.mackwell.nlight_beta.util.SetCmdEnum;
 import com.mackwell.nlight_beta.util.ToggleCmdEnum;
@@ -225,7 +225,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		
 			buffer.add(currentDevicAddress);
-			buffer.addAll(DataParser.convertString(input));
+			buffer.addAll(DataHelper.convertString(input));
 			System.out.println(buffer);
 			List<char[] > commandList = SetCmdEnum.SET_DEVICE_NAME.set(buffer);
 			connection.fetchData(commandList);

@@ -31,7 +31,7 @@ import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.models.Panel;
 import com.mackwell.nlight_beta.socket.TCPConnection;
 import com.mackwell.nlight_beta.util.CommandFactory;
-import com.mackwell.nlight_beta.util.DataParser;
+import com.mackwell.nlight_beta.util.DataHelper;
 
 /**
  * A simple   {@link android.support.v4.app.Fragment}  subclass. Use the {@link PanelInfoFragment#newInstance}  factory method to create an instance ofthis fragment.
@@ -467,8 +467,8 @@ public class PanelInfoFragment extends Fragment implements TCPConnection.CallBac
 	public void parse()
 	{
 		
-		panelData = DataParser.removeJunkBytes(rxBuffer);
-		eepRom = DataParser.getEepRom(panelData);
+		panelData = DataHelper.removeJunkBytes(rxBuffer);
+		eepRom = DataHelper.getEepRom(panelData);
 		
 		System.out.println("================EEPROM========================");
 		
@@ -478,7 +478,7 @@ public class PanelInfoFragment extends Fragment implements TCPConnection.CallBac
 		}
 		
 		System.out.println("================Device List========================");
-		deviceList = DataParser.getDeviceList(panelData,eepRom);
+		deviceList = DataHelper.getDeviceList(panelData, eepRom);
 		
 		
 		for(int i=0; i<deviceList.size();i++)

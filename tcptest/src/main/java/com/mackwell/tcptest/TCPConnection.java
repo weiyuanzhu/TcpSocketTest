@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ public class TCPConnection {
 		}
 	
 	private ExecutorService txExec;
+    private Thread rxThread;
 		
 	private int panelInfoPackageNo;
 	private boolean rxCompleted;
@@ -86,7 +88,7 @@ public class TCPConnection {
 		txExec = Executors.newSingleThreadExecutor();
 		
 		//create a separate thread for rx only, this thread will block
-		Thread rxThread = new Thread(rx);
+		rxThread = new Thread(rx);
 		rxThread.start();
 	}
 
@@ -102,7 +104,12 @@ public class TCPConnection {
 
 	
 	public void fetchData(List<char[]> commandList){
-		
+
+        if(rxThread==null){
+            rxThread = new Thread(rx);
+            rxThread.start();
+        }
+
 		this.commandList = commandList;
         setListening(true);
 		txExec.execute(tx);
@@ -159,7 +166,7 @@ public class TCPConnection {
 					if(socket == null ||  socket.isClosed())
 					{
 						socket = new Socket(ip,port);	
-						socket.setSoTimeout(5000);
+						socket.setSoTimeout(50000);
 						socket.setReceiveBufferSize(80000);
 						out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(),"ISO8859_1")),false);
 						in = socket.getInputStream();
@@ -249,11 +256,11 @@ public class TCPConnection {
 				
 				if(socket == null ||  socket.isClosed())
 				{
-					socket = new Socket(ip,port);	
+					socket = new Socket();
+					socket.connect(new InetSocketAddress(ip,port),5000);
+					setListening(true);
 					
-					setListening(false);
-					
-					socket.setSoTimeout(5000);
+					socket.setSoTimeout(0);
 					socket.setReceiveBufferSize(80000);
 					out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream(),"ISO8859_1")),false);
 					in = socket.getInputStream();
@@ -261,7 +268,7 @@ public class TCPConnection {
 					System.out.println("\nConnected to: " + socket.getInetAddress() + ": "+  socket.getPort());
 				}
 				
-				while(!socket.isClosed())
+				while(isListening() && !socket.isClosed())
 				{	
 					//checks if a package is complete
 					//and call callback
@@ -289,7 +296,9 @@ public class TCPConnection {
 					}*/
 					
 					//reading data from stream
-					if(isListening())
+					//if(isListening())
+//                    System.out.println(in.available());
+                    if(isListening())
 					{
 						data = in.read();
 						rxBuffer.add(data);
@@ -339,6 +348,7 @@ public class TCPConnection {
 			}
 			finally{
 				System.out.println("Finally, RX: closing thread");
+
 					
 				try {
 					if(socket != null && !socket.isClosed())  

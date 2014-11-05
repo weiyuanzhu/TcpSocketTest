@@ -16,7 +16,6 @@ import android.os.Message;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -31,7 +30,7 @@ import com.mackwell.nlight_beta.socket.PanelConnection;
 import com.mackwell.nlight_beta.socket.UDPConnection;
 import com.mackwell.nlight_beta.socket.UDPConnection.UDPCallback;
 import com.mackwell.nlight_beta.util.CommandFactory;
-import com.mackwell.nlight_beta.util.DataParser;
+import com.mackwell.nlight_beta.util.DataHelper;
 import com.mackwell.nlight_beta.util.MySQLiteController;
 import com.mackwell.nlight_beta.util.MySQLiteOpenHelper;
 
@@ -649,9 +648,9 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		List<Integer> rxBuffer = rxBufferMap.get(ip);
 		
-		List<List<Integer>> panelData = DataParser.removeJunkBytes(rxBuffer); 
-		List<List<Integer>> eepRom = DataParser.getEepRom(panelData);	
-		List<List<List<Integer>>> deviceList = DataParser.getDeviceList(panelData,eepRom);
+		List<List<Integer>> panelData = DataHelper.removeJunkBytes(rxBuffer);
+		List<List<Integer>> eepRom = DataHelper.getEepRom(panelData);
+		List<List<List<Integer>>> deviceList = DataHelper.getDeviceList(panelData, eepRom);
 		
 		
 		try {

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
 
-public class DataParser {
+public class DataHelper {
 	
 	
 	//panel stop and new line byte
@@ -292,7 +292,21 @@ public class DataParser {
         return reportList;
     }
 
+  public static boolean checkDataIntegrity(List<Integer> rx){
+      int size = rx.size();
+      int rxLsb = rx.get(size-6);
+      int rxMsb = rx.get(size-5);
 
+
+      int checksum = CRC.calcCRC(rx.subList(0,(rx.size()-6)), (rx.size()-6));
+      int lsb = CRC.getUnsignedInt(checksum);
+      int msb = CRC.getUnsignedInt(checksum >> 8);
+
+      System.out.println("Data integrity: " + "rxLsb=: " + rxLsb + " lsb=: " + lsb);
+      System.out.println("Data integrity: " + "rxMsb=: " + rxMsb + " msb=: " + msb);
+
+      return true;
+  }
 	
 }
 

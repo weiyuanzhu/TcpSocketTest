@@ -36,7 +36,7 @@ import com.mackwell.nlight_beta.models.Device;
 import com.mackwell.nlight_beta.models.Report;
 import com.mackwell.nlight_beta.socket.TCPConnection;
 import com.mackwell.nlight_beta.util.Constants;
-import com.mackwell.nlight_beta.util.DataParser;
+import com.mackwell.nlight_beta.util.DataHelper;
 import com.mackwell.nlight_beta.util.GetCmdEnum;
 
 import java.io.FileOutputStream;
@@ -87,7 +87,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
             if (rx.get(1) == Constants.FINISH) {
                 Log.i(TAG,Integer.toString(reportRawData.size()));
                 System.out.println(reportRawData);
-                reportList = DataParser.getReportList(reportRawData);
+                reportList = DataHelper.getReportList(reportRawData);
 
                 //put reports with faults in a separate list
                 faultyReportList = new ArrayList<Report>();
