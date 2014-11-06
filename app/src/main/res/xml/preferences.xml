@@ -2,21 +2,7 @@
 
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory
-        android:title="@string/text_settings_panelData"
-        android:key="pref_key_panel_data">
-	    <CheckBoxPreference
-	        android:key="pref_key_panel_save"
-	        android:title="@string/text_savePanelLocation"
-	        android:summary="@string/text_savePanelLocation_summary"
-	        android:defaultValue="true"/>
-		
-		<CheckBoxPreference
-	        android:key="pref_key_save_checked"
-	        android:title="@string/text_savePanelSelection"
-	        android:summary="@string/text_savePanelSelection_summary"
-	        android:defaultValue="true"/>
-		</PreferenceCategory>
+
 	<PreferenceCategory
 	  	android:title="@string/text_settings_syncPref"
 	    android:key="pref_key_sync">
@@ -87,12 +73,16 @@
 
     </PreferenceCategory>
 
-    <Preference
-        android:key="pref_panel_list"
-        android:title="@string/pref_panel_list"
-        android:summary="@string/pref_panel_lists_summary"
-        >
 
-    </Preference>
+    <PreferenceCategory
+        android:title="@string/pref_panel_list_category"
+        android:key="pref_cached_panel_list">
+        <Preference
+            android:key="pref_panel_list"
+            android:title="@string/pref_panel_list"
+            android:summary="@string/pref_panel_lists_summary"
+            >
+        </Preference>
+    </PreferenceCategory>
     
 </PreferenceScreen>
