@@ -120,7 +120,8 @@ public class PanelConnection {
 			{		
 				out.close();
 				in.close();
-				socket.close();			
+				socket.close();
+                socket = null;
 			}
 			
 		} catch (IOException ex) {
@@ -164,6 +165,7 @@ public class PanelConnection {
                             //set socket read() timeout
                             socket.setSoTimeout(READ_TIMEOUT);
 
+                            socket.setReceiveBufferSize(80000);
                             socket.setKeepAlive(true);
 
                             //connect socket to server with a 3secs timeout
@@ -231,6 +233,7 @@ public class PanelConnection {
                                 if(rxBuffer.get(0)==1 && rxBuffer.get(1)==173 && rxBuffer.get(2)==41){
                                     System.out.println(" All packages received");
                                     rxCompleted = true;
+                                    setListening(false);
                                 }
                                 mCallBack.get().receive(rxBuffer, ip);
                                 rxBuffer.clear();
@@ -287,9 +290,8 @@ public class PanelConnection {
                     } finally {
 
                         //close socket if all packages are received
-                        if (panelInfoPackageNo == commandList.size()) {
+                        if (rxCompleted) {
                             System.out.println("Finally: closing socket");
-                            rxCompleted = true;
                             try {
                                 if (socket != null && !socket.isClosed()) {
                                     out.close();

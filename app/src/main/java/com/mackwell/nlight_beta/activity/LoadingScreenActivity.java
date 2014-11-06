@@ -77,13 +77,20 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	private static int delay = 1000;
 	private Handler mHandler = null;
 	
-	private int panelToLoad = 0; 
-	
-	
+	private int panelToLoad = 0;
 
-	/* (non-Javadoc) implement TCPcallback, receiving data package
-	 * @see mackwell.nlight.BaseActivity#receive(java.util.List, java.lang.String)
-	 */
+    //setter and getters
+    public synchronized int getPanelToLoad() {
+        return panelToLoad;
+    }
+
+    public synchronized void setPanelToLoad(int panelToLoad) {
+        this.panelToLoad = panelToLoad;
+    }
+
+    /* (non-Javadoc) implement TCPcallback, receiving data package
+         * @see mackwell.nlight.BaseActivity#receive(java.util.List, java.lang.String)
+         */
 	public void receive(List<Integer> rx, String ip) {
 		
 		Message msg = mHandler.obtainMessage();
@@ -100,33 +107,34 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		System.out.println(ip + " received package: " + ip_connection_map.get(ip).getPanelInfoPackageNo() + " rxBuffer size: " + rxBuffer.size());
 		if(ip_connection_map.get(ip).isRxCompleted())
 		{
-            ip_connection_map.get(ip).setListening(false);
+//            ip_connection_map.get(ip).setListening(false);
             ip_connection_map.get(ip).closeConnection();
-			panelToLoad--;
+			setPanelToLoad(--panelToLoad);
 
 			//update progress with handler
 			
 			
-			if(panelToLoad==0){
-				msg.arg1 = PARSING;
-				
-			}
-			
-			
-			//mHandler.sendMessage(msg);
-			
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 
-			parse(ip);
-			
-		}
-		
-		mHandler.sendMessage(msg);
-		
+
+            //mHandler.sendMessage(msg);
+            /*try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
+
+
+
+        }
+
+
+        if(getPanelToLoad()==0){
+            msg.arg1 = PARSING;
+            parse();
+        }
+
+        mHandler.sendMessage(msg);
+
 	}
 
     @Override
@@ -227,9 +235,10 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
             udpConnection.setListen(false);
         }
 
-        //clear panel list from previous loading
+        //clear containers from previous loading
         panelList.clear();
-		
+		rxBufferMap.clear();
+        ip_connection_map.clear();
 		//save check status
 		savePanelSelectionToIpListSelected(selected);
 		
@@ -258,7 +267,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		//set isDemo flag
 		isDemo = false;
-		panelToLoad = ipListSelected.size();
+		setPanelToLoad(ipListSelected.size());
 
 		//check if loading is not already in process and panel selected not equal to 0
 		if(!isLoading && ipListSelected.size()!=0){
@@ -641,41 +650,50 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 
 	}
 	
-	public void parse(String ip)
+	public void parse()
 	{
 		
 		
 		Message msg = mHandler.obtainMessage();
 		//msg.arg1 = PARSING;
 		//mHandler.sendMessage(msg);
-		
-		List<Integer> rxBuffer = rxBufferMap.get(ip);
-		
-		List<List<Integer>> panelData = DataHelper.removeJunkBytes(rxBuffer);
-		List<List<Integer>> eepRom = DataHelper.getEepRom(panelData);
-		List<List<List<Integer>>> deviceList = DataHelper.getDeviceList(panelData, eepRom);
-		
-		
-		try {
-			Panel panel = panelMap.get(ip);
 
-            panel.updatePanel(eepRom, deviceList, ip);
-			panelMap.put(ip, panel);
-			panelList.add(panel);
-			
-			if(panelList.size()==ipListSelected.size()){
-				
-				//msg = new Message();
-				msg.arg1 = LOADING_FINISHED;
-				mHandler.sendMessage(msg);
+        for(String ip: ip_connection_map.keySet()) {
+            List<Integer> rxBuffer = rxBufferMap.get(ip);
 
-				mHandler.postDelayed(loadFinished, delay);	
-			}
-			
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+
+            try {
+
+                List<List<Integer>> panelData = DataHelper.removeJunkBytes(rxBuffer);
+                List<List<Integer>> eepRom = DataHelper.getEepRom(panelData);
+                List<List<List<Integer>>> deviceList = DataHelper.getDeviceList(panelData, eepRom);
+                Panel panel = panelMap.get(ip);
+
+                panel.updatePanel(eepRom, deviceList, ip);
+                panelMap.put(ip, panel);
+                panelList.add(panel);
+
+
+
+            } catch (UnsupportedEncodingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IndexOutOfBoundsException e1)
+            {
+                System.out.println("Error rxBuffer: " + ip + " size: " + rxBufferMap.get(ip).size());
+                onError(ip,e1);
+                break;
+            }
+        }
+        if (panelList.size() == ipListSelected.size()) {
+
+            //msg = new Message();
+            msg.arg1 = LOADING_FINISHED;
+            mHandler.sendMessage(msg);
+
+            mHandler.postDelayed(loadFinished, delay);
+        }
 		
 	}
 	
