@@ -20,7 +20,8 @@ public class Constants {
 	public static final int UART_NEW_LINE_H = 0x0D;
 	public static final int UART_NEW_LINE_L = 0x0A;
 	
-	public static final Integer HOST_ID = 0x02;
+	public static final int HOST_ID = 0x02;
+    public static final int RESPONSE_ID = 0x01;
 
 	public static final int MASTER_GET = 0xA0;
     public static final int GET_INIT = 0x21;

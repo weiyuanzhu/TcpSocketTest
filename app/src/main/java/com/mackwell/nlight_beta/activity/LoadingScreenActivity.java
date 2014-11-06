@@ -30,6 +30,7 @@ import com.mackwell.nlight_beta.socket.PanelConnection;
 import com.mackwell.nlight_beta.socket.UDPConnection;
 import com.mackwell.nlight_beta.socket.UDPConnection.UDPCallback;
 import com.mackwell.nlight_beta.util.CommandFactory;
+import com.mackwell.nlight_beta.util.Constants;
 import com.mackwell.nlight_beta.util.DataHelper;
 import com.mackwell.nlight_beta.util.GetCmdEnum;
 import com.mackwell.nlight_beta.util.MySQLiteController;
@@ -94,26 +95,33 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	public void receive(List<Integer> rx, String ip) {
 		
 		Message msg = mHandler.obtainMessage();
-		progress++;
-		
-		msg.arg1 = LOADING;
-		msg.arg2 = progress;
-		
-		
-		
-		List<Integer> rxBuffer = rxBufferMap.get(ip);
-		rxBuffer.addAll(rx);
+
+        msg.arg1 = LOADING;
+        msg.arg2 = progress;
+
+
+
+        List<Integer> rxBuffer = rxBufferMap.get(ip);
+        rxBuffer.addAll(rx);
+        if(rx.get(2)== Constants.GET_INIT){
+            progress++;
+        }
+
 //		connection.setListening(false);
-		System.out.println(ip + " received package: " + ip_connection_map.get(ip).getPanelInfoPackageNo() + " rxBuffer size: " + rxBuffer.size());
-		if(ip_connection_map.get(ip).isRxCompleted())
+        System.out.println(ip + " received package: " + ip_connection_map.get(ip).getPanelInfoPackageNo() + " rxBuffer size: " + rxBuffer.size());
+
+        if(ip_connection_map.get(ip).isRxCompleted())
 		{
+            progress++;
+            msg.arg2 = progress;
 //            ip_connection_map.get(ip).setListening(false);
             ip_connection_map.get(ip).closeConnection();
-			setPanelToLoad(--panelToLoad);
+            setPanelToLoad(--panelToLoad);
 
-			//update progress with handler
-			
-			
+
+            //update progress with handler
+
+
 
 
             //mHandler.sendMessage(msg);
@@ -122,18 +130,21 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }*/
-
+            if(panelToLoad==0){
+                msg.arg1 = PARSING;
+                parse();
+            }else{
+                String ipAddress = ipListSelected.get(panelToLoad-1);
+                ip_connection_map.get(ipAddress).fetchData(GetCmdEnum.GET_INIT.get());
+            }
 
 
         }
-
-
-        if(getPanelToLoad()==0){
-            msg.arg1 = PARSING;
-            parse();
-        }
-
         mHandler.sendMessage(msg);
+
+
+
+
 
 	}
 
@@ -240,9 +251,10 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		rxBufferMap.clear();
         ip_connection_map.clear();
 		//save check status
-		savePanelSelectionToIpListSelected(selected);
-		
-		progressBar.setMax(16*ipListSelected.size());
+        savePanelSelectionToIpListSelected(selected);
+        setPanelToLoad(ipListSelected.size());
+
+		progressBar.setMax(16 * ipListSelected.size());
         progress = 0;
 		
 		
@@ -267,7 +279,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		//set isDemo flag
 		isDemo = false;
-		setPanelToLoad(ipListSelected.size());
+
 
 		//check if loading is not already in process and panel selected not equal to 0
 		if(!isLoading && ipListSelected.size()!=0){
@@ -284,10 +296,12 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 //			List<char[]> commandList = CommandFactory.getPanelInfo();
 			List<char[]> commandList = GetCmdEnum.GET_INIT.get();
 
-			for(String ip: ipListSelected){
 
+            String ip = ipListSelected.get(panelToLoad-1);
+            {
                 ip_connection_map.get(ip).fetchData(commandList);
-			}
+            }
+
 			
 			
 			//set button disable
@@ -689,8 +703,8 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
         if (panelList.size() == ipListSelected.size()) {
 
             //msg = new Message();
-            msg.arg1 = LOADING_FINISHED;
-            mHandler.sendMessage(msg);
+//            msg.arg1 = LOADING_FINISHED;
+//            mHandler.sendMessage(msg);
 
             mHandler.postDelayed(loadFinished, delay);
         }

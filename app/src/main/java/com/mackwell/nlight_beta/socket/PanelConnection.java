@@ -230,7 +230,7 @@ public class PanelConnection {
                                 }
                                 */
 
-                                if(rxBuffer.get(0)==1 && rxBuffer.get(1)==173 && rxBuffer.get(2)==41){
+                                if(rxBuffer.get(0)==Constants.RESPONSE_ID && rxBuffer.get(1)==Constants.FINISH && rxBuffer.get(2)==Constants.GET_DATE_TIME){
                                     System.out.println(" All packages received");
                                     rxCompleted = true;
                                     setListening(false);
