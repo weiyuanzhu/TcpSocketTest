@@ -33,7 +33,7 @@ import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.models.Panel;
 import com.mackwell.nlight_beta.activity.InputDialogFragment.NoticeDialogListener;
 import com.mackwell.nlight_beta.activity.PanelListFragment.OnPanelListItemClickedCallBack;
-import com.mackwell.nlight_beta.socket.TCPConnection;
+import com.mackwell.nlight_beta.socket.TcpLongConnection;
 import com.mackwell.nlight_beta.util.CommandFactory;
 import com.mackwell.nlight_beta.util.DataHelper;
 import com.mackwell.nlight_beta.util.MySQLiteController;
@@ -43,7 +43,7 @@ import com.mackwell.nlight_beta.util.SetCmdEnum;
  * @author weiyuan zhu
  *
  */
-public class PanelActivity extends BaseActivity implements OnPanelListItemClickedCallBack, TCPConnection.CallBack, PopupMenu.OnMenuItemClickListener, NoticeDialogListener{
+public class PanelActivity extends BaseActivity implements OnPanelListItemClickedCallBack, TcpLongConnection.CallBack, PopupMenu.OnMenuItemClickListener, NoticeDialogListener{
 
     private static final String TAG = "PanelActivity";
 
@@ -54,7 +54,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
 	private List<Panel> panelList = null;
 	private Map<String,Panel> panelMap = null;
-	private Map<String,TCPConnection> ip_connection_map = null;
+	private Map<String,TcpLongConnection> ip_connection_map = null;
 	private Map<String,List<Integer>> rxBufferMap = null;
 	private List<char[] > commandList = null;
 	
@@ -97,7 +97,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	public void receive(List<Integer> rx, String ip) {
 		List<Integer> rxBuffer = rxBufferMap.get(ip);
 		rxBuffer.addAll(rx);
-		TCPConnection connection = ip_connection_map.get(ip);
+		TcpLongConnection connection = ip_connection_map.get(ip);
 		connection.setListening(true);
 		System.out.println(ip + " received package: " + connection.getPanelInfoPackageNo() + " rxBuffer size: " + rxBuffer.size());
 		if(connection.isRxCompleted())
@@ -113,7 +113,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
     @Override
     public void onError(String ip, Exception e) {
-        if (e instanceof TCPConnection.PanelResetException) {
+        if (e instanceof TcpLongConnection.PanelResetException) {
             mHandler.post(panelResetError);
         }
 
@@ -518,7 +518,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	protected void onStop() {
 		
 		if(panelMap!=null && ip_connection_map!=null){
-			for(TCPConnection connection : ip_connection_map.values())
+			for(TcpLongConnection connection : ip_connection_map.values())
 			{
 				if(connection!=null){
 					connection.setListening(false);
@@ -538,7 +538,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 			for(String key : panelMap.keySet())
 			{
 
-				TCPConnection connection = ip_connection_map.get(key);
+				TcpLongConnection connection = ip_connection_map.get(key);
 				if(connection!=null){
 					connection.setListening(false);
 					connection.closeConnection();
@@ -560,7 +560,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		for(String key : panelMap.keySet()){
 			
-			TCPConnection connection = new TCPConnection(this, key);
+			TcpLongConnection connection = new TcpLongConnection(this, key);
 			
 			ip_connection_map.put(key, connection);
 			
@@ -572,7 +572,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		for(String key : panelMap.keySet()){
 			
-			TCPConnection conn = ip_connection_map.get(key);
+			TcpLongConnection conn = ip_connection_map.get(key);
 			conn.fetchData(commandList);
 		}
 		
@@ -585,7 +585,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	{	
 		panelMap = new HashMap<String,Panel>();
 		fragmentList = new ArrayList<PanelInfoFragment>(panelList.size());
-		ip_connection_map = new HashMap<String,TCPConnection>();
+		ip_connection_map = new HashMap<String,TcpLongConnection>();
 		rxBufferMap = new HashMap<String,List<Integer>>();
 
 
@@ -598,7 +598,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
             //create connection for panels if is not in demo mode
             if (!isDemo) {
-                ip_connection_map.put(ip, new TCPConnection(this, ip));
+                ip_connection_map.put(ip, new TcpLongConnection(this, ip));
                 rxBufferMap.put(ip, new ArrayList<Integer>());
 
             }
@@ -656,7 +656,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	{
 		panelList = new ArrayList<Panel>();
 		panelMap = new HashMap<String,Panel>();
-		ip_connection_map = new HashMap<String,TCPConnection>();
+		ip_connection_map = new HashMap<String,TcpLongConnection>();
 		rxBufferMap = new HashMap<String,List<Integer>>();
 		
 		String ip1 = "192.168.1.17";
@@ -762,7 +762,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		checkConnectivity();
 		if(currentDisplayingPanel!=null){
 			String ip = currentDisplayingPanel.getIp();
-			TCPConnection conn = ip_connection_map.get(ip);
+			TcpLongConnection conn = ip_connection_map.get(ip);
 				
 			if(!isDemo &&  conn != null && commandList != null){
 				conn.fetchData(commandList);

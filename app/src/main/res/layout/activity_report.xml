@@ -5,4 +5,12 @@
     android:layout_height="match_parent"
     tools:context="com.mackwell.nlight_beta.activity.ReportActivity"
     tools:ignore="MergeRootFrame" >
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/report_progressBar"
+        android:visibility="gone"
+        android:layout_gravity="center" />
 </FrameLayout>

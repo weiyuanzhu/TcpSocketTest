@@ -29,12 +29,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.models.Device;
 import com.mackwell.nlight_beta.models.Report;
-import com.mackwell.nlight_beta.socket.TCPConnection;
+import com.mackwell.nlight_beta.socket.TcpShortConnection;
 import com.mackwell.nlight_beta.util.Constants;
 import com.mackwell.nlight_beta.util.DataHelper;
 import com.mackwell.nlight_beta.util.GetCmdEnum;
@@ -47,12 +48,13 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-public class ReportActivity extends BaseActivity implements ReportFragment.OnListItemClickedListener {
+public class ReportActivity extends BaseActivity implements ReportFragment.OnListItemClickedListener,TcpShortConnection.CallBack {
 
     private static final String TAG = "ReportActivity";
     private static final String TAG_RECEIVE = "ReportActivity_Receive";
     private static final int ROW_PER_PAGE = 20;
 
+    private TcpShortConnection mConnection;
     private String ip;
     private String location;
     private List<Integer> reportRawData;
@@ -60,6 +62,9 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     private List<Report> reportList;
     private Handler mHandler;
     private ReportFragment fragment;
+    private ProgressBar loadProgressBar;
+
+
 
     //properties for pdf print
 
@@ -69,9 +74,10 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
     private int getFaultyReportpages() {
         int temp = 0;
-        for(Report aReport:faultyReportList)
-        {
-            temp += aReport.getFaultPages();
+        if(faultyReportList!=null) {
+            for (Report aReport : faultyReportList) {
+                temp += aReport.getFaultPages();
+            }
         }
         return temp;
     }
@@ -80,13 +86,13 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     @Override
     public void receive(List<Integer> rx, String ip) {
         Log.d(TAG_RECEIVE,ip);
-       System.out.println(rx);
+        Log.d(TAG_RECEIVE,rx.toString());
         if (rx.get(1) == Constants.MASTER_GET && rx.get(2) == Constants.GET_REPORT) {
             reportRawData.addAll(rx.subList(3, rx.size() - 6));
         } else {
             if (rx.get(1) == Constants.FINISH) {
-                Log.i(TAG,Integer.toString(reportRawData.size()));
-                System.out.println(reportRawData);
+                Log.d(TAG_RECEIVE,"ReportRawData size: " + Integer.toString(reportRawData.size()));
+                Log.d(TAG_RECEIVE,reportRawData.toString());
                 reportList = DataHelper.getReportList(reportRawData);
 
                 //put reports with faults in a separate list
@@ -97,9 +103,15 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
                     }
                 }
 
-                mHandler.post(test);
+                mConnection.setListening(false);
+                mHandler.post(displayReport);
             }
         }
+    }
+
+    @Override
+    public void onError(String ip, Exception e) {
+        super.onError(ip, e);
     }
 
     @Override
@@ -123,6 +135,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         isDemo = getIntent().getBooleanExtra("demo",true);
         reportRawData = new ArrayList<Integer>();
         reportList = new ArrayList<Report>();
+        loadProgressBar = (ProgressBar) findViewById(R.id.report_progressBar);
 
         //init reportList in demo mode
         if(isDemo) reportList = initReportList();
@@ -139,7 +152,14 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if(isConnected && !isDemo) connection = new TCPConnection(this,ip);
+        if(isConnected && !isDemo) {
+            mConnection = new TcpShortConnection(this,ip);
+            mConnection.fetchData(GetCmdEnum.GET_REPORT.get(),GetCmdEnum.GET_REPORT.getValue());
+            loadProgressBar.setVisibility(View.VISIBLE);
+
+        }
+
+
 
         mHandler = new Handler();
 
@@ -148,10 +168,8 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     @Override
     protected void onStart() {
         super.onStart();
-        if(connection == null && isConnected && !isDemo){
-            connection = new TCPConnection(this,ip);
 
-        }
+//        fetchReport();
 
         if(isDemo) fragment.updateList(reportList);
 
@@ -187,6 +205,14 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     }
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mConnection!=null) {
+            mConnection.closeConnection();
+            mConnection = null;
+        }
+    }
 
     private void fetchReport()
     {
@@ -197,9 +223,9 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         if (isConnected && !isDemo) {
             reportRawData.clear();
 
-            fragment.showLoading();
+            loadProgressBar.setVisibility(View.VISIBLE);
 //            connection = new TCPConnection(this,ip);
-            connection.fetchData(GetCmdEnum.GET_REPORT.get());
+            mConnection.fetchData(GetCmdEnum.GET_REPORT.get(),GetCmdEnum.GET_REPORT.getValue());
         }
     }
 
@@ -220,16 +246,24 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         }
     }
 
-    Runnable test = new Runnable() {
+    Runnable displayReport = new Runnable() {
         @Override
         public void run() {
             fragment.updateList(reportList);
+            loadProgressBar.setVisibility(View.INVISIBLE);
+        }
+    };
+
+    Runnable error = new Runnable(){
+        @Override
+        public void run() {
+            loadProgressBar.setVisibility(View.INVISIBLE);
         }
     };
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void saveReport(){
-        Log.i("printPDF","print clicked");
+        Log.i(TAG,"Save report");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
@@ -513,17 +547,17 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
             int n;
             if(remainPages >1)
             {
-                n = report.getFaults()>22? 22: report.getFaults();
+//                n = report.getFaults()>22? 22: report.getFaults();
+                n = report.getFaultyDeviceList().size()>22? 22: report.getFaults();
+                //todo correct faults numbers, group faults not included now
+
 
             }
-            else n = report.getFaults()%22;
+            else n = report.getFaultyDeviceList().size()%22;
 
             for (int i=0,j=0; i<n; i++,j++) {
 
                 if(report.getFaultyDeviceList().size()>0) {
-
-
-
 
                     ArrayList<Integer> list = (ArrayList<Integer>) report.getFaultyDeviceList().get(i + start*22);
 
@@ -580,7 +614,5 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         } else return currentReportPosition;
 
     }
-
-
 
 }

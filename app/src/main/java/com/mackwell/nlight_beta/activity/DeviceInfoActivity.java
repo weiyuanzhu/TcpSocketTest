@@ -14,14 +14,14 @@ import android.widget.TextView;
 
 import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.models.Device;
-import com.mackwell.nlight_beta.socket.TCPConnection;
+import com.mackwell.nlight_beta.socket.TcpLongConnection;
 
 
-public class DeviceInfoActivity extends Activity implements TCPConnection.CallBack{
+public class DeviceInfoActivity extends Activity implements TcpLongConnection.CallBack{
 	
 	private static final String TAG = "DeviceInfoActivity";
 
-	private TCPConnection connection;
+	private TcpLongConnection connection;
 
 	private Device device;
     private DeviceInfoFragment fragment;

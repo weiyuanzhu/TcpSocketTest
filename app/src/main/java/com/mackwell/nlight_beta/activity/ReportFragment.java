@@ -54,8 +54,8 @@ public class ReportFragment extends Fragment {
     private ListView mListView;
     private SimpleAdapter mAdapter;
 
-    private TextView textView;
-    private ProgressBar progressBar;
+//    private TextView textView;
+//    private ProgressBar progressBar;
 
 
     /**
@@ -115,11 +115,6 @@ public class ReportFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-
-        textView = (TextView) getActivity().findViewById(R.id.report_textView);
-        progressBar = (ProgressBar) getActivity().findViewById(R.id.report_progressBar);
-
-
         mListView = (ListView) getActivity().findViewById(R.id.report_listView);
 
         mAdapter = new SimpleAdapter(getActivity(),getDataList(),R.layout.report_list_row,new String[] {"date","faults","status"},
@@ -178,19 +173,6 @@ public class ReportFragment extends Fragment {
                 new int[] {R.id.report_date_textView,R.id.report_faults_textView,R.id.report_status_textView});
         mListView.setAdapter(mAdapter);
 
-        hideLoading();
-
-
-    }
-
-    public void hideLoading(){
-        progressBar.setVisibility(View.INVISIBLE);
-        textView.setVisibility(View.INVISIBLE);
-    }
-
-    public void showLoading(){
-        progressBar.setVisibility(View.VISIBLE);
-        textView.setVisibility(View.VISIBLE);
     }
 
 

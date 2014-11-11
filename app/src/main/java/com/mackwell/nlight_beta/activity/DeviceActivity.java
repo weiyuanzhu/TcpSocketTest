@@ -34,7 +34,7 @@ import com.mackwell.nlight_beta.models.Device;
 import com.mackwell.nlight_beta.models.Panel;
 import com.mackwell.nlight_beta.activity.DeviceListFragment.OnDevicdListFragmentListener;
 import com.mackwell.nlight_beta.activity.InputDialogFragment.NoticeDialogListener;
-import com.mackwell.nlight_beta.socket.TCPConnection;
+import com.mackwell.nlight_beta.socket.TcpLongConnection;
 import com.mackwell.nlight_beta.util.Constants;
 import com.mackwell.nlight_beta.util.DataHelper;
 import com.mackwell.nlight_beta.util.GetCmdEnum;
@@ -43,7 +43,7 @@ import com.mackwell.nlight_beta.util.ToggleCmdEnum;
 
 
 
-public class DeviceActivity extends BaseActivity implements OnDevicdListFragmentListener,TCPConnection.CallBack, 
+public class DeviceActivity extends BaseActivity implements OnDevicdListFragmentListener,TcpLongConnection.CallBack,
 															NoticeDialogListener, SearchView.OnQueryTextListener,PopupMenu.OnMenuItemClickListener{
 	private static final String TAG= "DeviceActivity";
 
@@ -190,7 +190,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 
     @Override
     public void onError(String ip, Exception e) {
-        if (e instanceof TCPConnection.PanelResetException) {
+        if (e instanceof TcpLongConnection.PanelResetException) {
             mHandler.post(new PanelResetError(ip,e));
         } else if(e instanceof SocketTimeoutException){
             mHandler.post(new PanelResetError(ip,e));
@@ -384,7 +384,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		getActionBar().setTitle(title);
 		getActionBar().setSubtitle(R.string.subtitle_activity_device);
 		
-		if(isConnected && !isDemo) connection = new TCPConnection(this,panel.getIp());
+		if(isConnected && !isDemo) connection = new TcpLongConnection(this,panel.getIp());
 
 		deviceListFragment = (DeviceListFragment) getFragmentManager().findFragmentById(R.id.device_list_fragment);
 		deviceListFragment.setLoop1(panel.getLoop1());
@@ -534,7 +534,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
         //re-connect if app is switched to background
         if(connection== null)
         {
-            if(isConnected && !isDemo) connection = new TCPConnection(this,panel.getIp());
+            if(isConnected && !isDemo) connection = new TcpLongConnection(this,panel.getIp());
         }
 
         isActivityActive = true;

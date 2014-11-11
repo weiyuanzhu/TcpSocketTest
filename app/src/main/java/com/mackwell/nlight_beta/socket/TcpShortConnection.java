@@ -1,5 +1,7 @@
 package com.mackwell.nlight_beta.socket;
 
+import android.util.Log;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -14,11 +16,11 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import com.mackwell.nlight_beta.util.Constants;
-import com.mackwell.nlight_beta.util.DataHelper;
 
 
-public class PanelConnection {
+public class TcpShortConnection {
 
+    private static final String TAG = "PanelConnection";
     public static final int CONNECTION_TIMEOUT = 3000; // 10 seconds
     public static final int READ_TIMEOUT = 3000;    // 10 seconds
 
@@ -32,6 +34,7 @@ public class PanelConnection {
 	
 
 	private int panelInfoPackageNo;
+    private int finishByte;
 	private boolean rxCompleted;
     private boolean error;
 	
@@ -80,7 +83,7 @@ public class PanelConnection {
 	
 	
 	//Constructor , requires a delegation object for callback
-	public PanelConnection(CallBack callBack, String ip)
+	public TcpShortConnection(CallBack callBack, String ip)
 	{
 		this.ip = ip;
 		this.isListening = false;
@@ -89,7 +92,7 @@ public class PanelConnection {
 		this.rxBuffer = new ArrayList<Integer>();
 		this.port = 500;
 		this.mCallBack = new WeakReference<CallBack>(callBack);
-		
+
 	}
 
 	
@@ -103,11 +106,12 @@ public class PanelConnection {
 	
 
 	
-	public void fetchData(List<char[]> commandList){
+	public void fetchData(List<char[]> commandList,int finishByte){
 		
 		this.commandList = commandList;
+        this.finishByte = finishByte;
 		new Thread(fetch).start();
-		System.out.println("Connection started on thread:-------> " );
+        Log.i(TAG,"Connection started on thread:-------> ");
 		
 		
 	}
@@ -142,7 +146,7 @@ public class PanelConnection {
 		@Override
 		public void run() {
 			panelInfoPackageNo = 0;
-			System.out.println(Thread.currentThread().toString() + "Slayver starts");
+			System.out.println(Thread.currentThread().toString() + "Slaver starts");
 			
 			//char[] getPackageTest = new char[] {2, 165, 64, 15, 96, 0,0x5A,0xA5,0x0D,0x0A};
 			//char[] getConfig = new char[] {0x02,0xA0,0x21,0x68,0x18,0x5A,0xA5,0x0D,0x0A};
@@ -230,7 +234,7 @@ public class PanelConnection {
                                 }
                                 */
 
-                                if(rxBuffer.get(0)==Constants.RESPONSE_ID && rxBuffer.get(1)==Constants.FINISH && rxBuffer.get(2)==Constants.GET_DATE_TIME){
+                                if(rxBuffer.get(0)==Constants.RESPONSE_ID && rxBuffer.get(1)==Constants.FINISH && rxBuffer.get(2)==finishByte){
                                     System.out.println(" All packages received");
                                     rxCompleted = true;
                                     setListening(false);
@@ -244,7 +248,7 @@ public class PanelConnection {
                             if (isListening() && !socket.isClosed()) {
                                 data = in.read();
                                 if (data == -1) {
-                                    throw new TCPConnection.PanelResetException();
+                                    throw new TcpLongConnection.PanelResetException();
 
                                 }
 
@@ -277,7 +281,7 @@ public class PanelConnection {
                         setListening(false);
                         mCallBack.get().onError(ip, e);
 
-                    } catch (TCPConnection.PanelResetException e1) {
+                    } catch (TcpLongConnection.PanelResetException e1) {
                         e1.printStackTrace();
                         error = true;
                         setListening(false);

@@ -20,7 +20,7 @@ import com.mackwell.nlight_beta.util.Constants;
 
 
 
-public class TCPConnection {
+public class TcpLongConnection {
 
     public static final int READ_TIMEOUT = 0;
     public static final int CONNECTION_TIMEOUT = 5000;
@@ -91,7 +91,7 @@ public class TCPConnection {
     }
 
     //Constructor , requires a delegation(callback) object for callback
-	public TCPConnection(CallBack callBack, String ip)
+	public TcpLongConnection(CallBack callBack, String ip)
 	{
 		this.ip = ip;
 		this.isListening = false;

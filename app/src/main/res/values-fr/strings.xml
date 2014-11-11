@@ -119,7 +119,7 @@
     <string name="action_select_loop1">Sélectionner loop1 dispositifs</string>
     <string name="action_deselect_loop1">Désélectionner loop1 dispositifs</string>
     <string name="action_select_loop2">Sélectionner loop2 dispositifs</string>
-    <string name="action_deselect_loop2">Désélectionner loop1 dispositifs</string>
+    <string name="action_deselect_loop2">Désélectionner loop2 dispositifs</string>
     <string name="text_multi_selection_mode">Mode de sélection multiple.</string>
     <string name="text_loop_faulty_message"><xliff:g id="faulty_device_no">%1$s</xliff:g> Nombre de dispositif défectueuse(s): <xliff:g id="faulty_device_no">%2$d</xliff:g></string>
     <string name="text_panel_faulty_message">Panel (s): <xliff:g id="faulty_panel_no">%1$d</xliff:g></string>

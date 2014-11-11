@@ -21,13 +21,13 @@ import android.widget.SimpleAdapter;
 
 import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.models.Panel;
-import com.mackwell.nlight_beta.socket.TCPConnection;
+import com.mackwell.nlight_beta.socket.TcpLongConnection;
 
 
 /**
  * A simple   {@link android.support.v4.app.Fragment}  subclass. Activities thatcontain this fragment must implement the  {@link PanelListFragment.OnPanelListItemClickedCallBack}  interface to handleinteraction events.
  */
-public class PanelListFragment extends ListFragment implements TCPConnection.CallBack{
+public class PanelListFragment extends ListFragment implements TcpLongConnection.CallBack{
 	
 	/**
 	 * This interface must be implemented by activities that contain this fragment to allow an interaction in this fragment to be communicated to the activity and potentially other fragments contained in that activity. <p> See the Android Training lesson <a href= "http://developer.android.com/training/basics/fragments/communicating.html" >Communicating with Other Fragments</a> for more information.

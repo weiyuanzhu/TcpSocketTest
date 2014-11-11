@@ -26,10 +26,9 @@ import android.widget.Toast;
 import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.models.Device;
 import com.mackwell.nlight_beta.models.Panel;
-import com.mackwell.nlight_beta.socket.PanelConnection;
+import com.mackwell.nlight_beta.socket.TcpShortConnection;
 import com.mackwell.nlight_beta.socket.UDPConnection;
 import com.mackwell.nlight_beta.socket.UDPConnection.UDPCallback;
-import com.mackwell.nlight_beta.util.CommandFactory;
 import com.mackwell.nlight_beta.util.Constants;
 import com.mackwell.nlight_beta.util.DataHelper;
 import com.mackwell.nlight_beta.util.GetCmdEnum;
@@ -40,7 +39,7 @@ import com.mackwell.nlight_beta.util.MySQLiteOpenHelper;
  * @author  weiyuan zhu15/04/2014 Starting develop branch test on develop branch test 2 on feature branch test 3 on feature branch after rebase
  */
 
-public class LoadingScreenActivity extends BaseActivity implements PanelConnection.CallBack,ListDialogFragment.ListDialogListener, UDPCallback{
+public class LoadingScreenActivity extends BaseActivity implements TcpShortConnection.CallBack,ListDialogFragment.ListDialogListener, UDPCallback{
 	
 	private static final String TAG = "LoadingScreen";
     public static final String DEMO_MODE = "Demo Mode";
@@ -57,6 +56,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	private static final int ERROR = 3;
 	
 	private boolean isLoading = false;
+    private int finish; //finish byte of the command
 	
 	private Button liveBtn = null;
 	private Button demoBtn = null;
@@ -66,7 +66,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	
 	private List<Panel> panelList = null;
 	private Map<String,Panel> panelMap = null;
-	private Map<String,PanelConnection> ip_connection_map = null;
+	private Map<String,TcpShortConnection> ip_connection_map = null;
 	private Map<String,List<Integer>> rxBufferMap = null;
 
     //database
@@ -135,7 +135,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
                 parse();
             }else{
                 String ipAddress = ipListSelected.get(panelToLoad-1);
-                ip_connection_map.get(ipAddress).fetchData(GetCmdEnum.GET_INIT.get());
+                ip_connection_map.get(ipAddress).fetchData(GetCmdEnum.GET_INIT.get(),GetCmdEnum.GET_DATE_TIME.getValue());
             }
 
 
@@ -168,7 +168,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
         }
 
         //stop all other connections
-        for(PanelConnection connection:ip_connection_map.values())
+        for(TcpShortConnection connection:ip_connection_map.values())
         {
             connection.setError(true);
         }
@@ -228,7 +228,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 
         mSqLiteController.resetEnable();
 
-        for(PanelConnection connection: ip_connection_map.values()){
+        for(TcpShortConnection connection: ip_connection_map.values()){
             connection.setError(false);
         }
 
@@ -269,7 +269,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		
 		for(String ip : ipListSelected)
 		{
-			PanelConnection connection = new PanelConnection(this, ip);
+			TcpShortConnection connection = new TcpShortConnection(this, ip);
 			ip_connection_map.put(ip, connection);
 			rxBufferMap.put(ip, new ArrayList<Integer>());
 			
@@ -297,9 +297,10 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 			List<char[]> commandList = GetCmdEnum.GET_INIT.get();
 
 
+
             String ip = ipListSelected.get(panelToLoad-1);
             {
-                ip_connection_map.get(ip).fetchData(commandList);
+                ip_connection_map.get(ip).fetchData(commandList,finish);
             }
 
 			
@@ -355,7 +356,10 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_loading_screen);
-		
+
+        //finish byte for init panel
+        finish = GetCmdEnum.GET_DATE_TIME.getValue();
+
 		//init SQLite controller
         mSqLiteController = new MySQLiteController(this);
         mSqLiteController.open();
@@ -572,7 +576,7 @@ public class LoadingScreenActivity extends BaseActivity implements PanelConnecti
 		panelList = new ArrayList<Panel>();
 		
 		panelMap = new HashMap<String,Panel>();
-		ip_connection_map = new HashMap<String,PanelConnection>();
+		ip_connection_map = new HashMap<String,TcpShortConnection>();
 		rxBufferMap = new HashMap<String,List<Integer>>();
 		
 		dataList = new ArrayList<Map<String,Object>>();

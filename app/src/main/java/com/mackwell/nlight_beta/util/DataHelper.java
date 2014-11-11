@@ -1,5 +1,7 @@
 package com.mackwell.nlight_beta.util;
 
+import android.util.Log;
+
 import com.mackwell.nlight_beta.models.Report;
 
 import java.io.UnsupportedEncodingException;
@@ -9,7 +11,8 @@ import java.util.*;
 
 public class DataHelper {
 	
-	
+	static final String TAG = "Data Parser";
+
 	//panel stop and new line byte
 	static final int UART_STOP_BIT_H = 0x5A;
 	static final int UART_STOP_BIT_L = 0xA5;
@@ -144,6 +147,7 @@ public class DataHelper {
         calendar.set(Calendar.YEAR, timestamp.get(0) * 100 + timestamp.get(1));
         calendar.set(Calendar.HOUR_OF_DAY,timestamp.get(4));
         calendar.set(Calendar.MINUTE,timestamp.get(5));
+        calendar.set(Calendar.SECOND,0);
 
         return calendar;
     }
@@ -179,8 +183,7 @@ public class DataHelper {
         long timeElapsed = System.nanoTime() - startTime;
         double time = timeElapsed / 1E9;
 
-
-        System.out.println("Time Elapsed " + time + " seconds");
+        Log.d(TAG,"Time Elapsed " + time + " seconds");
 
         return getList(reportDataList);
 
@@ -208,7 +211,7 @@ public class DataHelper {
                 int groupNumber = 0;
                 List<List<Integer>> groupStatusList = new ArrayList<List<Integer>>();
 
-                //10-13 14-27 group status bytes
+                //10-13 14-17 group status bytes
                 for(int j = (h*4+10); j < (14 + h*4);j++)
                 {
                     int group = reportData.get(j);
@@ -223,8 +226,6 @@ public class DataHelper {
                         ArrayList<Integer> groupStatus = new ArrayList<Integer>();
                         groupStatus.add(groupNumber);
 
-
-
                         groupStatus.add((group & flag)>0 ? 1:0);
                         flag /=2;
 
@@ -233,13 +234,8 @@ public class DataHelper {
 
                         if(groupStatus.get(1)!=0 || groupStatus.get(2)!=0)  groupStatusList.add(groupStatus);
 
-
-
                         groupNumber ++;
                     } // end of 1 byte
-
-
-
 
                 } // end of 4 bytes
 

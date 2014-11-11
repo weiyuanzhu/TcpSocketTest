@@ -119,7 +119,7 @@
     <string name="action_select_loop1">Select loop1 devices</string>
     <string name="action_deselect_loop1">Deselect loop1 devices</string>
     <string name="action_select_loop2">Select loop2 devices</string>
-    <string name="action_deselect_loop2">Deselect loop1 devices</string>
+    <string name="action_deselect_loop2">Deselect loop2 devices</string>
     <string name="text_multi_selection_mode">Device Multiple selection mode.</string>
     <string name="text_loop_faulty_message"><xliff:g id="faulty_device_no">%1$s</xliff:g> Number of faulty device(s): <xliff:g id="faulty_device_no">%2$d</xliff:g></string>
     <string name="text_panel_faulty_message">Panel fault(s): <xliff:g id="faulty_panel_no">%1$d</xliff:g></string>

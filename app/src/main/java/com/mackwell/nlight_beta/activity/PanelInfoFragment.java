@@ -29,7 +29,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 
 import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.models.Panel;
-import com.mackwell.nlight_beta.socket.TCPConnection;
+import com.mackwell.nlight_beta.socket.TcpLongConnection;
 import com.mackwell.nlight_beta.util.CommandFactory;
 import com.mackwell.nlight_beta.util.DataHelper;
 
@@ -37,7 +37,7 @@ import com.mackwell.nlight_beta.util.DataHelper;
  * A simple   {@link android.support.v4.app.Fragment}  subclass. Use the {@link PanelInfoFragment#newInstance}  factory method to create an instance ofthis fragment.
  */
 @SuppressLint("ValidFragment")
-public class PanelInfoFragment extends Fragment implements TCPConnection.CallBack {
+public class PanelInfoFragment extends Fragment implements TcpLongConnection.CallBack {
 	
 	
 
@@ -70,7 +70,7 @@ public class PanelInfoFragment extends Fragment implements TCPConnection.CallBac
 	private List<List<Integer>> eepRom = null;		//panel eeprom data (bytes)
 	private List<List<List<Integer>>> deviceList = null;	//device list (bytes)
 	
-	private TCPConnection connection;	
+	private TcpLongConnection connection;
 	
 	private Panel panel = null;
 	
@@ -347,7 +347,7 @@ public class PanelInfoFragment extends Fragment implements TCPConnection.CallBac
 		
 		
 		PanelInfoFragment currentFragment= (PanelInfoFragment)getFragmentManager().findFragmentByTag("tagTest");
-		connection = new TCPConnection(currentFragment,ip);
+		connection = new TcpLongConnection(currentFragment,ip);
 		connection.fetchData(commandList);
 		}
 		

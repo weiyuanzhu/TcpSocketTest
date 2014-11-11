@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.socket.*;
-import com.mackwell.nlight_beta.socket.TCPConnection.CallBack;
+import com.mackwell.nlight_beta.socket.TcpLongConnection.CallBack;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -41,7 +41,7 @@ public class BaseActivity extends Activity implements CallBack{
     //a flag to check if activity is in the foreground or visible to the user
     protected boolean isActivityActive = false;
 
-	protected TCPConnection connection;
+	protected TcpLongConnection connection;
 
     //Android app shared preference object
     protected SharedPreferences sharedPreferences = null;

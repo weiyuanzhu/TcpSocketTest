@@ -9,7 +9,7 @@ import android.os.Bundle;
 
 import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.models.Panel;
-import com.mackwell.nlight_beta.socket.TCPConnection;
+import com.mackwell.nlight_beta.socket.TcpLongConnection;
 
 import java.net.SocketTimeoutException;
 
@@ -37,7 +37,7 @@ public class ErrorDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         // Set the dialog title
-        if(e instanceof TCPConnection.PanelResetException){
+        if(e instanceof TcpLongConnection.PanelResetException){
             builder.setTitle(getString(R.string.dialog_panelreset_title,ip,panel.getPanelLocation().trim()));
         }else if(e instanceof SocketTimeoutException){
             builder.setTitle(getString(R.string.dialog_SocketTimeout_title,panel.getPanelLocation().trim(),ip));
