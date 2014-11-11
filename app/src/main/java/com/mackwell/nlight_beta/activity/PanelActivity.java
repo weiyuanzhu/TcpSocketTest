@@ -372,7 +372,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
         getActionBar().setSubtitle(R.string.subtitle_activity_panel);
 
-        System.out.println("DeomMode--------> " + isDemo);
+        System.out.println("DemoMode--------> " + isDemo);
 
         System.out.println("All panel get: " + panelList.size());
 

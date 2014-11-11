@@ -34,6 +34,17 @@
         android:text="MessageTest"
         android:onClick="messagTest" />
 
-    
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Change Language Settings"
+        android:id="@+id/button"
+        android:onClick="settingsTest"
+        android:layout_below="@+id/button1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="60dp" />
+
 
 </RelativeLayout>

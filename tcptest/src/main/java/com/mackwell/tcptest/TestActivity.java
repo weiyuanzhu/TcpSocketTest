@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +19,8 @@ import java.util.Calendar;
 import java.util.List;
 
 public class TestActivity extends Activity implements TCPConnection.CallBack{
+
+    public static final String TAG="TEST ACTIVITY";
 
 	TCPConnection tcpConnection;
 	final String ip = "192.168.1.20";
@@ -166,6 +170,12 @@ public class TestActivity extends Activity implements TCPConnection.CallBack{
 
 	}
 
-	
+
+    public void settingsTest(View v)
+    {
+        Log.i(TAG,"settings intent test");
+        startActivity(new Intent(Settings.ACTION_LOCALE_SETTINGS));
+    }
+
 	
 }
