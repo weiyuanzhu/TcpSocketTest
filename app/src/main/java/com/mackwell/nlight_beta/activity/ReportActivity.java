@@ -333,6 +333,9 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
         public void onLayout(PrintAttributes oldAttributes, PrintAttributes newAttributes, CancellationSignal cancellationSignal, LayoutResultCallback layoutResultCallback, Bundle bundle) {
 
+            //reset current report posistion
+            currentReportPosition=0;
+
             myPdfDocument = new PrintedPdfDocument(context, newAttributes);
 
             outputName = getResources().getString(R.string.app_name) + ".pdf";
