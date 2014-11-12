@@ -62,7 +62,8 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
 	private Button demoBtn = null;
 	private TextView progressText = null;
 	private ProgressBar progressBar = null;
-	private int progress = 0;
+    private ListDialogFragment panelListDialog;
+    private int progress = 0;
 	
 	private List<Panel> panelList = null;
 	private Map<String,Panel> panelMap = null;
@@ -223,6 +224,8 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
 	@Override
     public void searchAgain() {
 
+        liveBtn.setEnabled(false);
+
         //reset all items in ipEnableMap to true
         if(ipEnableMap!=null) ipEnableMap.clear();
 
@@ -232,7 +235,12 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
             connection.setError(false);
         }
 
-		searchUDP();			
+		searchUDP();
+
+        mHandler.postDelayed(displayPanelList,3000);
+
+
+
 	}
 	 
 	/* (non-Javadoc) implementing ListDialogFragment's ListDialogListener interface
@@ -559,6 +567,72 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
 		}
 	};
 
+    Runnable displayPanelList = new Runnable() {
+        @Override
+        public void run() {
+
+            dataList.clear();
+            ipEnableMap.clear();
+            ipCheckMap.clear();
+
+            //compare current ipListAll with cached sqLite database
+            mSqLiteController.open();
+
+            Cursor cursor = mSqLiteController.selectIp();
+            for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
+            {
+                String ip = cursor.getString(0);
+                String macString = cursor.getString(1);
+                String location = cursor.getString(2);
+                int check = cursor.getInt(3);
+                int enable = cursor.getInt(4);
+
+                ipCheckMap.put(ip,(check!=0));
+                ipEnableMap.put(ip,(enable!=0));
+
+                if(!ipListAll.contains(ip)) ipListAll.add(ip);
+
+                if(panelMap.get(ip)==null){
+                    Panel panel = new Panel(ip,macString);
+                    panelMap.put(ip,panel);
+                }
+
+
+
+
+
+                //put ip and location into a map and add to dataList for dialog listview;
+                Map<String, Object> map = new HashMap<String,Object>();
+                map.put("ip", ip);
+                map.put("location",location);
+                dataList.add(map);
+
+            }
+
+
+
+            cursor.close();
+
+            //create a new ListDialogFragment and set its String[] ips to be udp search result
+            panelListDialog = new ListDialogFragment();
+
+            //get a String[] from ipSet and pass to dialog window
+            String[] ipArray = new String[ipListAll.size()];
+            ipListAll.toArray(ipArray);
+            panelListDialog.setIps(ipArray);
+            panelListDialog.setDataList(dataList);
+            panelListDialog.setIpEnableMap(ipEnableMap);
+            panelListDialog.setIpCheckMap(ipCheckMap);
+            panelListDialog.setmSqLiteController(mSqLiteController);
+
+            //test.setIps(null); //null test
+            panelListDialog.show(getFragmentManager(), "panelListDialog"); //popup dialog
+
+            liveBtn.setEnabled(true);
+
+        }
+    };
+
     /*
 		 * Initial fields
 		 *
@@ -608,63 +682,8 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
 			searchUDP();
 		}*/
 
-//        panelMap.clear();
-        dataList.clear();
-        ipEnableMap.clear();
-        ipCheckMap.clear();
+        mHandler.post(displayPanelList);
 
-        //compare current ipListAll with cached sqLite database
-        mSqLiteController.open();
-
-        Cursor cursor = mSqLiteController.selectIp();
-        for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext())
-        {
-            String ip = cursor.getString(0);
-            String macString = cursor.getString(1);
-            String location = cursor.getString(2);
-            int check = cursor.getInt(3);
-            int enable = cursor.getInt(4);
-
-            ipCheckMap.put(ip,(check!=0));
-            ipEnableMap.put(ip,(enable!=0));
-
-            if(!ipListAll.contains(ip)) ipListAll.add(ip);
-
-            if(panelMap.get(ip)==null){
-                Panel panel = new Panel(ip,macString);
-                panelMap.put(ip,panel);
-            }
-
-
-
-
-
-            //put ip and location into a map and add to dataList for dialog listview;
-            Map<String, Object> map = new HashMap<String,Object>();
-            map.put("ip", ip);
-            map.put("location",location);
-            dataList.add(map);
-
-        }
-
-
-
-        cursor.close();
-
-        //create a new ListDialogFragment and set its String[] ips to be udp search result
-        ListDialogFragment panelListDialog = new ListDialogFragment();
-
-        //get a String[] from ipSet and pass to dialog window
-        String[] ipArray = new String[ipListAll.size()];
-        ipListAll.toArray(ipArray);
-        panelListDialog.setIps(ipArray);
-        panelListDialog.setDataList(dataList);
-        panelListDialog.setIpEnableMap(ipEnableMap);
-        panelListDialog.setIpCheckMap(ipCheckMap);
-        panelListDialog.setmSqLiteController(mSqLiteController);
-
-        //test.setIps(null); //null test
-        panelListDialog.show(getFragmentManager(), "panelListDialog"); //popup dialog
 
 	}
 	
