@@ -51,7 +51,7 @@ public class SettingsFragment extends PreferenceFragment implements  SharedPrefe
         paneListPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(getActivity(),CachedPanelList.class);
+                Intent intent = new Intent(getActivity(),CachedPanelListActivity.class);
                 startActivity(intent);
 
                 return true;

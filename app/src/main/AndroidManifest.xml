@@ -106,7 +106,7 @@
             android:theme="@style/Theme.AppCompat.Light" >
         </activity>
         <activity
-            android:name="com.mackwell.nlight_beta.activity.CachedPanelList"
+            android:name=".activity.CachedPanelListActivity"
             android:label="@string/title_activity_cached_panel_list" >
 
         </activity>

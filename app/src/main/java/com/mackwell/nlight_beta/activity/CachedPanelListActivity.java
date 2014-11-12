@@ -16,6 +16,7 @@ import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.util.MySQLiteController;
@@ -24,7 +25,7 @@ import com.mackwell.nlight_beta.util.MySQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CachedPanelList extends Activity  implements UDPConnection.UDPCallback{
+public class CachedPanelListActivity extends Activity  implements UDPConnection.UDPCallback{
 
     private static final String TAG = "CachedPanelListActivity";
 
@@ -171,18 +172,23 @@ public class CachedPanelList extends Activity  implements UDPConnection.UDPCallb
         Log.d(TAG, "IP entered: " + ipEditText.getText().toString());
         int position = mListView.getCheckedItemPosition();
 
-        mCursor.moveToPosition(position);
-        String ip = mCursor.getString(mCursor.getColumnIndex(MySQLiteOpenHelper.COLUMN_PANELIP));
+        //check if there is any row selected
+        if(position!=-1) {
+            mCursor.moveToPosition(position);
+            String ip = mCursor.getString(mCursor.getColumnIndex(MySQLiteOpenHelper.COLUMN_PANELIP));
 
-        sqlController.open();
+            sqlController.open();
 
-        sqlController.deletePanel(ip);
-        mCursor = sqlController.readData();
-        mAdapter.changeCursor(mCursor);
-        mAdapter.notifyDataSetChanged();
+            sqlController.deletePanel(ip);
+            mCursor = sqlController.readData();
+            mAdapter.changeCursor(mCursor);
+            mAdapter.notifyDataSetChanged();
 
-        sqlController.close();
-
+            sqlController.close();
+        }
+        else{
+            Toast.makeText(this,R.string.toast_select_panel,Toast.LENGTH_SHORT).show();
+        }
     }
 
     class UpdateListView implements Runnable{
