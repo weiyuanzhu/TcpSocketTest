@@ -191,5 +191,10 @@
     <string name="dialog_SocketTimeout_title">连接到Panel: "<xliff:g id="dialog_SocketTimeout_panelname">%1$s</xliff:g>" 发生超时 (<xliff:g id="dialog_SocketTimeout_ip">%2$s</xliff:g>) </string>
     <string name="pref_panel_list_category">手动搜索Panel</string>
     <string name="toast_no_device_selected">请选择一个设备</string>
+    <string name="toast_found_panel">搜索成功</string>
+    <string name="toast_invalid_ip">请输入一个有效的IP地址</string>
+    <string name="toast_panel_not_found">无法找到Panel</string>
+    <string name="toast_search_signle_ip">搜索Panel</string>
+    <string name="toast_panel_exist">Panel已经在列表中</string>
 
 </resources>

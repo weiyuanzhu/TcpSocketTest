@@ -66,9 +66,9 @@ public class MySQLiteController {
 
     public Panel findPanel(String ip)
     {
-        String query  = "SELECT * FROM " + MySQLiteOpenHelper.TABLE_PANEL + " WHERE " + MySQLiteOpenHelper.COLUMN_PANELLOCATION + " = \"" + ip  + "\"";
+        String query  = "SELECT * FROM " + MySQLiteOpenHelper.TABLE_PANEL + " WHERE " + MySQLiteOpenHelper.COLUMN_PANELIP + " = \"" + ip  + "\"";
 
-        SQLiteDatabase db = helper.getWritableDatabase();
+        SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.rawQuery(query,null);
         Panel panel = new Panel();
 

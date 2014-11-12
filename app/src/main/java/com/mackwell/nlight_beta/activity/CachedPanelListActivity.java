@@ -4,14 +4,18 @@ import com.mackwell.nlight_beta.models.Panel;
 import com.mackwell.nlight_beta.socket.UDPConnection;
 
 import android.app.Activity;
+import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.InputFilter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -24,14 +28,21 @@ import com.mackwell.nlight_beta.util.MySQLiteOpenHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CachedPanelListActivity extends Activity  implements UDPConnection.UDPCallback{
 
     private static final String TAG = "CachedPanelListActivity";
+    private static final String PATTERN =
+            "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
+
+
 
     //activity controls
     private ListView mListView;
     private EditText ipEditText;
+    private Button searchBtn;
 
     //list view adapter and data
     private SimpleCursorAdapter mAdapter;
@@ -76,6 +87,34 @@ public class CachedPanelListActivity extends Activity  implements UDPConnection.
         //setup list view
         mListView = (ListView) findViewById(R.id.cached_panel_list_listView);
         ipEditText = (EditText) findViewById(R.id.cached_panel_list_ip_editText);
+        searchBtn = (Button) findViewById(R.id.cached_panel_list_search_button);
+
+
+        //ip address filter
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end,
+                                       android.text.Spanned dest, int dstart, int dend) {
+                if (end > start) {
+                    String destTxt = dest.toString();
+                    String resultingTxt = destTxt.substring(0, dstart) + source.subSequence(start, end) + destTxt.substring(dend);
+                    if (!resultingTxt.matches ("^\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3}(\\.(\\d{1,3})?)?)?)?)?)?")) {
+                        return "";
+                    } else {
+                        String[] splits = resultingTxt.split("\\.");
+                        for (int i=0; i<splits.length; i++) {
+                            if (Integer.valueOf(splits[i]) > 255) {
+                                return "";
+                            }
+                        }
+                    }
+                }
+                return null;
+            }
+
+        };
+        ipEditText.setFilters(filters);
 
         sqlController = new MySQLiteController(this);
         panelList = new ArrayList<Panel>();
@@ -153,20 +192,6 @@ public class CachedPanelListActivity extends Activity  implements UDPConnection.
         return super.onOptionsItemSelected(item);
     }
 
-    public void search(View view)
-    {
-        searchIP = ipEditText.getText().toString();
-        Log.d(TAG,"IP entered: " + searchIP);
-        if (udpConnection == null) {
-            udpConnection = new UDPConnection(UDPConnection.FIND,this);
-            udpConnection.tx(searchIP,UDPConnection.FIND);
-        }
-        else{
-            udpConnection.tx(searchIP,UDPConnection.FIND);
-        }
-
-    }
-
     public void remove(View view)
     {
         Log.d(TAG, "IP entered: " + ipEditText.getText().toString());
@@ -189,6 +214,55 @@ public class CachedPanelListActivity extends Activity  implements UDPConnection.
         else{
             Toast.makeText(this,R.string.toast_select_panel,Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void search(View view)
+    {
+        searchIP = ipEditText.getText().toString();
+        if(validate(searchIP)) {
+
+            searchBtn.setEnabled(false);
+            Log.d(TAG, "IP entered: " + searchIP);
+            sqlController.open();
+
+            //check if ip is already in the list
+
+            if (sqlController.findPanel(searchIP) != null) {
+                searchBtn.setEnabled(true);
+                Toast.makeText(this, R.string.toast_panel_exist, Toast.LENGTH_SHORT).show();
+
+            } else {
+                if (udpConnection == null) {
+                    udpConnection = new UDPConnection(UDPConnection.FIND, this);
+                }
+
+                udpConnection.tx(searchIP, UDPConnection.FIND);
+                Toast.makeText(this, R.string.toast_search_signle_ip, Toast.LENGTH_SHORT).show();
+
+            }
+
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    sqlController.open();
+
+                    //check if ip is already in the list
+                    if (sqlController.findPanel(searchIP) == null) {
+                        searchBtn.setEnabled(true);
+                        Toast.makeText(CachedPanelListActivity.this, searchIP + R.string.toast_panel_not_found, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }, 3000);
+        }
+        else{
+            Toast.makeText(this,R.string.toast_invalid_ip,Toast.LENGTH_SHORT).show();
+        }
+
+        //hide input keyboard
+        InputMethodManager imm = (InputMethodManager)getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(ipEditText.getWindowToken(), 0);
+
     }
 
     class UpdateListView implements Runnable{
@@ -218,9 +292,17 @@ public class CachedPanelListActivity extends Activity  implements UDPConnection.
 
             sqlController.close();
 
+            searchBtn.setEnabled(true);
+            Toast.makeText(CachedPanelListActivity.this, R.string.toast_found_panel, Toast.LENGTH_SHORT).show();
+
         }
     }
 
+    public static boolean validate(final String ip){
 
+        Pattern pattern = Pattern.compile(PATTERN);
+        Matcher matcher = pattern.matcher(ip);
+        return matcher.matches();
+    }
 
 }

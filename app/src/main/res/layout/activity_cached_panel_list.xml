@@ -43,6 +43,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/cached_panel_list_ip_editText"
         android:layout_alignBottom="@+id/cached_panel_list_search_button"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:inputType="phone"/>
 
 </RelativeLayout>

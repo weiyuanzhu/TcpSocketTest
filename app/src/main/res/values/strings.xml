@@ -191,5 +191,10 @@
     <string name="pref_panel_list_category">SEARCH PANEL MANUALLY</string>
     <string name="toast_no_device_selected">Please select a device</string>
     <string name="toast_select_panel">Please select a panel</string>
+    <string name="toast_found_panel">Panel found</string>
+    <string name="toast_invalid_ip">Please input a valid IP address</string>
+    <string name="toast_panel_not_found">not found</string>
+    <string name="toast_search_signle_ip">Search for panel</string>
+    <string name="toast_panel_exist">"Panel already in the list"</string>
 
 </resources>
