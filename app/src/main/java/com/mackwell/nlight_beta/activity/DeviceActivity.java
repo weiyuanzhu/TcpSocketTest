@@ -591,7 +591,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		 //commandList = CommandFactory.ftTest(device.getAddress());
 		if(isConnected && !isDemo){
-			System.out.println("----------ftTest--------");
+			Log.i(TAG,"----------Function Test--------");
 			List<char[] > commandList = ToggleCmdEnum.FT.multiToggleTest(addressList);
 			connection.fetchData(commandList);
 			if(addressList.contains(64)|| addressList.contains(192)){
@@ -609,7 +609,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		 //commandList = CommandFactory.ftTest(device.getAddress());
 		if(isConnected && !isDemo){
-			System.out.println("----------ftTest--------");
+            Log.i(TAG,"----------Duration Test--------");
 			List<char[] > commandList = ToggleCmdEnum.DT.multiToggleTest(addressList);
 			connection.fetchData(commandList);
 			
@@ -626,7 +626,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		 //commandList = CommandFactory.ftTest(device.getAddress());
 		if(isConnected && !isDemo){
-			System.out.println("----------ftTest--------");
+            Log.i(TAG,"----------Stop Test--------");
 			List<char[] > commandList = ToggleCmdEnum.ST.multiToggleTest(addressList);
 			connection.fetchData(commandList);
 		}
@@ -638,7 +638,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		 //commandList = CommandFactory.ftTest(device.getAddress());
 		if(isConnected && !isDemo){
-			System.out.println("----------ID--------");
+            Log.i(TAG,"----------Identify--------");
 			List<char[] > commandList = ToggleCmdEnum.IDENTIFY.multiToggleTest(addressList);
 			connection.fetchData(commandList);
 		}
@@ -650,7 +650,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		 //commandList = CommandFactory.ftTest(device.getAddress());
 		if(isConnected && !isDemo){
-			System.out.println("--------stopId----------");
+            Log.i(TAG,"----------Stop Id--------");
 			List<char[] > commandList = ToggleCmdEnum.STOP_IDENTIFY.multiToggleTest(addressList);
 			connection.fetchData(commandList);
 		}

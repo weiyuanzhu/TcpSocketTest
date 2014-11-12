@@ -190,5 +190,6 @@
     <string name="title_activity_cached_panel_list">本地列表</string>
     <string name="dialog_SocketTimeout_title">连接到Panel: "<xliff:g id="dialog_SocketTimeout_panelname">%1$s</xliff:g>" 发生超时 (<xliff:g id="dialog_SocketTimeout_ip">%2$s</xliff:g>) </string>
     <string name="pref_panel_list_category">手动搜索Panel</string>
+    <string name="toast_no_device_selected"></string>
 
 </resources>

@@ -156,28 +156,28 @@ public class DeviceListFragment extends Fragment {
 			{
 				case R.id.device_ft:
 					mListener.ft(mAdapter.getSelectedDeviceAddressList());
-					Toast.makeText(getActivity(), R.string.toast_ft_inProgress,Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), mAdapter.getCheckedCount()==0? R.string.toast_no_device_selected:R.string.toast_ft_inProgress,Toast.LENGTH_LONG).show();
 					break;
 				case R.id.device_st:
 					mListener.st(mAdapter.getSelectedDeviceAddressList());
-					Toast.makeText(getActivity(), R.string.toast_stop_all, Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(), mAdapter.getCheckedCount()==0? R.string.toast_no_device_selected:R.string.toast_stop_all, Toast.LENGTH_LONG).show();
 					break;
 				case R.id.device_dt:
 					mListener.dt(mAdapter.getSelectedDeviceAddressList());
-					Toast.makeText(getActivity(), R.string.toast_dt_inProgress, Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(), mAdapter.getCheckedCount()==0? R.string.toast_no_device_selected:R.string.toast_dt_inProgress, Toast.LENGTH_LONG).show();
 					break;
 				case R.id.device_id:
 					mListener.id(mAdapter.getSelectedDeviceAddressList());
-					Toast.makeText(getActivity(), R.string.toast_id_inProgress, Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(),mAdapter.getCheckedCount()==0? R.string.toast_no_device_selected:R.string.toast_id_inProgress, Toast.LENGTH_LONG).show();
 					break;
 				case R.id.device_stopId:
 					mListener.stopId(mAdapter.getSelectedDeviceAddressList());
-					Toast.makeText(getActivity(), R.string.toast_stop_identify, Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(),mAdapter.getCheckedCount()==0? R.string.toast_no_device_selected:R.string.toast_stop_identify, Toast.LENGTH_LONG).show();
 					break;
 				case R.id.device_refresh:
 					
 					mListener.refreshSelectedDevices(mAdapter.getSelectedDeviceAddressList());
-					Toast.makeText(getActivity(), R.string.toast_refresh_device, Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(), mAdapter.getCheckedCount()==0? R.string.toast_no_device_selected:R.string.toast_refresh_device, Toast.LENGTH_LONG).show();
 					break;
 				case R.id.device_select_loop1_all:
 					if(mAdapter.isLoop1Selected()){

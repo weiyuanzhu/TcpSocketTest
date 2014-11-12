@@ -190,6 +190,7 @@
     <string name="title_activity_cached_panel_list">CachedPanelList</string>
     <string name="dialog_SocketTimeout_title">Connexion au panneau: "<xliff:g id="dialog_SocketTimeout_panelname">%1$s</xliff:g>" a été temporisation (<xliff:g id="dialog_SocketTimeout_ip">%2$s</xliff:g>) </string>
     <string name="pref_panel_list_category">Panneau de recherche MANUELLE</string>
+    <string name="toast_no_device_selected">Se il vous plaît sélectionner un périphérique</string>
 
 
 </resources>
