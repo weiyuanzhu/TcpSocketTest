@@ -59,6 +59,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     private String location;
     private List<Integer> reportRawData;
     private List<Report> faultyReportList;
+    private List<Integer> pagesList;
     private List<Report> reportList;
     private Handler mHandler;
     private ReportFragment fragment;
@@ -71,6 +72,28 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     private int pageHeight;
     private int pageWidth;
     public int totalpages;
+    private int currentReportPosition = 0;
+    private int faultyReportPageSoFar = 0;
+
+    //getter and setters
+
+    public int getCurrentReportPosition() {
+        return currentReportPosition;
+    }
+
+    public void setCurrentReportPosition(int currentReportPosition) {
+        this.currentReportPosition = currentReportPosition;
+    }
+
+    public int getFaultyReportPageSoFar() {
+        return faultyReportPageSoFar;
+    }
+
+    public void setFaultyReportPageSoFar(int faultyReportPageSoFar) {
+        this.faultyReportPageSoFar = faultyReportPageSoFar;
+    }
+
+
 
     private int getFaultyReportpages() {
         int temp = 0;
@@ -90,6 +113,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         if (rx.get(1) == Constants.MASTER_GET && rx.get(2) == Constants.GET_REPORT) {
             reportRawData.addAll(rx.subList(3, rx.size() - 6));
         } else {
+            //RX complete
             if (rx.get(1) == Constants.FINISH) {
                 Log.d(TAG_RECEIVE,"ReportRawData size: " + Integer.toString(reportRawData.size()));
                 Log.d(TAG_RECEIVE,reportRawData.toString());
@@ -100,6 +124,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
                 for (Report aReport : reportList) {
                     if (aReport.getFaults() > 0) {
                         faultyReportList.add(aReport);
+
                     }
                 }
 
@@ -130,11 +155,16 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
 
+        //init layout controllers
         ip = getIntent().getStringExtra("ip");
         location = getIntent().getStringExtra("location");
         isDemo = getIntent().getBooleanExtra("demo",true);
+
+        //init properties
         reportRawData = new ArrayList<Integer>();
         reportList = new ArrayList<Report>();
+        pagesList = new ArrayList<Integer>();
+
         loadProgressBar = (ProgressBar) findViewById(R.id.report_progressBar);
 
         //init reportList in demo mode
@@ -283,6 +313,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     private List<Report> initReportList(){
 
         List<Report> list = new ArrayList<Report>();
+
         Report report;
         List<List<Integer>> list2;
         List<Integer> list3;
@@ -320,6 +351,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         public int totalpages = 1;
         public int summaryPages;
         public int detailPages;
+        private PrintAttributes newAttributes;
 
 
 
@@ -332,6 +364,11 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         @Override
 
         public void onLayout(PrintAttributes oldAttributes, PrintAttributes newAttributes, CancellationSignal cancellationSignal, LayoutResultCallback layoutResultCallback, Bundle bundle) {
+
+
+
+            //save attributes
+            this.newAttributes = newAttributes;
 
             //reset current report posistion
             currentReportPosition=0;
@@ -361,6 +398,8 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
             ReportActivity.this.totalpages = totalpages;
 
 
+
+
             if (totalpages > 0) {
                 PrintDocumentInfo.Builder builder = new PrintDocumentInfo.Builder(outputName)
                         .setContentType(PrintDocumentInfo.CONTENT_TYPE_DOCUMENT)
@@ -368,6 +407,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
                 PrintDocumentInfo info = builder.build();
                 layoutResultCallback.onLayoutFinished(info, true);
+
 
             } else {
                 layoutResultCallback.onLayoutFailed("Page count is zero");
@@ -381,6 +421,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
                 if (pagesInRange(pageRanges, i)) {
                     PdfDocument.PageInfo newPage = new PdfDocument.PageInfo.Builder(pageWidth, pageHeight, i).create();
 
+                    if(myPdfDocument==null) myPdfDocument = new PrintedPdfDocument(context, newAttributes);
                     PdfDocument.Page page = myPdfDocument.startPage(newPage);
 
                     if (cancellationSignal.isCanceled()) {
@@ -421,24 +462,9 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
     }
 
-    int currentReportPosition = 0;
-    int reportPageSoFar = 0;
 
-    public int getCurrentReportPosition() {
-        return currentReportPosition;
-    }
 
-    public void setCurrentReportPosition(int currentReportPosition) {
-        this.currentReportPosition = currentReportPosition;
-    }
 
-    public int getReportPageSoFar() {
-        return reportPageSoFar;
-    }
-
-    public void setReportPageSoFar(int reportPageSoFar) {
-        this.reportPageSoFar = reportPageSoFar;
-    }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void drawPage(PdfDocument.Page page, int pagenumber,int summaryPages, int detailPages)
@@ -487,11 +513,11 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
             canvas.drawText("Status", leftMargin + 320, titleBaseLine + 100, paint);
             canvas.drawLine(leftMargin, titleBaseLine + 108, leftMargin + 450, titleBaseLine + 108, paint);
 
-            int remain = reportList.size() - pagenumber * ROW_PER_PAGE;
-            int n = remain > ROW_PER_PAGE ? (pagenumber + 1) * ROW_PER_PAGE : reportList.size();
+            int remainReportNo = reportList.size() - pagenumber * ROW_PER_PAGE;
+            int lastReportOnThisPage = remainReportNo > ROW_PER_PAGE ? (pagenumber + 1) * ROW_PER_PAGE : reportList.size();
 
             Report report;
-            for (int i = (pagenumber * ROW_PER_PAGE), j = 0; i < n; i++, j++) {
+            for (int i = (pagenumber * ROW_PER_PAGE), j = 0; i < lastReportOnThisPage; i++, j++) {
                 report = reportList.get(i);
                 canvas.drawText(dateFormat.format(report.getDate().getTime()), leftMargin, titleBaseLine + 125 + j * 25, paint);
                 canvas.drawText(Integer.toString(report.getFaults()), leftMargin + 200, titleBaseLine + 125 + j * 25, paint);
@@ -543,7 +569,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
             int temp = pagenumber - summaryPages+1;
 
-            int remainPages = reportPageSoFar - (pagenumber-summaryPages);
+            int remainPages = faultyReportPageSoFar - (pagenumber-summaryPages);
             int start = report.getFaultPages()-remainPages;
 //            int n = remainPages > 0 ? (report.getFaults()>22? 22: report.getFaults()) : (report.getFaults()%22-1);
 
@@ -600,6 +626,10 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
     }
 
+    //
+
+
+
     private int getReportNumber(int pageNumber,int summaryPages){
         int temp = pageNumber-summaryPages+1;
 
@@ -608,7 +638,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
             temp2 += faultyReportList.get(i).getFaultPages();
         }
 
-        reportPageSoFar = temp2;
+        faultyReportPageSoFar = temp2;
 
         if(faultyReportList.get(currentReportPosition).getFaultPages()==1 || temp == temp2)
         {
