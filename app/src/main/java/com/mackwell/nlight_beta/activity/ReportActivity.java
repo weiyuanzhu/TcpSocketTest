@@ -64,6 +64,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     private Handler mHandler;
     private ReportFragment fragment;
     private ProgressBar loadProgressBar;
+    private MenuItem saveReportMenuItem;
 
 
 
@@ -209,6 +210,8 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.report, menu);
+        saveReportMenuItem = menu.findItem(R.id.action_save_report);
+
         return true;
     }
 
@@ -281,6 +284,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         public void run() {
             fragment.updateList(reportList);
             loadProgressBar.setVisibility(View.INVISIBLE);
+            saveReportMenuItem.setEnabled(true);
         }
     };
 
