@@ -96,15 +96,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
 
 
-    private int getFaultyReportPages() {
-        int pages = 0; //counter for faulty report pages
-        if(faultyReportList!=null && pagesList!=null) {
-            for (Report aReport : faultyReportList) {
-                pages += aReport.getFaultPages();
-            }
-        }
-        return pages;
-    }
+
 
 
 
@@ -359,28 +351,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         private PrintAttributes newAttributes;
 
 
-        private void updatePageList(){
-            for(int i=0;i<summaryPages;i++){
-                pagesList.add(null);
-            }
 
-            for (int i=0;i<faultyReportList.size();i++) {
-                for(int j=0;j< faultyReportList.get(i).getFaultPages();j++)
-                {
-                    int[] row = new int[3];
-                    row[0] = i;    //fault report index
-                    row[1] = j*22; //start point
-
-                    int n = faultyReportList.get(i).getFaultyDeviceList().size() - j*22;
-                    row[2] = n>22? 22:n; //end point
-
-                    pagesList.add(row);
-                }
-
-            }
-
-
-        }
 
 
 
@@ -482,124 +453,104 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
             writeResultCallback.onWriteFinished(pageRanges);
         }
 
-    }
+        @TargetApi(Build.VERSION_CODES.KITKAT)
+        private void drawPage(PdfDocument.Page page, int pagenumber,int summaryPages, int detailPages)
+        {
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private boolean pagesInRange(PageRange[] pageRanges,int page) {
-        for (PageRange pageRange : pageRanges) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-            if ((page >= pageRange.getStart()) && (page <= pageRange.getEnd())) {
-                return true;
-            }
-        }
-        return false;
-
-    }
+            Canvas canvas = page.getCanvas();
 
 
+            int imageBaseLine = 10;
+            int imageLeftMargin = 100;
+            int titleBaseLine = 130;
+            int leftMargin = 54;
+            int rightMargin = 104;
+            int bottomMargin = 20;
 
+            Paint paint = new Paint();
+            paint.setColor(Color.BLACK);
 
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    private void drawPage(PdfDocument.Page page, int pagenumber,int summaryPages, int detailPages)
-    {
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-        Canvas canvas = page.getCanvas();
-
-
-        int imageBaseLine = 10;
-        int imageLeftMargin = 100;
-        int titleBaseLine = 130;
-        int leftMargin = 54;
-        int rightMargin = 104;
-        int bottomMargin = 20;
-
-        Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
-
-        if(pagenumber < summaryPages) {
+            if(pagenumber < summaryPages) {
 
 
 
 
-            Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.nlight_connect);
+                Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.nlight_connect);
 
-            Matrix matrix = new Matrix();
-            matrix.postScale(0.15f, 0.15f);
-            Bitmap dstbmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
-            canvas.drawBitmap(dstbmp, imageLeftMargin, imageBaseLine, null);
+                Matrix matrix = new Matrix();
+                matrix.postScale(0.15f, 0.15f);
+                Bitmap dstbmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+                canvas.drawBitmap(dstbmp, imageLeftMargin, imageBaseLine, null);
 
-            paint.setTextSize(40);
-            canvas.drawText("Panel report", leftMargin, titleBaseLine, paint);
+                paint.setTextSize(40);
+                canvas.drawText("Panel report", leftMargin, titleBaseLine, paint);
 
-            paint.setTextSize(15);
+                paint.setTextSize(15);
 
-            canvas.drawText("Report type: Panel status report", leftMargin, titleBaseLine + 40, paint);
+                canvas.drawText("Report type: Panel status report", leftMargin, titleBaseLine + 40, paint);
 
-            canvas.drawText("Panel location: " + location, leftMargin, titleBaseLine + 60, paint);
+                canvas.drawText("Panel location: " + location, leftMargin, titleBaseLine + 60, paint);
 
-            paint.setTextSize(12);
+                paint.setTextSize(12);
 
-            canvas.drawText("Date/Time", leftMargin, titleBaseLine + 100, paint);
-            canvas.drawText("Fault(s) found", leftMargin + 170, titleBaseLine + 100, paint);
-            canvas.drawText("Status", leftMargin + 320, titleBaseLine + 100, paint);
-            canvas.drawLine(leftMargin, titleBaseLine + 108, leftMargin + 450, titleBaseLine + 108, paint);
+                canvas.drawText("Date/Time", leftMargin, titleBaseLine + 100, paint);
+                canvas.drawText("Fault(s) found", leftMargin + 170, titleBaseLine + 100, paint);
+                canvas.drawText("Status", leftMargin + 320, titleBaseLine + 100, paint);
+                canvas.drawLine(leftMargin, titleBaseLine + 108, leftMargin + 450, titleBaseLine + 108, paint);
 
-            int remainReportNo = reportList.size() - pagenumber * ROW_PER_PAGE;
-            int lastReportOnThisPage = remainReportNo > ROW_PER_PAGE ? (pagenumber + 1) * ROW_PER_PAGE : reportList.size();
+                int remainReportNo = reportList.size() - pagenumber * ROW_PER_PAGE;
+                int lastReportOnThisPage = remainReportNo > ROW_PER_PAGE ? (pagenumber + 1) * ROW_PER_PAGE : reportList.size();
 
-            Report report;
-            for (int i = (pagenumber * ROW_PER_PAGE), j = 0; i < lastReportOnThisPage; i++, j++) {
-                report = reportList.get(i);
-                canvas.drawText(dateFormat.format(report.getDate().getTime()), leftMargin, titleBaseLine + 125 + j * 25, paint);
-                canvas.drawText(Integer.toString(report.getFaults()), leftMargin + 200, titleBaseLine + 125 + j * 25, paint);
-                canvas.drawText(report.isFaulty() ? "Fault(s) found" : "OK", leftMargin + 330, titleBaseLine + 125 + j * 25, paint);
-                canvas.drawLine(leftMargin, titleBaseLine + 133 + j * 25, leftMargin + 450, titleBaseLine + 133 + j * 25, paint);
+                Report report;
+                for (int i = (pagenumber * ROW_PER_PAGE), j = 0; i < lastReportOnThisPage; i++, j++) {
+                    report = reportList.get(i);
+                    canvas.drawText(dateFormat.format(report.getDate().getTime()), leftMargin, titleBaseLine + 125 + j * 25, paint);
+                    canvas.drawText(Integer.toString(report.getFaults()), leftMargin + 200, titleBaseLine + 125 + j * 25, paint);
+                    canvas.drawText(report.isFaulty() ? "Fault(s) found" : "OK", leftMargin + 330, titleBaseLine + 125 + j * 25, paint);
+                    canvas.drawLine(leftMargin, titleBaseLine + 133 + j * 25, leftMargin + 450, titleBaseLine + 133 + j * 25, paint);
+                }
             }
 
-
-        }
-
-        else if (pagenumber < totalpages) {
+            else if (pagenumber < totalpages) {
 
 
-            Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.nlight_connect);
+                Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.nlight_connect);
 
-            Matrix matrix = new Matrix();
-            matrix.postScale(0.15f, 0.15f);
-            Bitmap dstbmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
-            canvas.drawBitmap(dstbmp, imageLeftMargin, imageBaseLine, null);
+                Matrix matrix = new Matrix();
+                matrix.postScale(0.15f, 0.15f);
+                Bitmap dstbmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
+                canvas.drawBitmap(dstbmp, imageLeftMargin, imageBaseLine, null);
 
 //            int reportNumber = getReportNumber(pagenumber,summaryPages);
-            int reportNumber = pagesList.get(pagenumber)[0];
+                int reportNumber = pagesList.get(pagenumber)[0];
 
-            canvas.drawText("Report type: ", leftMargin, titleBaseLine + 40, paint);
-            canvas.drawText("Faults summary report", leftMargin + 150, titleBaseLine + 40, paint);
+                canvas.drawText("Report type: ", leftMargin, titleBaseLine + 40, paint);
+                canvas.drawText("Faults summary report", leftMargin + 150, titleBaseLine + 40, paint);
 
-            dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            canvas.drawText("Report date: " , leftMargin, titleBaseLine + 60, paint);
-            canvas.drawText(dateFormat.format(faultyReportList.get(reportNumber).getDate().getTime()) , leftMargin + 150, titleBaseLine + 60, paint);
+                dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                canvas.drawText("Report date: " , leftMargin, titleBaseLine + 60, paint);
+                canvas.drawText(dateFormat.format(faultyReportList.get(reportNumber).getDate().getTime()) , leftMargin + 150, titleBaseLine + 60, paint);
 
-            dateFormat = new SimpleDateFormat("HH:mm:ss");
-            canvas.drawText("Report time:", leftMargin, titleBaseLine + 80, paint);
+                dateFormat = new SimpleDateFormat("HH:mm:ss");
+                canvas.drawText("Report time:", leftMargin, titleBaseLine + 80, paint);
 
 
-            canvas.drawText(dateFormat.format(faultyReportList.get(reportNumber).getDate().getTime()) , leftMargin + 150, titleBaseLine + 80, paint);
+                canvas.drawText(dateFormat.format(faultyReportList.get(reportNumber).getDate().getTime()) , leftMargin + 150, titleBaseLine + 80, paint);
 
-            canvas.drawText("Panel location: ", leftMargin, titleBaseLine + 100, paint);
-            canvas.drawText(location, leftMargin + 150, titleBaseLine + 100, paint);
+                canvas.drawText("Panel location: ", leftMargin, titleBaseLine + 100, paint);
+                canvas.drawText(location, leftMargin + 150, titleBaseLine + 100, paint);
 
-            paint.setTextSize(12);
-            canvas.drawText("Loop", leftMargin, titleBaseLine + 150, paint);
-            canvas.drawText("Device or group", leftMargin + 40, titleBaseLine + 150, paint);
-            canvas.drawText("Serial number", leftMargin + 150, titleBaseLine + 150, paint);
-            canvas.drawText("Location", leftMargin + 250, titleBaseLine + 150, paint);
-            canvas.drawText("Fault description", leftMargin + 350, titleBaseLine + 150, paint);
-            canvas.drawLine(leftMargin, titleBaseLine + 158, leftMargin + 450, titleBaseLine + 158, paint);
+                paint.setTextSize(12);
+                canvas.drawText("Loop", leftMargin, titleBaseLine + 150, paint);
+                canvas.drawText("Device/group", leftMargin + 40, titleBaseLine + 150, paint);
+                canvas.drawText("Serial number", leftMargin + 130, titleBaseLine + 150, paint);
+                canvas.drawText("Location", leftMargin + 230, titleBaseLine + 150, paint);
+                canvas.drawText("Fault description", leftMargin + 320, titleBaseLine + 150, paint);
+                canvas.drawLine(leftMargin, titleBaseLine + 158, leftMargin + 450, titleBaseLine + 158, paint);
 
-            Report report = faultyReportList.get(reportNumber);
+                Report report = faultyReportList.get(reportNumber);
 
 
 //            int remainPages = faultyReportPageSoFar - (pagenumber-summaryPages);
@@ -617,30 +568,58 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 //            }
 //            else n = report.getFaultyDeviceList().size()%22;
 
-            for (int i=0,j=0; i< pagesList.get(pagenumber)[2]; i++,j++) {
+                int deviceRowsInThisPage = pagesList.get(pagenumber)[2];
+                int groupRowsInThisPage = pagesList.get(pagenumber)[4];
 
-                if(report.getFaultyDeviceList().size()>0) {
+                int j =0;
+                for (int i=0;i < deviceRowsInThisPage; i++,j++) {
 
-                    ArrayList<Integer> list = (ArrayList<Integer>) report.getFaultyDeviceList().get(i + pagesList.get(pagenumber)[1]);
+                    if(report.getFaultyDeviceList().size()>0) {
 
-                    int address = list.get(0);
-                    int fs = list.get(1);
-                    long serialNumber = list.get(2) + 256 * list.get(3) + 65536 * list.get(4) + 16777216L * list.get(5);
+                        ArrayList<Integer> row = (ArrayList<Integer>) report.getFaultyDeviceList().get(i + pagesList.get(pagenumber)[1]);
+
+                        int address = row.get(0);
+                        int fs = row.get(1);
+                        long serialNumber = row.get(2) + 256 * row.get(3) + 65536 * row.get(4) + 16777216L * row.get(5);
+
+                        canvas.drawText((address & 0x80) == 0 ? "01" : "02", leftMargin, titleBaseLine + 170 + 20 * j, paint);
+                        canvas.drawText(Integer.toString(address & 63), leftMargin + 40, titleBaseLine + 170 + 20 * j, paint);
+                        canvas.drawText(Long.toString(serialNumber), leftMargin + 130, titleBaseLine + 170 + 20 * j, paint);
+                        canvas.drawText("-", leftMargin + 230, titleBaseLine + 150, paint);
+                        canvas.drawText(Device.getFailureStatusText(fs), leftMargin + 320, titleBaseLine + 170 + 20 * j, paint);
+                        canvas.drawLine(leftMargin, titleBaseLine + 176 + 20 * j, leftMargin + 450, titleBaseLine + 176 + 20 * j, paint);
+                    }
 
 
-                    canvas.drawText((address & 0x80) == 0 ? "01" : "02", leftMargin, titleBaseLine + 170 + 20 * j, paint);
-                    canvas.drawText(Integer.toString(address & 63), leftMargin + 40, titleBaseLine + 170 + 20 * j, paint);
-                    canvas.drawText(Long.toString(serialNumber), leftMargin + 150, titleBaseLine + 170 + 20 * j, paint);
-                    canvas.drawText("-", leftMargin + 250, titleBaseLine + 150, paint);
-                    canvas.drawText(Device.getFailureStatusText(fs), leftMargin + 350, titleBaseLine + 170 + 20 * j, paint);
-                    canvas.drawLine(leftMargin, titleBaseLine + 176 + 20 * j, leftMargin + 450, titleBaseLine + 176 + 20 * j, paint);
                 }
+
+
+                for (int i=0; i<groupRowsInThisPage;i++,j++)
+                {
+                    ArrayList<Integer> row = (ArrayList<Integer>) report.getLoopGroupStatus().get(i+ pagesList.get(pagenumber)[3]);
+                    int loop = row.get(0);
+                    int group = row.get(1);
+                    int ft = row.get(2);
+                    int dt = row.get(3);
+
+                    canvas.drawText((loop == 0 ? "01" : "02"), leftMargin, titleBaseLine + 170 + 20 * j, paint);
+                    canvas.drawText("Group " + Integer.toString(group), leftMargin + 40, titleBaseLine + 170 + 20 * j, paint);
+                    canvas.drawText("-", leftMargin + 130, titleBaseLine + 170 + 20 * j, paint);
+                    canvas.drawText("-", leftMargin + 230, titleBaseLine + 150, paint);
+                    canvas.drawText(ReportFaultsActivity.getGroupFaultDescription(ft,dt), leftMargin + 320, titleBaseLine + 170 + 20 * j, paint);
+                    canvas.drawLine(leftMargin, titleBaseLine + 176 + 20 * j, leftMargin + 450, titleBaseLine + 176 + 20 * j, paint);
+
+
+                }
+
+
+
             }
-        }
 
-        pagenumber++;
 
-        canvas.drawText("Page " + Integer.toString(pagenumber),pageWidth-rightMargin,pageHeight-bottomMargin,paint);
+            pagenumber++;
+
+            canvas.drawText("Page " + Integer.toString(pagenumber),pageWidth-rightMargin,pageHeight-bottomMargin,paint);
 
 
         /*if (pagenumber % 2 == 0) {
@@ -654,14 +633,103 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
         canvas.drawCircle(pageInfo.getPageWidth()/2,pageInfo.getPageHeight()/2,150, paint);
         */
+        }
+
+        /**
+         * Go through faultyReportList, calculate and put result in a List<int[]>
+         * Result includes: index of faulty report,device start point, number of device error, group start point, number of groups error
+         */
+        private void updatePageList(){
+            for(int i=0;i<summaryPages;i++){
+                pagesList.add(null);
+            }
+
+            for (int i=0;i<faultyReportList.size();i++) {
+
+                int groupErrorCounter = 0;
+
+                //put device error info in the array
+                for(int j=0;j< faultyReportList.get(i).getFaultPages();j++)
+                {
+
+                    int[] row = new int[5];
+                    row[0] = i;    //fault report index
+                    row[1] = j*22; //start point
+
+                    int n = faultyReportList.get(i).getFaultyDeviceList().size() - j*22;
+                    if(n<0) n=0;
+
+                    if (n>22) {
+                        row[2] = 22;
+                        row[3] = 0;
+                        row[4] = 0;
+                    }
+                    else{
+                        row[2] = n; //end point
+                        row[3] = groupErrorCounter;
+
+                        int m =  faultyReportList.get(i).getLoopGroupStatus().size()-groupErrorCounter + n;
+                        if(m<=22)
+                        {
+                            int remain = faultyReportList.get(i).getLoopGroupStatus().size()-groupErrorCounter;
+                            row[4] = remain >22? 22:remain;
+                        }
+                        else{
+                            row[4] = 22-n;
+                            groupErrorCounter += (22-n);
+                        }
+
+                    }
 
 
+                    pagesList.add(row);
+                }
+
+                //put group error info in the array
+
+
+            }
+
+
+        }
+
+        /**
+         * Check if given page is in the range
+         * @param pageRanges
+         * @param page
+         * @return boolean
+         */
+        @TargetApi(Build.VERSION_CODES.KITKAT)
+        private boolean pagesInRange(PageRange[] pageRanges,int page) {
+            for (PageRange pageRange : pageRanges) {
+
+                if ((page >= pageRange.getStart()) && (page <= pageRange.getEnd())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Calculate total page number for faulty report detail
+         * @return total page number
+         */
+        private int getFaultyReportPages() {
+            int pages = 0; //counter for faulty report pages
+            if(faultyReportList!=null && pagesList!=null) {
+                for (Report aReport : faultyReportList) {
+                    pages += aReport.getFaultPages();
+                }
+            }
+            return pages;
+        }
     }
 
-    //
 
 
-
+    /**
+     * deprecated
+     */
     private int getReportNumber(int pageNumber,int summaryPages){
         int temp = pageNumber-summaryPages+1;
 

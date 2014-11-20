@@ -205,14 +205,15 @@ public class DataHelper {
 
             //Loop 1 group totalFaults
 
+            List<List<Integer>> allGroupStatusList = new ArrayList<List<Integer>>();
             for(int h=0;h<2;h++)
             {
-
-                int groupNumber = 0;
                 List<List<Integer>> groupStatusList = new ArrayList<List<Integer>>();
 
-                //10-13 14-17 group status bytes
-                for(int j = (h*4+10); j < (14 + h*4);j++)
+                int groupNumber = 0;
+
+                //10-11 12-13 group status bytes
+                for(int j = (h*2+10); j < (12 + h*2);j++)
                 {
                     int group = reportData.get(j);
                     int flag = 0x80;
@@ -224,6 +225,7 @@ public class DataHelper {
                         int dt;
 
                         ArrayList<Integer> groupStatus = new ArrayList<Integer>();
+                        groupStatus.add(h);
                         groupStatus.add(groupNumber);
 
                         groupStatus.add((group & flag)>0 ? 1:0);
@@ -232,12 +234,15 @@ public class DataHelper {
                         groupStatus.add((group & flag)>0 ? 1:0);
                         flag /= 2;
 
-                        if(groupStatus.get(1)!=0 || groupStatus.get(2)!=0)  groupStatusList.add(groupStatus);
+                        if(groupStatus.get(2)!=0 || groupStatus.get(3)!=0) {
+                            groupStatusList.add(groupStatus);
+                            allGroupStatusList.add(groupStatus);
+                        }
 
                         groupNumber ++;
                     } // end of 1 byte
 
-                } // end of 4 bytes
+                } // end of 2 bytes
 
                 //set group status to report
                 switch(h)
@@ -250,7 +255,9 @@ public class DataHelper {
                 }
 
 
-            }
+            } //end of 4 bytes
+
+            report.setLoopGroupStatus(allGroupStatusList);
 
 
             //set report properties

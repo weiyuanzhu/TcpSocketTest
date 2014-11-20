@@ -110,12 +110,12 @@ public class ReportFaultsActivity extends BaseActivity {
             }
 
             for(int i=0; i<report.getLoop1GroupStatus().size();i++){
-                int groupAddress = report.getLoop1GroupStatus().get(i).get(0);
-                int ft = report.getLoop1GroupStatus().get(i).get(1);
-                int dt = report.getLoop1GroupStatus().get(i).get(2);
+                int groupAddress = report.getLoop1GroupStatus().get(i).get(1);
+                int ft = report.getLoop1GroupStatus().get(i).get(2);
+                int dt = report.getLoop1GroupStatus().get(i).get(3);
 
                 map = new HashMap<String, String>();
-                map.put("loop", "Loop1" );
+                map.put("loop", "01" );
                 map.put("device","Group " + Integer.toString(groupAddress));
                 map.put("serial", "-");
                 map.put("location", "-");
@@ -126,12 +126,12 @@ public class ReportFaultsActivity extends BaseActivity {
             }
 
             for(int i=0; i<report.getLoop2GroupStatus().size();i++){
-                int groupAddress = report.getLoop1GroupStatus().get(i).get(0);
-                int ft = report.getLoop1GroupStatus().get(i).get(1);
-                int dt = report.getLoop1GroupStatus().get(i).get(2);
+                int groupAddress = report.getLoop2GroupStatus().get(i).get(1);
+                int ft = report.getLoop2GroupStatus().get(i).get(2);
+                int dt = report.getLoop2GroupStatus().get(i).get(3);
 
                 map = new HashMap<String, String>();
-                map.put("loop", "Loop2" );
+                map.put("loop", "02" );
                 map.put("device", "Group " + Integer.toString(groupAddress));
                 map.put("serial", "-");
                 map.put("location", "-");
@@ -145,7 +145,7 @@ public class ReportFaultsActivity extends BaseActivity {
         return dataList;
     }
 
-    private String getGroupFaultDescription(int ft, int dt){
+    static public String getGroupFaultDescription(int ft, int dt){
 
         if(ft>0 && dt>0){
             return "Group function and duration test missed";
