@@ -915,5 +915,20 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		dialog.show(getFragmentManager(), "SetLocation");	
 	}
 
+
+    //set result intent for Panel Activity
+    @Override
+    public void onBackPressed() {
+
+        Intent intent = NavUtils.getParentActivityIntent(this);
+        intent.putExtra("ip",panel.getIp());
+        intent.putExtra("panel",panel);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        setResult(Activity.RESULT_OK,intent);
+        super.onBackPressed();
+
+
+    }
 }
 
