@@ -89,56 +89,45 @@ public class ReportFaultsActivity extends BaseActivity {
 
         if (report !=null) {
 
-            for(int i=0; i<report.getFaultyDeviceList().size();i++) {
-                map = new HashMap<String, String>();
+            if (report.getFaultyDeviceList()!=null) {
+                for(int i=0; i<report.getFaultyDeviceList().size();i++) {
+                    map = new HashMap<String, String>();
 
-                List<Integer> list = report.getFaultyDeviceList().get(i);
+                    List<Integer> list = report.getFaultyDeviceList().get(i);
 
-                int address = list.get(0);
-                int fs = list.get(1);
-                long serialNumber = list.get(2) + 256 * list.get(3) + 65536 * list.get(4) + 16777216L * list.get(5);
+                    int address = list.get(0);
+                    int fs = list.get(1);
+                    long serialNumber = list.get(2) + 256 * list.get(3) + 65536 * list.get(4) + 16777216L * list.get(5);
 
 
-                map.put("loop", (address & 0x80)==0? "01" : "02" );
-                map.put("device", Integer.toString(address & 63));
-                map.put("serial", Long.toString(serialNumber));
-                map.put("location", "-");
-                map.put("description", Device.getFailureStatusText(fs));
+                    map.put("loop", (address & 0x80)==0? "01" : "02" );
+                    map.put("device", Integer.toString(address & 63));
+                    map.put("serial", Long.toString(serialNumber));
+                    map.put("location", "-");
+                    map.put("description", Device.getFailureStatusText(fs));
 
-                dataList.add(map);
+                    dataList.add(map);
 
+                }
             }
 
-            for(int i=0; i<report.getLoop1GroupStatus().size();i++){
-                int groupAddress = report.getLoop1GroupStatus().get(i).get(1);
-                int ft = report.getLoop1GroupStatus().get(i).get(2);
-                int dt = report.getLoop1GroupStatus().get(i).get(3);
 
-                map = new HashMap<String, String>();
-                map.put("loop", "01" );
-                map.put("device","Group " + Integer.toString(groupAddress));
-                map.put("serial", "-");
-                map.put("location", "-");
-                map.put("description", getGroupFaultDescription(ft,dt));
+            if (report.getLoopGroupStatus()!=null) {
+                for(int i=0; i<report.getLoop2GroupStatus().size();i++){
+                    int groupAddress = report.getLoop2GroupStatus().get(i).get(1);
+                    int ft = report.getLoop2GroupStatus().get(i).get(2);
+                    int dt = report.getLoop2GroupStatus().get(i).get(3);
 
-                dataList.add(map);
+                    map = new HashMap<String, String>();
+                    map.put("loop", "02" );
+                    map.put("device", "Group " + Integer.toString(groupAddress));
+                    map.put("serial", "-");
+                    map.put("location", "-");
+                    map.put("description", getGroupFaultDescription(ft,dt));
 
-            }
+                    dataList.add(map);
 
-            for(int i=0; i<report.getLoop2GroupStatus().size();i++){
-                int groupAddress = report.getLoop2GroupStatus().get(i).get(1);
-                int ft = report.getLoop2GroupStatus().get(i).get(2);
-                int dt = report.getLoop2GroupStatus().get(i).get(3);
-
-                map = new HashMap<String, String>();
-                map.put("loop", "02" );
-                map.put("device", "Group " + Integer.toString(groupAddress));
-                map.put("serial", "-");
-                map.put("location", "-");
-                map.put("description", getGroupFaultDescription(ft,dt));
-
-                dataList.add(map);
-
+                }
             }
         }
 

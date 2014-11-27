@@ -309,21 +309,21 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
     private List<Report> initReportList(){
 
-        List<Report> list = new ArrayList<Report>();
+        List<Report> reportList = new ArrayList<Report>();
 
         Report report;
-        List<List<Integer>> list2;
-        List<Integer> list3;
+        List<List<Integer>> faultyDeviceList;
+        List<Integer> faultStatus;
 
         for(int i=0; i<1; i++){
 
             report = new Report(1, Calendar.getInstance(),true);
 
-            list2 = new ArrayList<List<Integer>>();
-            list3 =  Arrays.asList(1,130,255,255,255,255);
-            list2.add(list3);
-            report.setFaultyDeviceList(list2);
-            list.add(report);
+            faultyDeviceList = new ArrayList<List<Integer>>();
+            faultStatus =  Arrays.asList(1,130,255,255,255,255);
+            faultyDeviceList.add(faultStatus);
+            report.setFaultyDeviceList(faultyDeviceList);
+            reportList.add(report);
         }
 
 
@@ -332,7 +332,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
 
 
-        return list;
+        return reportList;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
