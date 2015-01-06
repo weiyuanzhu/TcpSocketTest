@@ -1,5 +1,6 @@
 package com.mackwell.nlight_beta.activity;
 
+import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -33,16 +34,16 @@ import com.mackwell.nlight_beta.models.Device;
 import com.mackwell.nlight_beta.models.Panel;
 import com.mackwell.nlight_beta.activity.DeviceListFragment.OnDevicdListFragmentListener;
 import com.mackwell.nlight_beta.activity.InputDialogFragment.NoticeDialogListener;
-import com.mackwell.nlight_beta.socket.TCPConnection;
+import com.mackwell.nlight_beta.socket.TcpLongConnection;
 import com.mackwell.nlight_beta.util.Constants;
-import com.mackwell.nlight_beta.util.DataParser;
+import com.mackwell.nlight_beta.util.DataHelper;
 import com.mackwell.nlight_beta.util.GetCmdEnum;
 import com.mackwell.nlight_beta.util.SetCmdEnum;
 import com.mackwell.nlight_beta.util.ToggleCmdEnum;
 
 
 
-public class DeviceActivity extends BaseActivity implements OnDevicdListFragmentListener,TCPConnection.CallBack, 
+public class DeviceActivity extends BaseActivity implements OnDevicdListFragmentListener,TcpLongConnection.CallBack,
 															NoticeDialogListener, SearchView.OnQueryTextListener,PopupMenu.OnMenuItemClickListener{
 	private static final String TAG= "DeviceActivity";
 
@@ -93,7 +94,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	private boolean splitScreen = false;
 
 	private boolean autoRefresh = false;
-	private boolean autoRefreshAllDevices = false;
+	private boolean autoRefreshAllDevicesFlag = false;
 	private boolean autoRefreshSelectedDevice = false;
 	
 	private boolean multiSelectionMode = false;
@@ -111,6 +112,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 
 	private int currentDevicAddress = 0;
 	private int currentGroupPosition = 0;
+    private int currentDevicePosition = 0;
 	
 	
 	private SearchView searchView= null; //search view for search button on the action bar
@@ -141,11 +143,11 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		
 		/**
-		 * @return the autoRefreshAllDevices
+		 * @return the autoRefreshAllDevicesFlag
 		 */
-		public boolean isAutoRefreshAllDevices() {
-			autoRefreshAllDevices = sharedPreferences.getBoolean("pref_auto_refresh_all_devices", false);
-			return autoRefreshAllDevices;
+		public boolean isAutoRefreshAllDevicesFlag() {
+			autoRefreshAllDevicesFlag = sharedPreferences.getBoolean("pref_auto_refresh_all_devices", false);
+			return autoRefreshAllDevicesFlag;
 		}
 
 		/**
@@ -167,6 +169,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		if(rx.get(1)==160 && rx.get(2)==39){
 			
 			int address = rx.get(3);
+
 			
 			panel.updateDeviceByAddress(address, rx);
 			/*if(currentSelectedDevice!=null){
@@ -178,12 +181,24 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 			
 			//connection.setListening(true);
 			mHandler.post(updateDeviceListFragment);
-		}
+		} /*else if(rx.get(1)==173)
+        {
+            if(!multiSelectionMode) connection.setListening(false);
+        }*/
 		
 	}
-	
-	
-	@Override
+
+    @Override
+    public void onError(String ip, Exception e) {
+        if (e instanceof TcpLongConnection.PanelResetException) {
+            mHandler.post(new PanelResetError(ip,e));
+        } else if(e instanceof SocketTimeoutException){
+            mHandler.post(new PanelResetError(ip,e));
+        }
+
+    }
+
+    @Override
 	public void cancel() {
 		// TODO Auto-generated method stub
 		
@@ -201,7 +216,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		//update both device fragment and device list display
 		deviceInfoFragment.updateLocation();
-		deviceListFragment.updateLocation(currentGroupPosition, currentDevicAddress, input);
+		deviceListFragment.updateLocation(currentGroupPosition, currentDevicePosition, input);
 		
 		//send command to panel if not in demo mode
 		
@@ -210,7 +225,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		
 			buffer.add(currentDevicAddress);
-			buffer.addAll(DataParser.convertString(input));
+			buffer.addAll(DataHelper.convertString(input));
 			System.out.println(buffer);
 			List<char[] > commandList = SetCmdEnum.SET_DEVICE_NAME.set(buffer);
 			connection.fetchData(commandList);
@@ -229,10 +244,14 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	 * @see nlight_android.nlight.DeviceListFragment.OnDevicdListFragmentListener#onDeviceItemClicked(int, int)
 	 */
 	@Override
-	public void onDeviceItemClicked(int groupPosition, int childPosition) {
+	public void onDeviceItemClicked(int groupPosition, int childPosition,int deviceAddress) {
 		
-		currentDevicAddress = childPosition;
+		currentDevicAddress = deviceAddress;
 		currentGroupPosition = groupPosition;
+        currentDevicePosition = childPosition;
+
+
+
 		
 		System.out.println("current device:-------------->" + currentDevicAddress);
 		System.out.println("groupPositon: " + groupPosition + " childPosition: " + childPosition);
@@ -240,11 +259,11 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		if(groupPosition==0)
 		{
 			currentSelectedDevice = panel.getLoop1().getDevice(childPosition);
-			if(splitScreen) deviceInfoFragment = DeviceInfoFragment.newInstance(currentSelectedDevice, isAutoRefreshAllDevices());
+			if(splitScreen) deviceInfoFragment = DeviceInfoFragment.newInstance(currentSelectedDevice, isAutoRefreshAllDevicesFlag());
 		}
 		else {
 			currentSelectedDevice = panel.getLoop2().getDevice(childPosition);
-			if(splitScreen) deviceInfoFragment = DeviceInfoFragment.newInstance(currentSelectedDevice,isAutoRefreshAllDevices());
+			if(splitScreen) deviceInfoFragment = DeviceInfoFragment.newInstance(currentSelectedDevice, isAutoRefreshAllDevicesFlag());
 		}
 
 //      if in splitScreen Mode, then set fragment transaction
@@ -272,6 +291,11 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 	@Override
 	public void onMultiSelectionMode(boolean multiSelect) {
 		multiSelectionMode = multiSelect;
+
+        //set connection read timeout to 0 if it is in multiSelection mode
+        //to prevent receive package lost
+        //set it to 5 seconds after quite multiSelection mode
+        //connection.setTimeOut(multiSelect ? 0 : 5000);
 
 		currentSelectedDevice = null;
 		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
@@ -331,10 +355,11 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
             this.imageView = (ImageView) findViewById(R.id.deviceInfo_image);
             this.messageTextView = (TextView) findViewById(R.id.deviceInfo_faultyNo_text);
 
+            //set status text
             messageTextView.setText(getResources().getString(R.string.text_panel_faulty_message, panel.getFaultDeviceNo()));
 
-
-            if(panel.getOverAllStatus()!=0)
+            //set status image
+            if(panel.getOverAllStatus()!=Panel.OK)
             {
                 imageView.setImageResource(R.drawable.redcross);
             }
@@ -359,18 +384,15 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		getActionBar().setTitle(title);
 		getActionBar().setSubtitle(R.string.subtitle_activity_device);
 		
-		if(isConnected && !isDemo) connection = new TCPConnection(this,panel.getIp());
-		
+		if(isConnected && !isDemo) connection = new TcpLongConnection(this,panel.getIp());
 
-
-		
 		deviceListFragment = (DeviceListFragment) getFragmentManager().findFragmentById(R.id.device_list_fragment);
 		deviceListFragment.setLoop1(panel.getLoop1());
 		deviceListFragment.setLoop2(panel.getLoop2());
 		
 		
 		//start auto refresh
-		mHandler.post(auroRefreshAllDevices);
+		mHandler.post(autoRefreshAllDevices);
 		mHandler.postDelayed(autoRefreshCurrentDevice,TimeUnit.SECONDS.toMillis(1));
 
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
@@ -512,7 +534,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
         //re-connect if app is switched to background
         if(connection== null)
         {
-            if(isConnected && !isDemo) connection = new TCPConnection(this,panel.getIp());
+            if(isConnected && !isDemo) connection = new TcpLongConnection(this,panel.getIp());
         }
 
         isActivityActive = true;
@@ -528,7 +550,11 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
     @Override
     protected void onStop() {
 
-
+        //close connection and socket when activity is at background or not visible
+        if(connection!=null){
+            connection.closeConnection();
+            connection = null;
+        }
 
         super.onStop();
 
@@ -545,7 +571,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		}
 		
 		//stop all repeating tasks
-		mHandler.removeCallbacks(auroRefreshAllDevices);
+		mHandler.removeCallbacks(autoRefreshAllDevices);
 		mHandler.removeCallbacks(autoRefreshCurrentDevice);
 		super.onDestroy();
 	}
@@ -565,7 +591,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		 //commandList = CommandFactory.ftTest(device.getAddress());
 		if(isConnected && !isDemo){
-			System.out.println("----------ftTest--------");
+			Log.i(TAG,"----------Function Test--------");
 			List<char[] > commandList = ToggleCmdEnum.FT.multiToggleTest(addressList);
 			connection.fetchData(commandList);
 			if(addressList.contains(64)|| addressList.contains(192)){
@@ -583,7 +609,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		 //commandList = CommandFactory.ftTest(device.getAddress());
 		if(isConnected && !isDemo){
-			System.out.println("----------ftTest--------");
+            Log.i(TAG,"----------Duration Test--------");
 			List<char[] > commandList = ToggleCmdEnum.DT.multiToggleTest(addressList);
 			connection.fetchData(commandList);
 			
@@ -600,7 +626,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		 //commandList = CommandFactory.ftTest(device.getAddress());
 		if(isConnected && !isDemo){
-			System.out.println("----------ftTest--------");
+            Log.i(TAG,"----------Stop Test--------");
 			List<char[] > commandList = ToggleCmdEnum.ST.multiToggleTest(addressList);
 			connection.fetchData(commandList);
 		}
@@ -612,7 +638,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		 //commandList = CommandFactory.ftTest(device.getAddress());
 		if(isConnected && !isDemo){
-			System.out.println("----------ID--------");
+            Log.i(TAG,"----------Identify--------");
 			List<char[] > commandList = ToggleCmdEnum.IDENTIFY.multiToggleTest(addressList);
 			connection.fetchData(commandList);
 		}
@@ -624,7 +650,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 		 //commandList = CommandFactory.ftTest(device.getAddress());
 		if(isConnected && !isDemo){
-			System.out.println("--------stopId----------");
+            Log.i(TAG,"----------Stop Id--------");
 			List<char[] > commandList = ToggleCmdEnum.STOP_IDENTIFY.multiToggleTest(addressList);
 			connection.fetchData(commandList);
 		}
@@ -642,7 +668,7 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		System.out.println("GroupOpen/Close Test " + groupPosition);
 		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 		
-		//set currentSelectedDevcict to null to prevent fragment error 
+		//set currentSelectedDevcict to null to prevent fragment onError
 //		(getResources() can not be called when fragment is not attached)
 		currentSelectedDevice = null;
 
@@ -758,15 +784,15 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		
 	};
 	
-	Runnable auroRefreshAllDevices = new Runnable(){
+	Runnable autoRefreshAllDevices = new Runnable(){
 
 		@Override
 		public void run() {
 			//System.out.println("---------------auto refresh all devices----------------");
-			//System.out.println("AutoRresh: " + isAutoRefreshAllDevices());
+			//System.out.println("AutoRresh: " + isAutoRefreshAllDevicesFlag());
 			
 			
-			if( isActivityActive && isAutoRefresh() && isAutoRefreshAllDevices()){
+			if( isActivityActive && isAutoRefresh() && isAutoRefreshAllDevicesFlag()){
 				refreshAllDevices();
 			}
 			//setup refresh frequency
@@ -837,6 +863,32 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		}
 		
 	};
+
+    class PanelResetError implements Runnable {
+
+        private  String ip;
+        Exception e;
+
+        public PanelResetError(String ip,Exception e){
+            this.ip  = ip;
+            this.e = e;
+        }
+
+        @Override
+        public void run() {
+            //display error message
+            Toast.makeText(DeviceActivity.this,R.string.toast_panel_reset,Toast.LENGTH_LONG).show();
+            ErrorDialogFragment dialog = new ErrorDialogFragment();
+            dialog.setIp(ip,panel,e);
+            dialog.show(getFragmentManager(),"PanelResetDialog");
+
+            //force navigate back to loading screen
+            /*Intent intent = new Intent(DeviceActivity.this,LoadingScreenActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            */
+        }
+    }
 	
 	
 	
@@ -863,17 +915,20 @@ public class DeviceActivity extends BaseActivity implements OnDevicdListFragment
 		dialog.show(getFragmentManager(), "SetLocation");	
 	}
 
-	
 
-	
+    //set result intent for Panel Activity
+    @Override
+    public void onBackPressed() {
 
-	
+        Intent intent = NavUtils.getParentActivityIntent(this);
+        intent.putExtra("ip",panel.getIp());
+        intent.putExtra("panel",panel);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-	
+        setResult(Activity.RESULT_OK,intent);
+        super.onBackPressed();
 
-	
-	
-	
-	
-	
+
+    }
 }
+

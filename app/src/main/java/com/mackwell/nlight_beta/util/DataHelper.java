@@ -1,5 +1,7 @@
 package com.mackwell.nlight_beta.util;
 
+import android.util.Log;
+
 import com.mackwell.nlight_beta.models.Report;
 
 import java.io.UnsupportedEncodingException;
@@ -7,9 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.*;
 
-public class DataParser {
+public class DataHelper {
 	
-	
+	static final String TAG = "Data Parser";
+
 	//panel stop and new line byte
 	static final int UART_STOP_BIT_H = 0x5A;
 	static final int UART_STOP_BIT_L = 0xA5;
@@ -117,7 +120,7 @@ public class DataParser {
 			for(byte b : byteArray) {
 				buffer.add(CRC.getUnsignedInt(b));
 			}
-			for(int i = buffer.size(); i < 33; i++) {
+			for(int i = buffer.size(); i < 32; i++) {
 				buffer.add(0x20);  // append SPACE '0x20' at the end to fill 32 character space
 			}
 			
@@ -144,6 +147,7 @@ public class DataParser {
         calendar.set(Calendar.YEAR, timestamp.get(0) * 100 + timestamp.get(1));
         calendar.set(Calendar.HOUR_OF_DAY,timestamp.get(4));
         calendar.set(Calendar.MINUTE,timestamp.get(5));
+        calendar.set(Calendar.SECOND,0);
 
         return calendar;
     }
@@ -179,8 +183,7 @@ public class DataParser {
         long timeElapsed = System.nanoTime() - startTime;
         double time = timeElapsed / 1E9;
 
-
-        System.out.println("Time Elapsed " + time + " seconds");
+        Log.d(TAG,"Time Elapsed " + time + " seconds");
 
         return getList(reportDataList);
 
@@ -202,13 +205,15 @@ public class DataParser {
 
             //Loop 1 group totalFaults
 
+            List<List<Integer>> allGroupStatusList = new ArrayList<List<Integer>>();
             for(int h=0;h<2;h++)
             {
-
-                int groupNumber = 16;
                 List<List<Integer>> groupStatusList = new ArrayList<List<Integer>>();
 
-                for(int j = (h*4+10); j < (14 + h*4);j++)
+                int groupNumber = 0;
+
+                //10-11 12-13 group status bytes
+                for(int j = (h*2+10); j < (12 + h*2);j++)
                 {
                     int group = reportData.get(j);
                     int flag = 0x80;
@@ -220,9 +225,8 @@ public class DataParser {
                         int dt;
 
                         ArrayList<Integer> groupStatus = new ArrayList<Integer>();
+                        groupStatus.add(h);
                         groupStatus.add(groupNumber);
-
-
 
                         groupStatus.add((group & flag)>0 ? 1:0);
                         flag /=2;
@@ -230,17 +234,15 @@ public class DataParser {
                         groupStatus.add((group & flag)>0 ? 1:0);
                         flag /= 2;
 
-                        if(groupStatus.get(1)!=0 || groupStatus.get(2)!=0)  groupStatusList.add(groupStatus);
+                        if(groupStatus.get(2)!=0 || groupStatus.get(3)!=0) {
+                            groupStatusList.add(groupStatus);
+                            allGroupStatusList.add(groupStatus);
+                        }
 
-
-
-                        groupNumber --;
+                        groupNumber ++;
                     } // end of 1 byte
 
-
-
-
-                } // end of 4 bytes
+                } // end of 2 bytes
 
                 //set group status to report
                 switch(h)
@@ -253,7 +255,9 @@ public class DataParser {
                 }
 
 
-            }
+            } //end of 4 bytes
+
+            report.setLoopGroupStatus(allGroupStatusList);
 
 
             //set report properties
@@ -291,7 +295,21 @@ public class DataParser {
         return reportList;
     }
 
+  public static boolean checkDataIntegrity(List<Integer> rx){
+      int size = rx.size();
+      int rxLsb = rx.get(size-6);
+      int rxMsb = rx.get(size-5);
 
+
+      int checksum = CRC.calcCRC(rx.subList(0,(rx.size()-6)), (rx.size()-6));
+      int lsb = CRC.getUnsignedInt(checksum);
+      int msb = CRC.getUnsignedInt(checksum >> 8);
+
+      System.out.println("Data integrity: " + "rxLsb=: " + rxLsb + " lsb=: " + lsb);
+      System.out.println("Data integrity: " + "rxMsb=: " + rxMsb + " msb=: " + msb);
+
+      return true;
+  }
 	
 }
 

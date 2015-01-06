@@ -11,23 +11,49 @@ import java.util.List;
 
 public class UDPConnection {
 
-	private List<int[]> panelUDPDataList;
+    public static final String FIND = "FIND";
+    public static final String SETT = "SETT";
+    public static final String SETC = "SETC";
+
+
+	private List<byte[]> panelUDPDataList;
 	
 	
 	private static final int SERVER_PORT = 1460;
 	private static final int LISTEN_PORT = 5001;
-	
+
+
+    private String broadCastIp;
 	private DatagramSocket udpSocket = null;
-	private DatagramPacket udpPacket = null; 
+	private DatagramPacket udpTxPacket = null;
+	private DatagramPacket udpRxPacket = null;
+
+    private byte[] rxBuffer;
+
 	private boolean isListening = true; // a flag for keep/stop listening on socket
 	private UDPCallback mCallback;
 	
 	private String msg;
 	
 	private Thread rxThread = null;
-	
+
+    //getters and setters
+    public synchronized boolean isListen() {
+        return isListening;
+    }
+
+    public synchronized void setListen(boolean isListen) {
+        this.isListening = isListen;
+    }
+
+    public List<byte[]> getPanelList() {
+        return panelUDPDataList;
+    }
+
+
+    //interface
 	public interface UDPCallback{
-		public int addIp(String ip);
+		public int addIp(byte[] mac,String ip);
 		
 	}
 	
@@ -35,17 +61,23 @@ public class UDPConnection {
 	public UDPConnection(String msg, UDPCallback callback)
 	{
 		//super();
-		panelUDPDataList = new ArrayList<int[]>();
+		panelUDPDataList = new ArrayList<byte[]>();
 		this.msg = msg;
 		mCallback = callback;
-		
+
+        rxBuffer = new byte[256];
+
 		//start udp listining
-	
+
 	}
-	
-	
-	public void tx(String msg){
+
+
+	public void tx(String ip,String msg){
 		this.msg = msg;
+        this.broadCastIp = ip;
+
+
+
 		Thread t = new Thread(tx);
 		t.start();
 		
@@ -57,7 +89,7 @@ public class UDPConnection {
 		public void run()
 		{
 			try {
-				InetAddress address = InetAddress.getByName("255.255.255.255");
+				InetAddress address = InetAddress.getByName(broadCastIp);
 				
 				if(udpSocket==null){
 					udpSocket = new DatagramSocket(LISTEN_PORT);
@@ -66,9 +98,9 @@ public class UDPConnection {
 				
 				int msg_len = msg == null? 0 : msg.length();
 				
-				udpPacket = new DatagramPacket(msg.getBytes(),msg_len,address,SERVER_PORT);
+				udpTxPacket = new DatagramPacket(msg.getBytes(),msg_len,address,SERVER_PORT);
 				
-				udpSocket.send(udpPacket);
+				udpSocket.send(udpTxPacket);
 				
 				if(rxThread == null){
 					rxThread = new Thread(rx);
@@ -97,9 +129,8 @@ public class UDPConnection {
 		public void run() {
 
 			System.out.println("---------------receiving udp packages------------");
-			byte[] buf = new byte[1024];
-			udpPacket = new DatagramPacket(buf, buf.length);
-			
+
+
 			
 			
 			try{
@@ -110,26 +141,30 @@ public class UDPConnection {
 				
 				while(isListening)
 				{
-				
-					udpSocket.receive(udpPacket);
-					int[] buffer = new int[buf.length];
+                    udpRxPacket= new DatagramPacket(rxBuffer, rxBuffer.length);
+					udpSocket.receive(udpRxPacket);
+					//byte[] buffer = new byte[rxBuffer.length];
 					int i = 0;
-					for(byte b : udpPacket.getData()) {
-						int a = b & 0xFF;
-						buffer[i] = a;
+					for(byte b : udpRxPacket.getData()) {
+						//int a = b & 0xFF;
+						rxBuffer[i] = b;
 						
 						i++;
 					}
 					
-					/*for(int j =0; j<buffer.length;j++)
+					/*for(int j =0; j<rxBuffer.length;j++)
 					{
-						System.out.print(buffer[j] + " ");
+						System.out.print(rxBuffer[j] + " ");
 						
 					}*/
 					
-					panelUDPDataList.add(buffer);
-					mCallback.addIp(getIp(buffer));
-					
+					panelUDPDataList.add(rxBuffer);
+					mCallback.addIp(getMac(rxBuffer),getIp(rxBuffer));
+
+                    //clear buffer
+                    rxBuffer = new byte[256];
+
+
 				}
 			}
 			catch (IOException e) {
@@ -193,28 +228,30 @@ public class UDPConnection {
 		
 	}
 	
-	public synchronized boolean isListen() {
-		return isListening;
-	}
 
-	public synchronized void setListen(boolean isListen) {
-		this.isListening = isListen;
-	}
 	
-	public List<int[]> getPanelList() {
-		return panelUDPDataList;
-	}
-	
-	private String getIp(int[] buffer)
+	private String getIp(byte[] buffer)
 	{
 		StringBuilder sb = new StringBuilder();
 		for(int j=11; j<15; j++)
 		{
-			sb.append(buffer[j]);
+            int a = buffer[j] & 0xFF;
+			sb.append(a);
 			sb.append(".");
 		}
 		sb.deleteCharAt(sb.length()-1);
 		
 		return sb.toString();
 	}
+
+    private byte[] getMac(byte[] buffer){
+
+        byte[] macAddress = new byte[6];
+        for(int j=4; j<10; j++)
+        {
+            macAddress[j-4] = buffer[j];
+        }
+
+        return macAddress;
+    }
 }

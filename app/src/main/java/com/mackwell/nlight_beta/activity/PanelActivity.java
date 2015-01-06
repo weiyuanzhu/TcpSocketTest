@@ -33,26 +33,28 @@ import com.mackwell.nlight_beta.R;
 import com.mackwell.nlight_beta.models.Panel;
 import com.mackwell.nlight_beta.activity.InputDialogFragment.NoticeDialogListener;
 import com.mackwell.nlight_beta.activity.PanelListFragment.OnPanelListItemClickedCallBack;
-import com.mackwell.nlight_beta.socket.TCPConnection;
+import com.mackwell.nlight_beta.socket.TcpLongConnection;
 import com.mackwell.nlight_beta.util.CommandFactory;
-import com.mackwell.nlight_beta.util.DataParser;
+import com.mackwell.nlight_beta.util.DataHelper;
+import com.mackwell.nlight_beta.util.MySQLiteController;
 import com.mackwell.nlight_beta.util.SetCmdEnum;
 
 /**
  * @author weiyuan zhu
  *
  */
-public class PanelActivity extends BaseActivity implements OnPanelListItemClickedCallBack, TCPConnection.CallBack, PopupMenu.OnMenuItemClickListener, NoticeDialogListener{
+public class PanelActivity extends BaseActivity implements OnPanelListItemClickedCallBack, TcpLongConnection.CallBack, PopupMenu.OnMenuItemClickListener, NoticeDialogListener{
 
     private static final String TAG = "PanelActivity";
 
     private static final int REQUEST_PANEL = 1;
 
+    private android.os.Handler mHandler;
     private boolean splitScreen = false;
 
 	private List<Panel> panelList = null;
 	private Map<String,Panel> panelMap = null;
-	private Map<String,TCPConnection> ip_connection_map = null;
+	private Map<String,TcpLongConnection> ip_connection_map = null;
 	private Map<String,List<Integer>> rxBufferMap = null;
 	private List<char[] > commandList = null;
 	
@@ -77,14 +79,17 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	
 	
 	private boolean engineerMode = false;
-	
-	
+
+
 	private String passcodeEntered = "initial";
-	
+
 	//private int currentSelected;
 
-	
-	
+    //database
+    private MySQLiteController sqLiteController;
+
+
+
 	/* (non-Javadoc)callback for connection
 	 * @see nlight_android.nlight.BaseActivity#receive(java.util.List, java.lang.String)
 	 */
@@ -92,22 +97,32 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	public void receive(List<Integer> rx, String ip) {
 		List<Integer> rxBuffer = rxBufferMap.get(ip);
 		rxBuffer.addAll(rx);
-		TCPConnection connection = ip_connection_map.get(ip);
+		TcpLongConnection connection = ip_connection_map.get(ip);
 		connection.setListening(true);
 		System.out.println(ip + " received package: " + connection.getPanelInfoPackageNo() + " rxBuffer size: " + rxBuffer.size());
 		if(connection.isRxCompleted())
 		{
 			//connection.closeConnection();
 			//parse(ip);
-			
+			//todo
 		}
+
 		rxBuffer.clear();
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see nlight_android.nlight.InputDialogFragment.NoticeDialogListener#cancel()
-	 */
+
+
+    @Override
+    public void onError(String ip, Exception e) {
+        if (e instanceof TcpLongConnection.PanelResetException) {
+            mHandler.post(panelResetError);
+        }
+
+    }
+
+
+    /* (non-Javadoc)
+     * @see nlight_android.nlight.InputDialogFragment.NoticeDialogListener#cancel()
+     */
 	@Override
 	public void cancel() {
 		
@@ -129,7 +144,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		//create buffer for input
 		
 		List<Integer> buffer = new ArrayList<Integer>();
-		buffer.addAll(DataParser.convertString(input));
+		buffer.addAll(DataHelper.convertString(input));
 		System.out.println(buffer);
 		
 		switch(type){
@@ -211,7 +226,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		
 		
-		System.out.println(location + " " +  ip + "positon: " + index);
+		System.out.println(location + " " +  ip + "position: " + index);
 
         // In split screen mode, show the detail view in this activity by
         // adding or replacing the detail fragment using a
@@ -287,6 +302,11 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_panel);
 
+        mHandler = new android.os.Handler();  //handler
+
+        sqLiteController = new MySQLiteController(this); //sql controller
+
+
 
         // The detail container view will be present only in the
         // large-screen landscape layouts (res/values-w720dp).
@@ -297,6 +317,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         {
             //flag true for split screen
             splitScreen = true;
+
+            //set screen orientation
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
 
             //set panel fragments
@@ -332,7 +354,9 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
         savePanelToPreference();
 
         //set home bar back navigation to display
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getActionBar()!=null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
 
         panelListFragment = (PanelListFragment) getFragmentManager().findFragmentById(R.id.fragment_panel_list);
@@ -348,7 +372,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
         getActionBar().setSubtitle(R.string.subtitle_activity_panel);
 
-        System.out.println("DeomoMode--------> " + isDemo);
+        System.out.println("DemoMode--------> " + isDemo);
 
         System.out.println("All panel get: " + panelList.size());
 
@@ -389,7 +413,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	    }
 	}
 
-	/* (non-Javadoc) callback for pupupMenu items
+	/* (non-Javadoc) callback for popupMenu items
 	 * @see android.widget.PopupMenu.OnMenuItemClickListener#onMenuItemClick(android.view.MenuItem)
 	 */
 	@Override
@@ -463,7 +487,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
     @Override
     protected void onResume() {
         super.onResume();
-        Log.i("PanalActivity","onResume");
+        Log.i("PanelActivity","onResume");
 
 //      set panelInfoImage's icon address
         String imageLocation = sharedPreferences.getString("pref_app_icons","default image");
@@ -494,10 +518,8 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	protected void onStop() {
 		
 		if(panelMap!=null && ip_connection_map!=null){
-			for(String key : panelMap.keySet())
+			for(TcpLongConnection connection : ip_connection_map.values())
 			{
-				
-				TCPConnection connection = ip_connection_map.get(key);
 				if(connection!=null){
 					connection.setListening(false);
 					connection.closeConnection();
@@ -515,12 +537,12 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		if(panelMap!=null && ip_connection_map!=null){
 			for(String key : panelMap.keySet())
 			{
-				
-				TCPConnection connection = ip_connection_map.get(key);
+
+				TcpLongConnection connection = ip_connection_map.get(key);
 				if(connection!=null){
 					connection.setListening(false);
 					connection.closeConnection();
-					connection = null;
+//					connection = null;
 				}
 			}
 		}
@@ -538,7 +560,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		for(String key : panelMap.keySet()){
 			
-			TCPConnection connection = new TCPConnection(this, key);
+			TcpLongConnection connection = new TcpLongConnection(this, key);
 			
 			ip_connection_map.put(key, connection);
 			
@@ -550,7 +572,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		for(String key : panelMap.keySet()){
 			
-			TCPConnection conn = ip_connection_map.get(key);
+			TcpLongConnection conn = ip_connection_map.get(key);
 			conn.fetchData(commandList);
 		}
 		
@@ -559,31 +581,29 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	
 
 	
-	public void initialFields()
+	void initialFields()
 	{	
 		panelMap = new HashMap<String,Panel>();
 		fragmentList = new ArrayList<PanelInfoFragment>(panelList.size());
-		ip_connection_map = new HashMap<String,TCPConnection>();
+		ip_connection_map = new HashMap<String,TcpLongConnection>();
 		rxBufferMap = new HashMap<String,List<Integer>>();
-		
-		
-		for(int i=0; i<panelList.size();i++)
-		{
-			String ip = panelList.get(i).getIp();
-			panelMap.put(ip, panelList.get(i));	
-			PanelInfoFragment panelFragment = PanelInfoFragment.newInstance(panelList.get(i).getIp(), panelList.get(i).getPanelLocation(),panelList.get(i));
-			fragmentList.add(panelFragment);
-			
-			
-			//create connection for panels if is not in demo mode
-			if(!isDemo)
-			{
-				ip_connection_map.put(ip, new TCPConnection(this, ip));
-				rxBufferMap.put(ip, new ArrayList<Integer>());
-				
-			}
-			
-		}
+
+
+        for (Panel aPanel : panelList) {
+            String ip = aPanel.getIp();
+            panelMap.put(ip, aPanel);
+            PanelInfoFragment panelFragment = PanelInfoFragment.newInstance(aPanel.getIp(), aPanel.getPanelLocation(), aPanel);
+            fragmentList.add(panelFragment);
+
+
+            //create connection for panels if is not in demo mode
+            if (!isDemo) {
+                ip_connection_map.put(ip, new TcpLongConnection(this, ip));
+                rxBufferMap.put(ip, new ArrayList<Integer>());
+
+            }
+
+        }
 			
 			
 	}
@@ -594,13 +614,14 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		List<Integer> rxBuffer = rxBufferMap.get(ip);
 		
-		List<List<Integer>> panelData = DataParser.removeJunkBytes(rxBuffer); 
-		List<List<Integer>> eepRom = DataParser.getEepRom(panelData);	
-		List<List<List<Integer>>> deviceList = DataParser.getDeviceList(panelData,eepRom);
+		List<List<Integer>> panelData = DataHelper.removeJunkBytes(rxBuffer);
+		List<List<Integer>> eepRom = DataHelper.getEepRom(panelData);
+		List<List<List<Integer>>> deviceList = DataHelper.getDeviceList(panelData, eepRom);
 		
 		
 		try {
-			Panel newPanel = new Panel(eepRom, deviceList, ip);
+			Panel newPanel = panelMap.get(ip);
+            newPanel.updatePanel(eepRom, deviceList, ip);
 			panelMap.put(ip, newPanel);
 		
 		} catch (UnsupportedEncodingException e) {
@@ -635,31 +656,31 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	{
 		panelList = new ArrayList<Panel>();
 		panelMap = new HashMap<String,Panel>();
-		ip_connection_map = new HashMap<String,TCPConnection>();
+		ip_connection_map = new HashMap<String,TcpLongConnection>();
 		rxBufferMap = new HashMap<String,List<Integer>>();
 		
 		String ip1 = "192.168.1.17";
-		panelMap.put(ip1, new Panel(ip1));
+		panelMap.put(ip1, new Panel(ip1,"0:0:0:0:0:0"));
 		rxBufferMap.put(ip1, new ArrayList<Integer>());
 		fragmentList.add(null);
 		
 		String ip2 = "192.168.1.21";
-		panelMap.put(ip2, new Panel(ip2));
+		panelMap.put(ip2, new Panel(ip2,"0:0:0:0:0:0"));
 		rxBufferMap.put(ip2, new ArrayList<Integer>());
 		fragmentList.add(null);
 		
 		String ip3 = "192.168.1.20";
-		panelMap.put(ip3, new Panel(ip3));
+		panelMap.put(ip3, new Panel(ip3,"0:0:0:0:0:0"));
 		rxBufferMap.put(ip3, new ArrayList<Integer>());
 		fragmentList.add(null);
 		
 		String ip4 = "192.168.1.23";
-		panelMap.put(ip4, new Panel(ip4));
+		panelMap.put(ip4, new Panel(ip4,"0:0:0:0:0:0"));
 		rxBufferMap.put(ip4, new ArrayList<Integer>());
 		fragmentList.add(null);
 	
 		String ip5 = "192.168.1.24";
-		panelMap.put(ip5, new Panel(ip5));
+		panelMap.put(ip5, new Panel(ip5,"0:0:0:0:0:0"));
 		rxBufferMap.put(ip5, new ArrayList<Integer>());
 		fragmentList.add(null);
 		
@@ -705,21 +726,25 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		boolean isSave = sp.getBoolean(SettingsActivity.SAVE_PANEL_LOCATION, true);
 		if(isSave)
 		{
+            sqLiteController.open();
 			for(Panel panel : panelList)
 			{
+                //save panel location to SharedPreference
 				SharedPreferences.Editor editor = sp.edit();
 				editor.putString(panel.getIp(), panel.getPanelLocation());
-				editor.commit();
+				editor.apply();
 
-			}
-			
-		};
-		
-		
-		
+                //save panel location to database
+                if(isDemo) sqLiteController.insertPanel(panel); //put demo panel into list for test
+
+                sqLiteController.updatePanelLocation(panel.getIp(), panel.getPanelLocation());
+
+            }
+            sqLiteController.close();
+        }
 	}
 	
-	public void showDropDownMenu(View view)
+	void showDropDownMenu(View view)
 	{
 		System.out.println("Panel Drop Down Menu");
 		PopupMenu popup = new PopupMenu(this, view);
@@ -737,7 +762,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		checkConnectivity();
 		if(currentDisplayingPanel!=null){
 			String ip = currentDisplayingPanel.getIp();
-			TCPConnection conn = ip_connection_map.get(ip);
+			TcpLongConnection conn = ip_connection_map.get(ip);
 				
 			if(!isDemo &&  conn != null && commandList != null){
 				conn.fetchData(commandList);
@@ -757,7 +782,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		String ip = currentDisplayingPanel.getIp();
 		if(panelMap.get(ip)==null)
 		{
-			panelMap.put(ip, new Panel(ip));
+			panelMap.put(ip, new Panel(ip,"0:0:0:0:0:0"));
 		}
 		
 		
@@ -773,7 +798,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
 		
 		fragmentTransaction.replace(R.id.panel_detail_container, fragmentList.get(index),"tagTest");
-		//fragmentTransaction.addToBackStack(null);  add fragment to backstack
+		//fragmentTransaction.addToBackStack(null);  add fragment to back stack
 		fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 		fragmentTransaction.commit();
 		
@@ -783,7 +808,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	}
 	
 	/**
-	 * Remove PanelInfoFagment and reset Mackwell logo 
+	 * Remove PanelInfoFragment and reset Mackwell logo
 	 */
 	private void updatePanelInfoFragment(){
 		
@@ -826,9 +851,9 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	public void contactEngineerBtn(View view){
 
 		if(currentDisplayingPanel!=null && !currentDisplayingPanel.isEngineerMode()){
-			panelInfoImage.setVisibility(panelInfoImage.isShown()? 4:0);
-			faultTextView.setVisibility(faultTextView.isShown()? 4:0);
-			panelContact.setVisibility(panelInfoImage.isShown()? 4:0);
+			panelInfoImage.setVisibility(panelInfoImage.isShown()? View.INVISIBLE:View.VISIBLE);
+			faultTextView.setVisibility(faultTextView.isShown()? View.INVISIBLE:View.VISIBLE);
+			panelContact.setVisibility(panelInfoImage.isShown()? View.INVISIBLE:View.VISIBLE);
 			panelContact.setText(getContactDetails());
 		}
 		
@@ -836,7 +861,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 
 	/**
 	 * When engineerModeBtn clicked
-	 * @param view
+	 * @param view button
 	 */
 	public void engineerModeBtn(View view){
 
@@ -850,7 +875,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 	}
 	
 	/**
-	 * Using a StringBuilder to build a string for contact textview
+	 * Using a StringBuilder to build a string for contact text view
 	 * @return contact details string
 	 */
 	private String getContactDetails(){
@@ -863,6 +888,19 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 		
 		return sb.toString();
 	}
+
+   final Runnable panelResetError = new Runnable() {
+        @Override
+        public void run() {
+            Toast.makeText(PanelActivity.this,R.string.toast_panel_reset, Toast.LENGTH_LONG).show();
+
+            //force navigate back to loading screen
+            /*Intent intent = new Intent(DeviceActivity.this,LoadingScreenActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            */
+        }
+    };
 	
 		
 }

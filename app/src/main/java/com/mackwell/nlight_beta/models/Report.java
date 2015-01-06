@@ -23,6 +23,7 @@ public class Report implements Serializable{
     private List<List<Integer>> faultyDeviceList;
     private List<List<Integer>> Loop1GroupStatus;
     private List<List<Integer>> Loop2GroupStatus;
+    private List<List<Integer>> LoopGroupStatus;
 
 
     /**
@@ -35,7 +36,13 @@ public class Report implements Serializable{
         return faultPages = (faults == 0) ? 0: faults/FAULTS_PER_PAGE+1;
     }
 
+    public List<List<Integer>> getLoopGroupStatus() {
+        return LoopGroupStatus;
+    }
 
+    public void setLoopGroupStatus(List<List<Integer>> loopGroupStatus) {
+        LoopGroupStatus = loopGroupStatus;
+    }
 
     public List<List<Integer>> getLoop2GroupStatus() {
         return Loop2GroupStatus;
@@ -91,7 +98,7 @@ public class Report implements Serializable{
         this.date = date;
     }
 
-    /**
+    /*
      *  Empty Constructor
      */
 

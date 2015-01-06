@@ -6,7 +6,7 @@
         android:orderInCategory="100"
         android:showAsAction="always"
         android:title="@string/action_ft"
-         android:icon="@drawable/ft"
+        android:icon="@drawable/light_bulb"
        />
      
      <item
@@ -31,19 +31,22 @@
         android:showAsAction="always"
         android:title="@string/action_id"
      	/>
+
+    <item
+        android:id="@+id/device_stopId"
+        android:orderInCategory="104"
+        android:icon="@drawable/stop_id"
+        android:showAsAction="always"
+        android:title="@string/action_stop_id"/>
       
       <item
         android:id="@+id/device_refresh"
-        android:orderInCategory="104"
+        android:orderInCategory="105"
         android:showAsAction="always"
         android:icon="@drawable/ic_action_refresh"
         android:title="@string/action_refresh"/>
       
-      <item
-        android:id="@+id/device_stopId"
-        android:orderInCategory="105"
-        android:showAsAction="never"
-        android:title="@string/action_stop_id"/>
+
       
       <item
         android:id="@+id/device_select_all_faulty"

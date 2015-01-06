@@ -2,7 +2,7 @@ package com.mackwell.nlight_beta.util;
 
 public class Constants {
 	
-	public static final int GAP_BETWEEN_COMMANDS = 500;
+	public static final int GAP_BETWEEN_COMMANDS = 700;
 	
 	public static final int TEXT_MAX = 32;
 	public static final int PASSCODE_MAX = 4;
@@ -20,7 +20,8 @@ public class Constants {
 	public static final int UART_NEW_LINE_H = 0x0D;
 	public static final int UART_NEW_LINE_L = 0x0A;
 	
-	public static final Integer HOST_ID = 0x02;
+	public static final int HOST_ID = 0x02;
+    public static final int RESPONSE_ID = 0x01;
 
 	public static final int MASTER_GET = 0xA0;
     public static final int GET_INIT = 0x21;
@@ -87,6 +88,6 @@ public class Constants {
 	public static final int DEVICE_ID = 0x3F;
 	public static final int DEVICE_LOST_BYTE = 0x40;
 
-	public static final String FIND_PANELS = "FIND";
+
 	
 }

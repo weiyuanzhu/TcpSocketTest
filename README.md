@@ -1,6 +1,23 @@
 PATCH NOTES
 ================
 
+v0.9.0
+===================
+
+###Updates:
+- 1 Improved connection, app has a connection timeout and checks panel reset
+- 2 Cached panel list which is stored in a local SQLite database
+- 3 LiveMode panel list is now ASC
+- 4 Improved panel getInit
+- 5 Improved panel report, report details and group error
+
+
+###Fix:
+- 1 device multi-selection bug: wrong device address due to sort
+- 2 panel sometime will lose data on devices
+- 3 udp and tcp connections
+
+
 v0.8.0
 ===================
 

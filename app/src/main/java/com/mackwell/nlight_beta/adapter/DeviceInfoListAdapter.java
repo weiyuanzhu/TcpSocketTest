@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 /**
  * A custom adapter extends SimpleAdapter for displaying device information
- * Device Failure status will display "RED" if device has error
+ * Device Failure status will display "RED" if device has onError
  * 
  * 
  * @author weiyuan zhu

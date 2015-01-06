@@ -26,7 +26,9 @@ public class Panel  implements Parcelable {
 	private Loop loop2;
 	
 	private String ip;
-	
+    private String macString;
+//    private byte[] macAddress;
+
 	private String panelLocation;
 	private String contact;
 	private String tel;
@@ -41,6 +43,7 @@ public class Panel  implements Parcelable {
 	private Long serialNumber;
 	private BigInteger gtin;
 	private int[] gtinArray;
+
 	
 	private int deviceNumber;
 	
@@ -48,7 +51,7 @@ public class Panel  implements Parcelable {
 	private int faultDeviceNo;
 	
 	private boolean engineerMode = false;
-	
+
 	
 	public Panel()
 	{
@@ -56,11 +59,12 @@ public class Panel  implements Parcelable {
 		gtinArray = new int[6]; 
 	}
 
-	public Panel(String ip)
+	public Panel(String ip,String mac)
 
 	{
 		setIp(ip);
-		panelLocation = "Mackwell L&B Demo";
+        macString = mac;
+		panelLocation = "";
 		contact = "Mackwell Engineer";
 		loop1 = new Loop("Loop1");
 		loop2 = new Loop("Loop2");
@@ -74,23 +78,76 @@ public class Panel  implements Parcelable {
 		serialNumber = (long) 1234567;
 		gtinArray = new int[]{6,5,4,3,2,1};
 		overAllStatus = 0;
-		
-	}
-	
-	
 
-	public Panel(Parcel source)
+	}
+
+
+
+    public Panel(Parcel source)
 	{
 		this();
 		readFromParcel(source);
 	}
 
-	public Panel(List<List<Integer>> eepRom, List<List<List<Integer>>> deviceList, String ip) throws UnsupportedEncodingException
+    public Panel(List<List<Integer>> eepRom, List<List<List<Integer>>> deviceList, String ip) throws UnsupportedEncodingException
+    {
+        gtinArray = new int[6];
+
+        this.ip = ip;
+
+
+        this.panelLocation = new String(getBytes(eepRom.get(60)),"UTF-8");
+
+        String con = new String(getBytes(eepRom.get(61)),"UTF-8");
+        this.contact = con.contains("?")? "-" : con;
+
+
+        String tel = new String(getBytes(eepRom.get(62)),"UTF-8");
+        this.tel = tel.contains("?")? "-" : tel;
+
+        String mob = new String(getBytes(eepRom.get(63)),"UTF-8");
+        this.mobile = mob.contains("?")? "-" : mob;
+
+
+        this.version = new String(getBytes(eepRom.get(13)),0,16,"UTF-8");
+
+        this.serialNumber = eepRom.get(3).get(9) + eepRom.get(3).get(8) * 256 + eepRom.get(3).get(7) * 65536 +
+                eepRom.get(3).get(6) * 16777216L;
+
+        this.gtin = BigInteger.valueOf(eepRom.get(3).get(5) + eepRom.get(3).get(4) * 256 +
+                eepRom.get(3).get(3) * 65536 + eepRom.get(3).get(2) * 16777216L +
+                eepRom.get(3).get(1) * 4294967296L + eepRom.get(3).get(0) * 1099511627776L);
+
+        this.gtinArray = new int[]{0,0,0,0,0,0};
+        for(int i=0; i< gtinArray.length; i++)
+        {
+            int temp = 5-i;
+            gtinArray[i] = eepRom.get(3).get(temp);
+        }
+
+
+        this.passcode = String.valueOf(eepRom.get(51).get(0) * 256 + eepRom.get(51).get(1));
+
+        reportUsageLong = eepRom.get(15).get(3) + eepRom.get(15).get(4) * 256 + eepRom.get(15).get(5) * 65536 +
+                eepRom.get(15).get(6) * 16777216L;
+
+        //this.reportUsage = (new DecimalFormat("#.#####").format(reportUsage / FLASH_MEMORY) +"%"); // update report usage
+        this.reportUsage = (new DecimalFormat("#.#####").format(reportUsageLong / FLASH_MEMORY) +"%"); // update report usage
+
+        System.out.println("================Panel Info========================");
+        System.out.println(this.toString());
+
+        loop1 = new Loop(deviceList.get(0),eepRom,"Loop1");
+        loop2 = new Loop(deviceList.get(1),eepRom,"Loop2");
+
+    }
+
+	public void updatePanel(List<List<Integer>> eepRom, List<List<List<Integer>>> deviceList, String ip) throws UnsupportedEncodingException
 	{
 		gtinArray = new int[6];
 		
 		this.ip = ip;
-		
+
 		this.panelLocation = new String(getBytes(eepRom.get(60)),"UTF-8");
 		
 		String con = new String(getBytes(eepRom.get(61)),"UTF-8");
@@ -134,10 +191,7 @@ public class Panel  implements Parcelable {
 		
 		loop1 = new Loop(deviceList.get(0),eepRom,"Loop1");
 		loop2 = new Loop(deviceList.get(1),eepRom,"Loop2");
-		
-		
-		
-		
+
 	}
 	
 	public static final Parcelable.Creator<Panel> CREATOR = new Parcelable.Creator<Panel>(){
@@ -179,17 +233,11 @@ public class Panel  implements Parcelable {
 
 
 	//getters
-	
-	/**
-	 * @return the engineerMode
-	 */
+
 	public boolean isEngineerMode() {
 		return engineerMode;
 	}
 
-	/**
-	 * @param engineerMode the engineerMode to set
-	 */
 	public void setEngineerMode(boolean engineerMode) {
 		this.engineerMode = engineerMode;
 	}
@@ -236,11 +284,16 @@ public class Panel  implements Parcelable {
 	public Long getSerialNumber() {
 		return serialNumber;
 	}
-	
-	
 
+    public String getMacString() {
+        return macString;
+    }
 
-	public void setSerialNumber(Long serialNumber) {
+    public void setMacString(String macString) {
+        this.macString = macString;
+    }
+
+    public void setSerialNumber(Long serialNumber) {
 		this.serialNumber = serialNumber;
 	}
 
@@ -343,6 +396,8 @@ public class Panel  implements Parcelable {
 		this.overAllStatus = overAllStatus;
 	}
 
+
+
 	@Override
 	public int describeContents() {
 		// TODO Auto-generated method stub
@@ -371,6 +426,7 @@ public class Panel  implements Parcelable {
 		dest.writeValue(loop2);
 		
 		dest.writeString(ip);
+        dest.writeString(macString);
 		dest.writeString(panelLocation);
 		dest.writeString(contact);
 		dest.writeString(tel);
@@ -395,6 +451,7 @@ public class Panel  implements Parcelable {
 		loop2 = (Loop) source.readValue(Loop.class.getClassLoader());
 		
 		ip = source.readString();
+        macString = source.readString();
 		panelLocation = source.readString();
 		contact = source.readString();
 		tel  = source.readString();

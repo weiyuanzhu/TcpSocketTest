@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mackwell.nlight_beta"
-    android:versionCode="5"
+    android:versionCode="11"
     android:versionName="@string/app_version" >
 
     <uses-sdk
-        android:minSdkVersion="19"
+        android:minSdkVersion="16"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="19" />
 
+    <!--App now supports large and xlarge tablet-->
     <supports-screens
         android:largeScreens="true"
         android:normalScreens="false"
@@ -20,6 +25,9 @@
         android:xlargeScreens="true" >
     </supports-screens>
 
+
+
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/mackwell_logo"
@@ -27,7 +35,7 @@
         android:theme="@android:style/Theme.Holo.Light" >
         <meta-data
             android:name="android.app.default_searchable"
-            android:value="nlight_android.nlight.DeviceActivity"/>
+            android:value="nlight_android.nlight.DeviceActivity" />
 
         <activity
             android:name="com.mackwell.nlight_beta.activity.PanelStatusActivity"
@@ -42,12 +50,13 @@
             android:label="@string/title_activity_loading_screen"
             android:screenOrientation="userLandscape"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" >
->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name="com.mackwell.nlight_beta.activity.PanelInfoActivity"
@@ -87,10 +96,6 @@
             android:label="@string/title_activity_settings" >
         </activity>
         <activity
-            android:name="com.mackwell.nlight_beta.test.TestActivity"
-            android:label="@string/app_name" >
-        </activity>
-        <activity
             android:name="com.mackwell.nlight_beta.activity.ReportActivity"
             android:label="@string/title_activity_report"
             android:theme="@style/Theme.AppCompat.Light" >
@@ -99,6 +104,11 @@
             android:name="com.mackwell.nlight_beta.activity.ReportFaultsActivity"
             android:label="@string/title_activity_report_faults"
             android:theme="@style/Theme.AppCompat.Light" >
+        </activity>
+        <activity
+            android:name=".activity.CachedPanelListActivity"
+            android:label="@string/title_activity_cached_panel_list" >
+
         </activity>
     </application>
 

@@ -2,7 +2,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_name">N-Light Connect</string>
-	<string name="app_version">Version: <xliff:g id="promotion_code">beta 0.8.2</xliff:g></string>
+	<string name="app_version">Version: <xliff:g id="promotion_code">beta 0.9.1</xliff:g></string>
 	<string name="action_settings">Paramètres</string>
 	<string name="action_about">A propos</string> 
 	<string name="action_search">Recherche</string> 
@@ -119,7 +119,7 @@
     <string name="action_select_loop1">Sélectionner loop1 dispositifs</string>
     <string name="action_deselect_loop1">Désélectionner loop1 dispositifs</string>
     <string name="action_select_loop2">Sélectionner loop2 dispositifs</string>
-    <string name="action_deselect_loop2">Désélectionner loop1 dispositifs</string>
+    <string name="action_deselect_loop2">Désélectionner loop2 dispositifs</string>
     <string name="text_multi_selection_mode">Mode de sélection multiple.</string>
     <string name="text_loop_faulty_message"><xliff:g id="faulty_device_no">%1$s</xliff:g> Nombre de dispositif défectueuse(s): <xliff:g id="faulty_device_no">%2$d</xliff:g></string>
     <string name="text_panel_faulty_message">Panel (s): <xliff:g id="faulty_panel_no">%1$d</xliff:g></string>
@@ -179,6 +179,23 @@
     <string name="pref_title_customIcon_checkbox">"Icône personnalisée pour l'App"</string>
     <string name="pref_summary_customIcon_unchecked">"Icône de l'image est définie par défaut."</string>
     <string name="pref_summary_customIcon_checked">"S'il vous plaît choisir une image de la galerie de médias."</string>
+    <string name="dialogmessage_panel_busy">Certains panneau (s ) est occupé et ne peut pas être connecté</string>
+    <string name="toast_panel_reset">"Groupe spécial a été remis à zéro , s'il vous plaît vérifier la connexion"</string>
+    <string name="dialog_panelreset_positivebutton">Re -connect</string>
+    <string name="dialog_panelreset_negtivebutton">Rester</string>
+    <string name="dialog_panelreset_title">(<xliff:g id="dialog_panelreset_ip">%1$s</xliff:g>) <xliff:g id="dialog_panelreset_panelname">%2$s</xliff:g> a été réinitialisé par un autre appareil</string>
+    <string name="dialog_panelrest_message">"Voulez-vous revenir à l'écran de chargement et re-connecter au panneau ou rester sur cet écran ?"</string>
+    <string name="pref_panel_list">Liste de panneau de contrôle local</string>
+    <string name="pref_panel_lists_summary">”Liste du panneau cache , qui peut être ajouté / supprimer manuellement“</string>
+    <string name="title_activity_cached_panel_list">CachedPanelList</string>
+    <string name="dialog_SocketTimeout_title">Connexion au panneau: "<xliff:g id="dialog_SocketTimeout_panelname">%1$s</xliff:g>" a été temporisation (<xliff:g id="dialog_SocketTimeout_ip">%2$s</xliff:g>) </string>
+    <string name="pref_panel_list_category">Panneau de recherche MANUELLE</string>
+    <string name="toast_no_device_selected">Se il vous plaît sélectionner un périphérique</string>
+    <string name="toast_found_panel">Groupe spécial a constaté</string>
+    <string name="toast_invalid_ip">Veuillez entrer une adresse IP valide</string>
+    <string name="toast_panel_not_found"> pas trouvé</string>
+    <string name="toast_search_signle_ip">Recherche pour panneau</string>
+    <string name="toast_panel_exist">"Panneau déjà dans la liste"</string>
 
 
 </resources>

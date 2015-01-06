@@ -19,6 +19,7 @@ public enum GetCmdEnum  {
 	GET_LIST(0x26),
 	UPDATE_LIST(0x27),
 	UPDATE_REPORT(0x28),
+    GET_DATE_TIME(0x29),
 	GET_OVERALL_STATUS(0x32);
 	
 	

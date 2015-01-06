@@ -43,7 +43,7 @@ public class DeviceListFragment extends Fragment {
 	 */
 	public interface OnDevicdListFragmentListener {
 		// TODO: Update argument type and name
-		public void onDeviceItemClicked(int groupPosition, int childPosition);
+		public void onDeviceItemClicked(int groupPosition, int childPosition, int deviceAddress);
 		public void onGroupExpandOrCollapse(int groupPosition);
 		public void onMultiSelectionMode(boolean multiSelect);
 		
@@ -70,6 +70,7 @@ public class DeviceListFragment extends Fragment {
 
     private int currentGroupPosition = -1;
     private int currentChildPosition = -1;
+    private int currentDeviceAddress = -1;
     
 
 	
@@ -155,28 +156,28 @@ public class DeviceListFragment extends Fragment {
 			{
 				case R.id.device_ft:
 					mListener.ft(mAdapter.getSelectedDeviceAddressList());
-					Toast.makeText(getActivity(), R.string.toast_ft_inProgress,Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), mAdapter.getCheckedCount()==0? R.string.toast_no_device_selected:R.string.toast_ft_inProgress,Toast.LENGTH_LONG).show();
 					break;
 				case R.id.device_st:
 					mListener.st(mAdapter.getSelectedDeviceAddressList());
-					Toast.makeText(getActivity(), R.string.toast_stop_all, Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(), mAdapter.getCheckedCount()==0? R.string.toast_no_device_selected:R.string.toast_stop_all, Toast.LENGTH_LONG).show();
 					break;
 				case R.id.device_dt:
 					mListener.dt(mAdapter.getSelectedDeviceAddressList());
-					Toast.makeText(getActivity(), R.string.toast_dt_inProgress, Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(), mAdapter.getCheckedCount()==0? R.string.toast_no_device_selected:R.string.toast_dt_inProgress, Toast.LENGTH_LONG).show();
 					break;
 				case R.id.device_id:
 					mListener.id(mAdapter.getSelectedDeviceAddressList());
-					Toast.makeText(getActivity(), R.string.toast_id_inProgress, Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(),mAdapter.getCheckedCount()==0? R.string.toast_no_device_selected:R.string.toast_id_inProgress, Toast.LENGTH_LONG).show();
 					break;
 				case R.id.device_stopId:
 					mListener.stopId(mAdapter.getSelectedDeviceAddressList());
-					Toast.makeText(getActivity(), R.string.toast_stop_identify, Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(),mAdapter.getCheckedCount()==0? R.string.toast_no_device_selected:R.string.toast_stop_identify, Toast.LENGTH_LONG).show();
 					break;
 				case R.id.device_refresh:
 					
 					mListener.refreshSelectedDevices(mAdapter.getSelectedDeviceAddressList());
-					Toast.makeText(getActivity(), R.string.toast_refresh_device, Toast.LENGTH_LONG).show();
+					Toast.makeText(getActivity(), mAdapter.getCheckedCount()==0? R.string.toast_no_device_selected:R.string.toast_refresh_device, Toast.LENGTH_LONG).show();
 					break;
 				case R.id.device_select_loop1_all:
 					if(mAdapter.isLoop1Selected()){
@@ -427,13 +428,21 @@ public class DeviceListFragment extends Fragment {
             	
             	currentGroupPosition = groupPosition;
                 currentChildPosition = childPosition;
+
+                if(groupPosition==0){
+                    currentDeviceAddress = listDataChild.get(loop1).get(childPosition).getAddress();
+                }else {
+                    currentDeviceAddress = listDataChild.get(loop2).get(childPosition).getAddress();
+                }
             	
             	mAdapter.selectItem(groupPosition, childPosition);
+
+
             	
             	if(mAdapter.isMultiSelectMode()){
             		mActionMode.updateCounter();
             	}else{
-	            	mListener.onDeviceItemClicked(groupPosition, childPosition);
+	            	mListener.onDeviceItemClicked(groupPosition,childPosition,currentDeviceAddress);
             		
             	}
             	
@@ -513,7 +522,7 @@ public class DeviceListFragment extends Fragment {
                     mListener.onGroupExpandOrCollapse(groupPosition);
                 }
                 else{
-                    mListener.onDeviceItemClicked(groupPosition,childPosition);
+                    mListener.onDeviceItemClicked(groupPosition,childPosition,currentChildPosition);
                 }
                 mAdapter.selectItem(groupPosition,childPosition);
             }

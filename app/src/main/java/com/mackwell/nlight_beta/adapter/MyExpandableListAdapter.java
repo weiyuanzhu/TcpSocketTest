@@ -133,11 +133,11 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 			
 			int address = -1;
 			for(int i=1; i<checkedList.get(0).size();i++){
-        		if(checkedList.get(0).get(i)){
+        		if(checkedList.get(0).valueAt(i)){
         			
         			
         			//put address in to selectedDeviceAddressList if it is selected(true)
-        			int childPosition = i - 1;
+        			int childPosition = checkedList.get(0).keyAt(i) - 1;
         		
         			address = listDataChild.get(listDataHeader.get(0)).get(childPosition).getAddress();
         			selectedDeviceAddressList.add(address);
@@ -160,12 +160,15 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
 			 * 5 return
 			 * */
 			int address = -1;
-			for(int i=1; i<checkedList.get(1).size();i++){
-        		if(checkedList.get(1).get(i)){
+            int size = checkedList.get(1).size();
+
+            //iterate form i=1 because 0 is for loop
+			for(int i=1; i<size;i++){
+        		if(checkedList.get(1).valueAt(i)){
         			
         			
         			//put address in to selectedDeviceAddressList if it is selected(true)
-        			int childPosition = i - 1;
+        			int childPosition = checkedList.get(1).keyAt(i) - 1;
         		
         			address = listDataChild.get(listDataHeader.get(1)).get(childPosition).getAddress();
         			selectedDeviceAddressList.add(address);
@@ -464,7 +467,7 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
     	    	
     	boolean check = !checkedList.get(groupPosition).get(childPosition==-1? 0: childPosition+1);
     	
-    	//set checked status
+    	//set checked status, 0 is for loop,devices start from 1
     	checkedList.get(groupPosition).put(childPosition==-1? 0: childPosition+1, check);
     }
     
@@ -495,7 +498,6 @@ public class MyExpandableListAdapter extends BaseExpandableListAdapter {
     
     /**
      * clear checked status for a particular loop
-     * @param groupPosition
      */
     public void clearCheck()
     {
