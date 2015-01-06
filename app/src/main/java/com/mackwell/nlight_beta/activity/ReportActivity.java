@@ -72,7 +72,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
     private int pageHeight;
     private int pageWidth;
-    public int totalpages;
+    private int totalpages;
     private int currentReportPosition = 0;
     private int faultyReportPageSoFar = 0;
 
@@ -173,8 +173,9 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         fragmentTransaction.commit();
 
 
-
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getActionBar()!=null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         if(isConnected && !isDemo) {
             mConnection = new TcpShortConnection(this,ip);
@@ -272,7 +273,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         }
     }
 
-    Runnable displayReport = new Runnable() {
+    private final Runnable displayReport = new Runnable() {
         @Override
         public void run() {
             fragment.updateList(reportList);
@@ -338,7 +339,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public class MyPrintDocumentAdapter extends PrintDocumentAdapter {
 
-        Context context;
+        final Context context;
 
         private String outputName;
 
@@ -373,7 +374,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
             //save attributes
             this.newAttributes = newAttributes;
 
-            //reset current report posistion
+            //reset current report position
             currentReportPosition=0;
             pagesList.clear();
 
@@ -454,7 +455,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
         }
 
         @TargetApi(Build.VERSION_CODES.KITKAT)
-        private void drawPage(PdfDocument.Page page, int pagenumber,int summaryPages, int detailPages)
+        private void drawPage(PdfDocument.Page page, int pageNumber,int summaryPages, int detailPages)
         {
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -472,7 +473,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
             Paint paint = new Paint();
             paint.setColor(Color.BLACK);
 
-            if(pagenumber < summaryPages) {
+            if(pageNumber < summaryPages) {
 
 
 
@@ -500,11 +501,11 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
                 canvas.drawText("Status", leftMargin + 320, titleBaseLine + 100, paint);
                 canvas.drawLine(leftMargin, titleBaseLine + 108, leftMargin + 450, titleBaseLine + 108, paint);
 
-                int remainReportNo = reportList.size() - pagenumber * ROW_PER_PAGE;
-                int lastReportOnThisPage = remainReportNo > ROW_PER_PAGE ? (pagenumber + 1) * ROW_PER_PAGE : reportList.size();
+                int remainReportNo = reportList.size() - pageNumber * ROW_PER_PAGE;
+                int lastReportOnThisPage = remainReportNo > ROW_PER_PAGE ? (pageNumber + 1) * ROW_PER_PAGE : reportList.size();
 
                 Report report;
-                for (int i = (pagenumber * ROW_PER_PAGE), j = 0; i < lastReportOnThisPage; i++, j++) {
+                for (int i = (pageNumber * ROW_PER_PAGE), j = 0; i < lastReportOnThisPage; i++, j++) {
                     report = reportList.get(i);
                     canvas.drawText(dateFormat.format(report.getDate().getTime()), leftMargin, titleBaseLine + 125 + j * 25, paint);
                     canvas.drawText(Integer.toString(report.getFaults()), leftMargin + 200, titleBaseLine + 125 + j * 25, paint);
@@ -513,7 +514,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
                 }
             }
 
-            else if (pagenumber < totalpages) {
+            else if (pageNumber < totalpages) {
 
 
                 Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.drawable.nlight_connect);
@@ -523,8 +524,8 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
                 Bitmap dstbmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, true);
                 canvas.drawBitmap(dstbmp, imageLeftMargin, imageBaseLine, null);
 
-//            int reportNumber = getReportNumber(pagenumber,summaryPages);
-                int reportNumber = pagesList.get(pagenumber)[0];
+//            int reportNumber = getReportNumber(pageNumber,summaryPages);
+                int reportNumber = pagesList.get(pageNumber)[0];
 
                 canvas.drawText("Report type: ", leftMargin, titleBaseLine + 40, paint);
                 canvas.drawText("Faults summary report", leftMargin + 150, titleBaseLine + 40, paint);
@@ -568,15 +569,15 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 //            }
 //            else n = report.getFaultyDeviceList().size()%22;
 
-                int deviceRowsInThisPage = pagesList.get(pagenumber)[2];
-                int groupRowsInThisPage = pagesList.get(pagenumber)[4];
+                int deviceRowsInThisPage = pagesList.get(pageNumber)[2];
+                int groupRowsInThisPage = pagesList.get(pageNumber)[4];
 
                 int j =0;
                 for (int i=0;i < deviceRowsInThisPage; i++,j++) {
 
                     if(report.getFaultyDeviceList().size()>0) {
 
-                        ArrayList<Integer> row = (ArrayList<Integer>) report.getFaultyDeviceList().get(i + pagesList.get(pagenumber)[1]);
+                        ArrayList<Integer> row = (ArrayList<Integer>) report.getFaultyDeviceList().get(i + pagesList.get(pageNumber)[1]);
 
                         int address = row.get(0);
                         int fs = row.get(1);
@@ -596,7 +597,7 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
                 for (int i=0; i<groupRowsInThisPage;i++,j++)
                 {
-                    ArrayList<Integer> row = (ArrayList<Integer>) report.getLoopGroupStatus().get(i+ pagesList.get(pagenumber)[3]);
+                    ArrayList<Integer> row = (ArrayList<Integer>) report.getLoopGroupStatus().get(i+ pagesList.get(pageNumber)[3]);
                     int loop = row.get(0);
                     int group = row.get(1);
                     int ft = row.get(2);
@@ -617,9 +618,9 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
             }
 
 
-            pagenumber++;
+            pageNumber++;
 
-            canvas.drawText("Page " + Integer.toString(pagenumber),pageWidth-rightMargin,pageHeight-bottomMargin,paint);
+            canvas.drawText("Page " + Integer.toString(pageNumber),pageWidth-rightMargin,pageHeight-bottomMargin,paint);
 
 
         /*if (pagenumber % 2 == 0) {
@@ -695,8 +696,8 @@ public class ReportActivity extends BaseActivity implements ReportFragment.OnLis
 
         /**
          * Check if given page is in the range
-         * @param pageRanges
-         * @param page
+         * @param pageRanges a range of pages been printed
+         * @param page current page
          * @return boolean
          */
         @TargetApi(Build.VERSION_CODES.KITKAT)

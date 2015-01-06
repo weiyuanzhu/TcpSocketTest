@@ -1,6 +1,7 @@
 package com.mackwell.nlight_beta.activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -12,7 +13,6 @@ import com.mackwell.nlight_beta.messageType.FailureStatusFlag;
 import com.mackwell.nlight_beta.models.Device;
 import com.mackwell.nlight_beta.models.Report;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -42,7 +42,9 @@ public class ReportFaultsActivity extends BaseActivity {
                 new int[] {R.id.report_fault_loop_textView,R.id.report_fault_device_textView,R.id.report_fault_serial_textView,R.id.report_fault_location_textView,R.id.report_fault_description_textView});
         mListView.setAdapter(mAdapter);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getActionBar()!=null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
 
@@ -71,13 +73,17 @@ public class ReportFaultsActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Generate a list contains data for ListView simple adapter
+     * @return dataList
+     */
+
     private List<Map<String,String>> getDataList(){
 
         ArrayList<Map<String,String>> dataList = new ArrayList<Map<String, String>>();
         HashMap<String,String> map;
 
-        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
+//        SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
         map = new HashMap<String, String>();
         map.put("loop", "Loop");
@@ -98,7 +104,6 @@ public class ReportFaultsActivity extends BaseActivity {
                     int address = list.get(0);
                     int fs = list.get(1);
                     long serialNumber = list.get(2) + 256 * list.get(3) + 65536 * list.get(4) + 16777216L * list.get(5);
-
 
                     map.put("loop", (address & 0x80)==0? "01" : "02" );
                     map.put("device", Integer.toString(address & 63));
@@ -164,12 +169,12 @@ public class ReportFaultsActivity extends BaseActivity {
             else{
                 for(FailureStatus fs : fsSet)
                 {
-                    sb.append(fs.getDescription()+" , ");
+                    sb.append(fs.getDescription()).append(" , ");
                 }
-                System.out.println(sb);
+                Log.d(TAG,sb.toString());
 
                 //trim last ","
-                sb.deleteCharAt(sb.length()-2);
+                sb.deleteCharAt(sb.length() - 2);
 
             }
 
