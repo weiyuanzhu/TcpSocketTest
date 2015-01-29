@@ -34,7 +34,7 @@ public class TcpShortConnection {
 	
 
 	private int panelInfoPackageNo;
-    private int finishByte;
+    private int FINISH_BYTE;   //finish byte for a command
 	private boolean rxCompleted;
     private boolean error;
 	
@@ -109,7 +109,7 @@ public class TcpShortConnection {
 	public void fetchData(List<char[]> commandList,int finishByte){
 		
 		this.commandList = commandList;
-        this.finishByte = finishByte;
+        this.FINISH_BYTE = finishByte;
 		new Thread(fetch).start();
         Log.i(TAG,"Connection started on thread:-------> ");
 		
@@ -234,7 +234,7 @@ public class TcpShortConnection {
                                 }
                                 */
 
-                                if(rxBuffer.get(0)==Constants.RESPONSE_ID && rxBuffer.get(1)==Constants.FINISH && rxBuffer.get(2)==finishByte){
+                                if(rxBuffer.get(0)==Constants.RESPONSE_ID && rxBuffer.get(1)==Constants.FINISH && rxBuffer.get(2)== FINISH_BYTE){
                                     System.out.println(" All packages received");
                                     rxCompleted = true;
                                     setListening(false);

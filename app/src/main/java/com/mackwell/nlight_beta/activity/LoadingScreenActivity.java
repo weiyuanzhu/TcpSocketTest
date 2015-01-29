@@ -56,7 +56,7 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
 	private static final int ERROR = 3;
 	
 	private boolean isLoading = false;
-    private int finish; //finish byte of the command
+    private int FINISH_BYTE; //FINISH_BYTE byte of the command
 	
 	private Button liveBtn = null;
 	private Button demoBtn = null;
@@ -308,7 +308,7 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
 
             String ip = ipListSelected.get(panelToLoad-1);
             {
-                ip_connection_map.get(ip).fetchData(commandList,finish);
+                ip_connection_map.get(ip).fetchData(commandList, FINISH_BYTE);
             }
 
 			
@@ -365,8 +365,8 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_loading_screen);
 
-        //finish byte for init panel
-        finish = GetCmdEnum.GET_DATE_TIME.getValue();
+        //FINISH_BYTE byte for init panel
+        FINISH_BYTE = GetCmdEnum.GET_DATE_TIME.getValue();
 
 		//init SQLite controller
         mSqLiteController = new MySQLiteController(this);
@@ -562,8 +562,8 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
 			//clear ipSelected list 
 			ipListSelected.clear();
 
-			//finish this activity to prevent back navi
-			//finish();
+			//FINISH_BYTE this activity to prevent back navi
+			//FINISH_BYTE();
 		}
 	};
 
