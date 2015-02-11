@@ -1,11 +1,13 @@
 package com.mackwell.nlight_beta.activity;
 
 import java.math.BigInteger;
+import java.text.Bidi;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -186,10 +188,14 @@ public class DeviceInfoFragment extends ListFragment {
 		Map<String,Object> map = new HashMap<String,Object>();
 		
 		
-		//device name	
+	    //get device name and trim white space
 		
-		String location = device.getLocation();
-		String name = location.startsWith("?")? location + "[Click and hold to name device]" : location;
+		String location = device.getLocation().trim();
+		String name = location.startsWith("?")? location + "[Click and hold to name device]" : "\u061c" + location ;
+
+        //Bidi bidi = new Bidi(location,Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
+
+
 		
 		
 		map.put("description", R.string.text_fragment_deviceInfo_deviceName);

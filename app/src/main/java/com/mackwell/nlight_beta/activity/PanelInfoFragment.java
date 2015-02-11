@@ -424,7 +424,7 @@ public class PanelInfoFragment extends Fragment implements TcpLongConnection.Cal
 		map = new HashMap<String,Object>();
 		
 		map.put("text1", getResources().getString(R.string.text_fragment_panelInfo_contact));
-		map.put("text2", panel==null? "..." : panel.getContact());
+		map.put("text2", panel==null? "..." : panel.getContact().trim());
 		
 		dataList.add(map);
 		map = new HashMap<String,Object>();
@@ -443,7 +443,7 @@ public class PanelInfoFragment extends Fragment implements TcpLongConnection.Cal
 		map = new HashMap<String,Object>();
 		
 		map.put("text1", getResources().getString(R.string.text_fragment_panelInfo_firmware));
-		map.put("text2", panel==null? "..." : panel.getVersion());
+		map.put("text2", panel==null? "..." : panel.getVersion().trim());
 			
 		dataList.add(map);
 		
