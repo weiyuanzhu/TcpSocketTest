@@ -191,7 +191,7 @@ public class DeviceInfoFragment extends ListFragment {
 	    //get device name and trim white space
 		
 		String location = device.getLocation().trim();
-		String name = location.startsWith("?")? location + "[Click and hold to name device]" : "\u061c" + location ;
+		String name = location.startsWith("?")? location + "[Click and hold to name device]" :location ;
 
         //Bidi bidi = new Bidi(location,Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT);
 

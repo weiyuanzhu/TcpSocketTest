@@ -735,7 +735,7 @@ public class PanelActivity extends BaseActivity implements OnPanelListItemClicke
 				editor.apply();
 
                 //save panel location to database
-                if(isDemo) sqLiteController.insertPanel(panel); //put demo panel into list for test
+                if(!isDemo) sqLiteController.insertPanel(panel); //put demo panel into list for test
 
                 sqLiteController.updatePanelLocation(panel.getIp(), panel.getPanelLocation());
 
