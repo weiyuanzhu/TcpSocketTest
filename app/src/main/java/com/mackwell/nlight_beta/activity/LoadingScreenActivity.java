@@ -199,10 +199,28 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
 
             //create new panel and put it in the panel map
             Panel panel = new Panel(ip,macString);
+            Panel oldPanel;
            // panelMap.put(ip,panel);
             mSqLiteController.open();
-            mSqLiteController.insertPanel(panel);
-            mSqLiteController.close();
+            oldPanel = mSqLiteController.findPanelByMac(macString);
+
+
+
+            //check if panel with same MAC address already exist in the panel, update if exist, else insert
+            if(oldPanel!=null) {
+                mSqLiteController.insertPanel(panel);
+                String oldIp = oldPanel.getIp();
+                String oldLocation = oldPanel.getPanelLocation().trim();
+
+                if (!oldIp.equals(ip) || !oldLocation.equals("")  ) {
+                    panel.setPanelLocation(oldLocation);
+                    mSqLiteController.updatePanelLocation(ip, oldLocation);
+                }
+            }else {
+                mSqLiteController.insertPanel_Ignore(panel);
+            }
+
+           // mSqLiteController.close();
 
             ipEnableMap.put(ip,true);
 			
@@ -559,6 +577,8 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
 			intent.putExtra(DEMO_MODE, isDemo);
 			startActivity(intent);
 
+            //close database
+            mSqLiteController.close();
 			//clear ipSelected list 
 			ipListSelected.clear();
 

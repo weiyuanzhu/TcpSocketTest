@@ -227,7 +227,7 @@ public class CachedPanelListActivity extends Activity  implements UDPConnection.
 
             //check if ip is already in the list
 
-            if (sqlController.findPanel(searchIP) != null) {
+            if (sqlController.findPanelByIp(searchIP) != null) {
                 searchBtn.setEnabled(true);
                 Toast.makeText(this, R.string.toast_panel_exist, Toast.LENGTH_SHORT).show();
 
@@ -247,7 +247,7 @@ public class CachedPanelListActivity extends Activity  implements UDPConnection.
                     sqlController.open();
 
                     //check if ip is already in the list
-                    if (sqlController.findPanel(searchIP) == null) {
+                    if (sqlController.findPanelByIp(searchIP) == null) {
                         searchBtn.setEnabled(true);
                         Toast.makeText(CachedPanelListActivity.this, searchIP + R.string.toast_panel_not_found, Toast.LENGTH_SHORT).show();
                     }
