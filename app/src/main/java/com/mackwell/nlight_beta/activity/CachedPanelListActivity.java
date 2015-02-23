@@ -200,11 +200,12 @@ public class CachedPanelListActivity extends Activity  implements UDPConnection.
         //check if there is any row selected
         if(position!=-1) {
             mCursor.moveToPosition(position);
-            String ip = mCursor.getString(mCursor.getColumnIndex(MySQLiteOpenHelper.COLUMN_PANELIP));
+            //String ip = mCursor.getString(mCursor.getColumnIndex(MySQLiteOpenHelper.COLUMN_PANELIP));
+            String macAddress = mCursor.getString(mCursor.getColumnIndex(MySQLiteOpenHelper.COLUMN_PANELMAC));
 
             sqlController.open();
 
-            sqlController.deletePanel(ip);
+            sqlController.deletePanel(macAddress);
             mCursor = sqlController.readData();
             mAdapter.changeCursor(mCursor);
             mAdapter.notifyDataSetChanged();

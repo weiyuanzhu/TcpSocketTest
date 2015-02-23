@@ -197,30 +197,17 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
             String macString = String.format("%02X:%02X:%02X:%02X:%02X:%02X",
                     mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 
-            //create new panel and put it in the panel map
+            //create new panel
             Panel panel = new Panel(ip,macString);
-            Panel oldPanel;
-           // panelMap.put(ip,panel);
-            mSqLiteController.open();
-            oldPanel = mSqLiteController.findPanelByMac(macString);
 
+            // update database
+            // if panel with same MAC address already exist in the database, update ip , else insert a new instance
+            if(mSqLiteController.panelExist(macString)) {
+                mSqLiteController.updatePanelIpAddress(macString,ip);
 
-
-            //check if panel with same MAC address already exist in the panel, update if exist, else insert
-            if(oldPanel!=null) {
-                mSqLiteController.insertPanel(panel);
-                String oldIp = oldPanel.getIp();
-                String oldLocation = oldPanel.getPanelLocation().trim();
-
-                if (!oldIp.equals(ip) || !oldLocation.equals("")  ) {
-                    panel.setPanelLocation(oldLocation);
-                    mSqLiteController.updatePanelLocation(ip, oldLocation);
-                }
             }else {
-                mSqLiteController.insertPanel_Ignore(panel);
+                mSqLiteController.insertPanel(panel);
             }
-
-           // mSqLiteController.close();
 
             ipEnableMap.put(ip,true);
 			
@@ -276,6 +263,7 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
         panelList.clear();
 		rxBufferMap.clear();
         ip_connection_map.clear();
+
 		//save check status
         savePanelSelectionToIpListSelected(selected);
         setPanelToLoad(ipListSelected.size());
@@ -701,9 +689,7 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
 			
 			searchUDP();
 		}*/
-
         mHandler.post(displayPanelList);
-
 
 	}
 	
@@ -855,7 +841,8 @@ public class LoadingScreenActivity extends BaseActivity implements TcpShortConne
 
         for(String ip : ipListAll)
         {
-            mSqLiteController.updateChecked(ip,ipListSelected.contains(ip)? 1 : 0);
+            String macAddress = panelMap.get(ip).getMacString();
+            mSqLiteController.updateChecked(macAddress,ipListSelected.contains(ip)? 1 : 0);
         }
 
 		// clear selected IP list

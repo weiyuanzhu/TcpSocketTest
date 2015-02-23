@@ -37,8 +37,8 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_PRODUCTS_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_PANEL
                 + " (" + COLUMN_ID + " INTEGER DEFAULT 0, "
-                + COLUMN_PANELIP + " TEXT PRIMARY KEY ASC NOT NULL, "
-                + COLUMN_PANELMAC + " TEXT NOT NULL UNIQUE, "
+                + COLUMN_PANELIP + " TEXT NOT NULL, "
+                + COLUMN_PANELMAC + " TEXT PRIMARY KEY NOT NULL, "
                 + COLUMN_PANELLOCATION + " TEXT, "
                 + COLUMN_CHECK + " INTEGER DEFAULT 0, "
                 + COLUMN_ENABLE + " INTEGER DEFAULT 1)";

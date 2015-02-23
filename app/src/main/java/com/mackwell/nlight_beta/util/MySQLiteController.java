@@ -122,16 +122,37 @@ public class MySQLiteController {
             panel = null;
         }
 
-        //db.close();
         return panel;
     }
 
+    public boolean panelExist(String macAddress)
+    {
 
-    public boolean deletePanel(String ip){
+        String query  = "SELECT * FROM " + MySQLiteOpenHelper.TABLE_PANEL + " WHERE " + MySQLiteOpenHelper.COLUMN_PANELMAC + " = \"" + macAddress  + "\"";
+
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query,null);
+
+        if(cursor.moveToFirst()){
+            cursor.moveToFirst();
+//            panel.set_id((Integer.parseInt(cursor.getString(0))));
+
+            cursor.close();
+            return true;
+
+        }else{
+            return false;
+        }
+
+
+    }
+
+
+    public boolean deletePanel(String macAddress){
 
         boolean result = false;
 
-        String query = "Select * FROM " + MySQLiteOpenHelper.TABLE_PANEL + " WHERE " + MySQLiteOpenHelper.COLUMN_PANELIP + " = \"" + ip + "\"";
+        String query = "Select * FROM " + MySQLiteOpenHelper.TABLE_PANEL + " WHERE " + MySQLiteOpenHelper.COLUMN_PANELMAC + " = \"" + macAddress + "\"";
 
 
        Cursor cursor = database.rawQuery(query,null);
@@ -140,7 +161,7 @@ public class MySQLiteController {
 
         if(cursor.moveToFirst())
         {
-            database.delete(MySQLiteOpenHelper.TABLE_PANEL, MySQLiteOpenHelper.COLUMN_PANELIP + " = ?", new String[]{ip});
+            database.delete(MySQLiteOpenHelper.TABLE_PANEL, MySQLiteOpenHelper.COLUMN_PANELMAC + " = ?", new String[]{macAddress});
             cursor.close();
 
             result = true;
@@ -160,10 +181,10 @@ public class MySQLiteController {
 
 
 
-    public void updatePanelLocation(String ip, String location){
+    public void updatePanelLocation(String macAddress, String location){
         ContentValues values = new ContentValues();
         values.put(MySQLiteOpenHelper.COLUMN_PANELLOCATION,location);
-        String whereClause = MySQLiteOpenHelper.COLUMN_PANELIP + "=" + "\"" + ip + "\"";
+        String whereClause = MySQLiteOpenHelper.COLUMN_PANELMAC + "=" + "\"" + macAddress + "\"";
 
         database.update(MySQLiteOpenHelper.TABLE_PANEL,values,whereClause,null);
     }
@@ -212,11 +233,11 @@ public class MySQLiteController {
 
     }
 
-    public void updateChecked(String ip,int check){
+    public void updateChecked(String macAddress,int check){
 
         ContentValues values = new ContentValues();
         values.put(MySQLiteOpenHelper.COLUMN_CHECK,check);
-        String whereClause = MySQLiteOpenHelper.COLUMN_PANELIP + "=" + "\"" + ip + "\"";
+        String whereClause = MySQLiteOpenHelper.COLUMN_PANELMAC + "=" + "\"" + macAddress + "\"";
 
         database.update(MySQLiteOpenHelper.TABLE_PANEL,values,whereClause,null);
 
@@ -226,7 +247,6 @@ public class MySQLiteController {
         ContentValues values = new ContentValues();
         values.put(MySQLiteOpenHelper.COLUMN_CHECK,0);
         database.update(MySQLiteOpenHelper.TABLE_PANEL,values,null,null);
-
     }
 
 }
